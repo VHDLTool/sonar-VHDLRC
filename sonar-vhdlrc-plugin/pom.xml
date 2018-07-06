@@ -19,7 +19,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
   <dependency>
@@ -90,9 +90,10 @@
       <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
+        <extensions>true</extensions>
         <configuration>
           <pluginName>VHDL</pluginName>
-          <pluginClass>com.linty.sonar.plugins.vhdlrc</pluginClass>
+          <pluginClass>com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin</pluginClass>
           <sonarQubeMinVersion>${sonar.version}</sonarQubeMinVersion>
         </configuration>
       </plugin>
