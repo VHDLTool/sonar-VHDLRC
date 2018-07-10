@@ -1,7 +1,5 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
-import org.assertj.core.util.VisibleForTesting;
-
 import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
 
 public class Rule {
