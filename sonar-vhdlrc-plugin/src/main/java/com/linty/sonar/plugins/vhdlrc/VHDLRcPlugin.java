@@ -18,7 +18,7 @@ public class VHDLRcPlugin implements Plugin {
 	    if (!context.getSonarQubeVersion().isGreaterThanOrEqual(SQ_6_7)) {
 	      throw new IllegalStateException("SonarQube 6.7 is required for VHDL plugin");
 	    }
-	    builder.add(
+	    context.addExtension(
 	    		Vhdl.class	    		
 	    		);
 //    context.addExtensions(VHDLToolConfiguration.getPropertyDefinitions());
