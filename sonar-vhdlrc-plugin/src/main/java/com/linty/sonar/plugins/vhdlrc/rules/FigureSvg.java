@@ -5,12 +5,23 @@ import java.util.regex.Pattern;
 
 public class FigureSvg {
 	
+	String figureRef;
 	String height;
 	String width;
 	String figureCode;
 	
 	private Pattern widthPattern = Pattern.compile(".*width=\\\"(\\d*\\.\\d+|\\d+\\.\\d*)\\\"");
 	private Pattern heightPattern = Pattern.compile(".*height=\\\"(\\d*\\.\\d+|\\d+\\.\\d*)\\\"");
+	
+	public FigureSvg() {
+		this.height="300px";
+		this.width="300px";
+		this.figureCode="";
+	}
+	
+	public boolean hasImage() {
+		return !this.figureCode.isEmpty();
+	}
 
 
 	public void changeToScalable() {
@@ -37,8 +48,7 @@ public class FigureSvg {
 			m2.appendReplacement(sb, "   height=\"100%\"");
 			m2.appendTail(sb);
 			this.figureCode=sb.toString();
-		}
-		
+		}	
 		
 	}
 

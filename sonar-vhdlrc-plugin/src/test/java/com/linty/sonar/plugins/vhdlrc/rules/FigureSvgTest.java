@@ -1,5 +1,6 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
@@ -30,9 +31,9 @@ public class FigureSvgTest {
 				"   sodipodi:docname=\"STD_04600.svg\">\r\n" + 
 				"  <defs"
 				;
-
+		if(figure.hasImage()) {
 		figure.changeToScalable();
-
+		}
 		assertEquals(figure.figureCode,
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n" + 
 				"<!-- Created with Inkscape (http://www.inkscape.org/) -->\r\n" + 
@@ -122,6 +123,14 @@ public class FigureSvgTest {
 				"   height=\"971.87701\"\r\n"
 				);
 		
+	}
+	
+	@Test
+	public void test_no_code() {
+		FigureSvg figure = new FigureSvg();	
+		figure.changeToScalable();
+		if(!figure.hasImage())
+		assertThat(figure.figureCode).isEmpty();
 	}
 
 
