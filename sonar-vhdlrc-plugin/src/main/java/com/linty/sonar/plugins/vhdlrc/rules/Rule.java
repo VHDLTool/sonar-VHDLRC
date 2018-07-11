@@ -5,6 +5,7 @@ import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
 public class Rule {
 	
 	String name;
+	String ruleKey;
 	  
     String category;
     String remediationEffort;

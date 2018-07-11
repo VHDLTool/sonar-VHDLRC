@@ -31,7 +31,7 @@ public class HandbookXmlParserTest {
 	
 	@Test
 	public void Test() {		
-		assertThat(rl1).isNotNull();
+		//assertThat(rl1).isNotNull();
 		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
 		assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
 	}
@@ -55,26 +55,32 @@ public class HandbookXmlParserTest {
 		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
 	}
 	
-	//
+
 	@Test
 	public void file_is_a_directory_log_treated_has_not_found() {
 		rl1 = XmlParser.parseXML(new File("src/test/files/handbooks/"));
 		String filename = "src\\test\\files\\handbooks";
 		assertThat(logTester.logs(LoggerLevel.WARN)).contains("File " + filename + " was not found or is not a file and won't be analysed");
-		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();		
 	}
 	
-	//Null argument is not supposed to append
+
 	@Test (expected = IllegalStateException.class)
-	public void null_argument() {
+	public void should_not_log_debug_when_null_argument() {
 		File nullFile = null;
 		rl1 = XmlParser.parseXML(nullFile);
 		assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Null argument in parseXML()");
+		assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
 	}
 	
-	
-		
-	
+	@Test (expected = IllegalStateException.class)
+	  public void should_log_debug_when_null_argument() {
+	    logTester.setLevel(LoggerLevel.DEBUG);
+	    File nullFile = null;
+		rl1 = XmlParser.parseXML(nullFile);
+	    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Null argument in parseXML()");
+	    assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1).isNotEmpty();
+	}
 	
 	
 	//Existing file with parsing error should raise an error
