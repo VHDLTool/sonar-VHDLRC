@@ -110,9 +110,9 @@ public class FigureSvgTest {
 				"   height=\"971.87701\"\r\n"
 				;
 		
-		System.out.println(figure.figureCode+"\n---end1------");//
+		//System.out.println(figure.figureCode+"\n---end1------");//
 		figure.changeToScalable();
-		System.out.println(figure.figureCode+"\n----end2-----");//
+		//System.out.println(figure.figureCode+"\n----end2-----");//
 		
 		assertEquals(figure.figureCode, 
 				"   xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\r\n" +  

@@ -4,20 +4,20 @@ import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
 
 public class Rule {
 	
-	String name;
 	String ruleKey;
+	String name;
 	  
     String category;
-    String remediationEffort;
-    String sonarSeverity;
-    String tag;
-    String type;
-    
-    String subCategoty;    
+    String subCategoty; 
     String rationale;
     String shortDescription;
     String longDescription; 
     
+    String type;
+    String sonarSeverity;
+    String remediationEffort;
+    String tag;
+
     String goodExDesc;
     String goodExampleRef;
     String goodExampleCode;
@@ -46,7 +46,7 @@ public class Rule {
         this.goodExampleRef=   EMPTY_STRING;        
         this.badExDesc=        EMPTY_STRING;
         this.badExampleRef=    EMPTY_STRING;       
-        this.figureDesc=       EMPTY_STRING;   	
+        this.figureDesc=       EMPTY_STRING; 
     }
     
     

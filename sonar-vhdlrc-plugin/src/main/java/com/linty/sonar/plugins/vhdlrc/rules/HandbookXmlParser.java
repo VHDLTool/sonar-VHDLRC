@@ -13,10 +13,7 @@ import com.linty.sonar.plugins.vhdlrc.rules.Rule;
 import org.codehaus.staxmate.SMInputFactory;
 import org.codehaus.staxmate.in.SMEvent;
 import org.codehaus.staxmate.in.SMFilter;
-import org.codehaus.staxmate.in.SMFilterFactory;
-import org.codehaus.staxmate.in.SMHierarchicCursor;
 import org.codehaus.staxmate.in.SMInputCursor;
-import org.codehaus.staxmate.in.SimpleFilter;
 
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
@@ -36,13 +33,11 @@ public class HandbookXmlParser {
 	private static final ImmutableList<String> IGNORE = ImmutableList.of(
 			"RuleUID",
 			"RuleHist",
-			"Status",
+			"IsParent",
+			"IsSon",
+			"Severity",
 			"Technology",
 			"ApplicationFields",
-			"Revision",
-			"Modified",
-			"Creation",
-			"Version",
 			"ParentUID"
 			);
 	private SMFilter filter = new IgnoreSomeRuleElements();
@@ -71,7 +66,8 @@ public class HandbookXmlParser {
 			}
 			else if(file==null)
 				throw new NullPointerException();			
-			else if(!file.exists() || !file.isFile()) {
+			else 
+			{
 				LOG.warn("File {} was not found or is not a file and won't be analysed", file.getPath());
 				return NULL;
 			}
@@ -84,13 +80,12 @@ public class HandbookXmlParser {
 			throw new IllegalStateException(e);
 			
 		} catch ( XMLStreamException e) {
-			LOG.error("Error when parsing xml file: {}",file.getPath());
+			LOG.error("Error when parsing xml file: {} at line: {}",file.getPath(),e.getLocation().getLineNumber());
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("{}\nXML file parsing failed because of :{}\n{}",ExceptionUtils.getFullStackTrace(e),e.getMessage());
+				LOG.debug("XML file parsing failed because of :{}",ExceptionUtils.getFullStackTrace(e));
 			}
 			throw new IllegalStateException(e);
 		}
-		return NULL;
 	}
 
 	private void collectRules(File file, List<Rule> rules) throws XMLStreamException {		
@@ -112,65 +107,106 @@ public class HandbookXmlParser {
 		while(sectionCursor.asEvent() != null) {
 			switch(sectionCursor.getLocalName()) {
 			case RULE_CONTENT:
-				collectRuleContent(r, sectionCursor.childElementCursor());
+				collectRuleContent(r, sectionCursor.childCursor(filter).advance());
 				break;
 			case SONARQUBE:
-				collectRuleSQ(r, sectionCursor.childElementCursor());
+				collectRuleSQ(r, sectionCursor.childCursor(filter).advance());
 				break;
 			case RULE_DESC:
-				collectRuleDesc(r, sectionCursor.childElementCursor());
+				collectRuleDesc(r, sectionCursor.childCursor(filter).advance());
 				break;
+			default:
+				// Nothing, ignore other tags
 			}
-		}
-
-			
-		//catch {("Missing <RuleContent> at line" + sectionCursor.getCursorLocation().getLineNumber());			
-			
-	}
-
-	private void collectRuleContent(Rule r, SMInputCursor contentCursor) throws XMLStreamException {
-		try {
-			while (contentCursor.asEvent() != null) {
-				switch (contentCursor.getLocalName()) {
-				case "Name":
-					r.name = contentCursor.getElemStringValue();
-					break;
-				case "Category":
-					r.category = contentCursor.getElemStringValue();
-					break;
-				case "SubCategory":
-					r.subCategoty = contentCursor.getElemStringValue();
-					break;
-				case "Rationale":
-					r.rationale = contentCursor.getElemStringValue();
-					break;
-				case "ShortDesc":
-					r.shortDescription = contentCursor.getElemStringValue();
-					break;
-				case "LongDesc":
-					r.longDescription = contentCursor.getElemStringValue();
-					break;
-				default:
-					// Nothing. Ignore other element names.
-				}
-				contentCursor.advance();
-			}
-		} catch (XMLStreamException e) {		
-			throw new XMLStreamException(errorMessage(contentCursor));
+			sectionCursor.advance();
 		}
 	}
 
-	private void collectRuleSQ(Rule r, SMInputCursor contentCursor) throws XMLStreamException {
+	private void collectRuleContent(Rule r, SMInputCursor cursor) throws XMLStreamException {
+		while (cursor.asEvent() != null) {
+			switch (cursor.getLocalName()) {
+			case "Name":
+				r.name = cursor.getElemStringValue();
+				break;
+			case "Category":
+				r.category = cursor.getElemStringValue();
+				break;
+			case "SubCategory":
+				r.subCategoty = cursor.getElemStringValue();
+				break;
+			case "Rationale":
+				r.rationale = cursor.getElemStringValue();
+				break;
+			case "ShortDesc":
+				r.shortDescription = cursor.getElemStringValue();
+				break;
+			case "LongDesc":
+				r.longDescription = cursor.getElemStringValue();
+				break;
+			default:
+				// Nothing. Ignore other element names.
+			}
+			cursor.advance();
+		}
+	}
+
+	private void collectRuleSQ(Rule r, SMInputCursor cursor) throws XMLStreamException {
+		while (cursor.asEvent() != null) {
+			switch (cursor.getLocalName()) {
+			case "SonarType":
+				r.type = cursor.getElemStringValue();
+				break;
+			case "SonarSeverity":
+				r.sonarSeverity = cursor.getElemStringValue();
+				break;
+			case "RemediationEffort":
+				r.remediationEffort = cursor.getElemStringValue();
+				break;
+			case "SonarTag":
+				r.tag = cursor.getElemStringValue();
+				break;			
+			default:
+				// Nothing. Ignore other element names.
+			}
+			cursor.advance();
+		}
 
 	}
-	private void collectRuleDesc(Rule r, SMInputCursor contentCursor) throws XMLStreamException {
-
+	private void collectRuleDesc(Rule r, SMInputCursor cursor) throws XMLStreamException {
+		while (cursor.asEvent() != null) {
+			switch (cursor.getLocalName()) {
+			case "GoodExDesc":
+				r.goodExDesc = cursor.getElemStringValue();
+				break;
+			case "GoodExample":
+				r.goodExampleRef = cursor.getElemStringValue();
+				break;
+			case "BadExDesc":
+				r.badExampleRef = cursor.getElemStringValue();
+				break;
+			case "BadExample":
+				r.badExampleRef = cursor.getElemStringValue();
+				break;
+			case "FigureDesc":
+				r.figureDesc = cursor.getElemStringValue();
+				break;
+			case "Figure":
+				r.figure = collectFigureRef(cursor);
+				break;
+			default:
+				// Nothing. Ignore other element names.
+			}
+			cursor.advance();
+		}
 	}
 	
-	
-	private void errorMessage(String message) throws XMLStreamException {
-		LOG.error(message);
-		throw new XMLStreamException(message);
+	private FigureSvg collectFigureRef(SMInputCursor cursor) throws XMLStreamException {
+		FigureSvg f = null;
+		String fileRef=cursor.getAttrValue("fileref");
+		if(fileRef!=null) {
+			return new FigureSvg(fileRef,cursor.getAttrValue("height"),cursor.getAttrValue("width"));			
+		}
+		return f;
 	}
 
 	private class IgnoreSomeRuleElements extends SMFilter {

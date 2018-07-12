@@ -31,9 +31,41 @@ public class HandbookXmlParserTest {
 	
 	@Test
 	public void Test() {		
-		//assertThat(rl1).isNotNull();
+		assertThat(rl1).isNotNull();
+		assertThat(rl1).hasSize(74);
 		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
 		assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
+	}
+	
+	@Test
+	public void test_content_nullity() {
+		assertThat(rl1.get(0).ruleKey).isEqualTo("STD_00600");
+		assertThat(rl1.get(1).ruleKey).isEqualTo("STD_00800");
+		assertThat(rl1.get(1).category).isEqualTo("Formatting");
+		assertThat(rl1.get(1).badExampleRef).isEmpty();
+		assertThat(rl1.get(rl1.size()-1).ruleKey).isEqualTo("STD_07000");
+		for(com.linty.sonar.plugins.vhdlrc.rules.Rule r : rl1) {
+			assertThat(r.ruleKey).matches("[A-Z]{3}_[0-9]{5}");
+			assertThat(r.category).isNotEmpty();
+			assertThat(r.subCategoty).isNotEmpty();
+			assertThat(r.rationale).isNotNull();
+			assertThat(r.shortDescription).isNotNull();
+			assertThat(r.longDescription).isNotNull();
+			assertThat(r.type).isNotEmpty();
+			assertThat(r.sonarSeverity).isNotEmpty();
+			assertThat(r.remediationEffort).isNotEmpty();
+			assertThat(r.tag).isNotNull();
+			assertThat(r.goodExDesc).isNotNull();
+			assertThat(r.goodExampleRef).isNotNull();
+			assertThat(r.badExDesc).isNotNull();
+			assertThat(r.badExampleRef).isNotNull();
+			assertThat(r.figureDesc).isNotNull();
+			if(r.figure!=null) {
+				assertThat(r.figure.figureRef).isNotNull().isNotEmpty();
+				assertThat(r.figure.width).isNotNull().isNotEmpty();
+				assertThat(r.figure.height).isNotNull().isNotEmpty();				
+			}
+		}
 	}
 	
 	//Existing but empty file should return a null List<Rule> and raise a warning
@@ -83,15 +115,23 @@ public class HandbookXmlParserTest {
 	}
 	
 	
-	//Existing file with parsing error should raise an error
-//	@Test
-//	  public void should_return_null_when_encountering_parsing_issue() {
-//	    logTester.setLevel(LoggerLevel.DEBUG);
-//	    assertThat(XmlParser.parseXML(new File("src/test/files/handbooks/parsing-issue.xml"))).isNull();
-//	    String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/parsing-issue.xml");
-//	    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Unable to parse xml file: " + filename);
-//	    assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1).contains("XML file parsing failed because of : org.xml.sax.SAXParseException; systemId: file: ");
-//	}
+	@Test (expected = IllegalStateException.class)
+	  public void parse_error_should_log_location() {
+	    //logTester.setLevel(LoggerLevel.DEBUG);
+		rl1 = XmlParser.parseXML(new File("src/test/files/handbooks/parsing_issue.xml"));
+	    String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/parsing_issue.xml");
+	    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Error when parsing xml file: " + filename + " at line: 28" );
+	    //assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1).contains("XML file parsing failed because of : org.xml.sax.SAXParseException; systemId: file: ");
+	}
+	
+	@Test (expected = IllegalStateException.class)
+	  public void parse_error_should_log_location_in_debug() {
+	    logTester.setLevel(LoggerLevel.DEBUG);
+		rl1 = XmlParser.parseXML(new File("src/test/files/handbooks/parsing_issue.xml"));
+	    String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/parsing_issue.xml");
+	    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Error when parsing xml file: " + filename + " at line: 28" );
+	    assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1).contains("XML file parsing failed because of : org.xml.sax.SAXParseException; systemId: file: ");
+	}
 	
 	
 	

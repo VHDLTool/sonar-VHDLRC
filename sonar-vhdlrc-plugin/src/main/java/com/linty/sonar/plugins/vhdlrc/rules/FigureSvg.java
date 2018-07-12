@@ -13,9 +13,18 @@ public class FigureSvg {
 	private Pattern widthPattern = Pattern.compile(".*width=\\\"(\\d*\\.\\d+|\\d+\\.\\d*)\\\"");
 	private Pattern heightPattern = Pattern.compile(".*height=\\\"(\\d*\\.\\d+|\\d+\\.\\d*)\\\"");
 	
+	//For testing
 	public FigureSvg() {
+		this.figureRef="";
 		this.height="300px";
 		this.width="300px";
+		this.figureCode="";
+	}
+	
+	public FigureSvg(String figureRef, String height, String width) {
+		this.figureRef = figureRef;
+		this.height = (!height.isEmpty()&&height!=null) ? height : "300px";
+		this.width= (!width.isEmpty()&&width!=null) ? width : "300px";
 		this.figureCode="";
 	}
 	
