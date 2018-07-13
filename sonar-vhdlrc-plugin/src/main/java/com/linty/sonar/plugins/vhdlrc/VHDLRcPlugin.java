@@ -32,6 +32,7 @@ public class VHDLRcPlugin implements Plugin {
 	    		.subCategory("General")
 	    		.onQualifiers(Qualifiers.PROJECT)
 	    		.build());
+	    //builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
 	    
 //    context.addExtensions(VHDLToolConfiguration.getPropertyDefinitions());
 //    context.addExtensions(Arrays.asList(
