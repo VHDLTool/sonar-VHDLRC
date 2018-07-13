@@ -16,12 +16,13 @@ public class VHDLRcPluginTest {
 	private static final Version VERSION_6_7 = Version.create(6, 7);
 	private VHDLRcPlugin vhdlRcPlugin = new VHDLRcPlugin();
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void test_plugin_extensions_compatible_with_6_7() {
 		SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_6_7, SonarQubeSide.SERVER);
 		Plugin.Context context = new Plugin.Context(runtime);
 		vhdlRcPlugin.define(context);
-		assertThat(context.getExtensions()).hasSize(1);
+		assertThat(context.getExtensions()).hasSize(3);
 	}
 	
 	@Test (expected = IllegalStateException.class)

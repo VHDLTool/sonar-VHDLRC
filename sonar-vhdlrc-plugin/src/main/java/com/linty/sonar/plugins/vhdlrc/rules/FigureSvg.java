@@ -10,21 +10,23 @@ public class FigureSvg {
 	String width;
 	String figureCode;
 	
+	private static final String DEFAULT_DIM = "300px";
+	
 	private Pattern widthPattern = Pattern.compile(".*width=\\\"(\\d*\\.\\d+|\\d+\\.\\d*)\\\"");
 	private Pattern heightPattern = Pattern.compile(".*height=\\\"(\\d*\\.\\d+|\\d+\\.\\d*)\\\"");
 	
 	//For testing
 	public FigureSvg() {
 		this.figureRef="";
-		this.height="300px";
-		this.width="300px";
+		this.height=DEFAULT_DIM;
+		this.width=DEFAULT_DIM;
 		this.figureCode="";
 	}
 	
 	public FigureSvg(String figureRef, String height, String width) {
 		this.figureRef = figureRef;
-		this.height = (!height.isEmpty()&&height!=null) ? height : "300px";
-		this.width= (!width.isEmpty()&&width!=null) ? width : "300px";
+		this.height = (height!=null && !height.isEmpty()) ? height : DEFAULT_DIM;
+		this.width= (width!=null && !width.isEmpty()) ? width : DEFAULT_DIM;
 		this.figureCode="";
 	}
 	
