@@ -14,6 +14,7 @@ import com.linty.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
 public class VHDLRcPlugin implements Plugin {
 
  private static final Version SQ_6_7 = Version.create(6, 7);
+ private static final String VHDL_RULECHEKER_CATEGORY = "VHDL RuleChecker";
 	
  @Override 
  public void define(Context context) {
@@ -32,7 +33,14 @@ public class VHDLRcPlugin implements Plugin {
 	    		.subCategory("General")
 	    		.onQualifiers(Qualifiers.PROJECT)
 	    		.build());
-	    //builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
+	    builder.add(PropertyDefinition.builder(VhdlRulesDefinition.HANDBOOK_PATH_KEY)
+	    		.defaultValue(VhdlRulesDefinition.DEFAULT_HANDBOOK_PATH)
+	    		.category(Vhdl.NAME)
+	    		.subCategory(VHDL_RULECHEKER_CATEGORY)
+	    		.name("Handbook Directory Path")
+	    		.description(VhdlRulesDefinition.HANDBOOK_PATH_DESC)
+	    		.onQualifiers(Qualifiers.PROJECT)
+	    		.build());
 	    
 //    context.addExtensions(VHDLToolConfiguration.getPropertyDefinitions());
 //    context.addExtensions(Arrays.asList(
