@@ -11,7 +11,7 @@
   <groupId>com.linty.sonar</groupId>
   <artifactId>sonar-vhdlrc-plugin</artifactId>
   <version>1.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>sonar-plugin</packaging>
   <name>SonarQube VHDL Rulechecker Plugin</name>
   <url>http://maven.apache.org</url>
 
