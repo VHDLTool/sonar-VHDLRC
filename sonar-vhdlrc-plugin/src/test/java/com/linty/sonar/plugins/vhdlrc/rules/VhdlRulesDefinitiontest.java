@@ -1,19 +1,21 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
+import java.io.File;
 import org.junit.Test;
-import org.sonar.api.platform.ServerFileSystem;
 import org.sonar.api.server.rule.RulesDefinition;
+import com.linty.sonar.plugins.vhdlrc.utils.ServerFileSystemTester;
 
 
 public class VhdlRulesDefinitiontest {
 	
-	private ServerFileSystem serverFileSystem;
 	
 	@Test
 	  public void test() {
-	    VhdlRulesDefinition definition = new VhdlRulesDefinition(serverFileSystem);
+		File ServerHome = new File("src");
+	    VhdlRulesDefinition definition = new VhdlRulesDefinition(new ServerFileSystemTester(ServerHome));
 	    RulesDefinition.Context context = new RulesDefinition.Context();
 	    definition.define(context);
+	    
 	}
 
 }
