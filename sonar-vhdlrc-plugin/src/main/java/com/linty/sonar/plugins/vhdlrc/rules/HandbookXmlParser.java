@@ -43,7 +43,7 @@ public class HandbookXmlParser {
 	private SMFilter filter = new IgnoreSomeRuleElements();
 	
 	private static final Logger LOG = Loggers.get(HandbookXmlParser.class);
-	private static final String NAMESPACE_HANDBOOX = "HANDBOOK";//TODO : get this from configuration
+	private static final String NAMESPACE_HANDBOOX = "HANDBOOK";
 	private static final List<Rule> NULL = null;
 	
 	private static boolean fileExists(@Nullable File file) {
