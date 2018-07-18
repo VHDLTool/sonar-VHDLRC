@@ -115,4 +115,14 @@ public class VhdlRulesDefinitiontest {
 		assertThat(logTester.logs(LoggerLevel.WARN)).contains("File is empty and won't be analyzed : " + filename);
 		assertThat(logTester.logs(LoggerLevel.WARN)).contains("No VHDL RuleCheker rules loaded!");
 	}
+	
+	@Test
+	public void bad_tag_should_be_handled() {
+		MapSettings settings = new MapSettings();
+		settings.setProperty(VhdlRulesDefinition.HANDBOOK_PATH_KEY, "handbook_parse_issues");
+		String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/handbook_parse_issues/Rulesets/handbook_STD_issues.xml");
+		VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
+	    RulesDefinition.Context context = new RulesDefinition.Context();
+	    definition.define(context);	   
+	}
 }

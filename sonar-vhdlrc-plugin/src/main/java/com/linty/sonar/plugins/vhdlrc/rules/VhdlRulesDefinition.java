@@ -2,26 +2,19 @@ package com.linty.sonar.plugins.vhdlrc.rules;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
+
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import com.linty.sonar.plugins.vhdlrc.rules.Rule;
 import com.linty.sonar.plugins.vhdlrc.Vhdl;
-import java.io.FilenameFilter;
-
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.internal.apachecommons.io.FilenameUtils;
-import org.sonar.api.internal.apachecommons.lang.StringUtils;
 import org.sonar.api.platform.ServerFileSystem;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.ServerSide;
-import org.sonar.api.server.debt.DebtRemediationFunction;
 import org.sonar.api.server.rule.RuleTagFormat;
 import org.sonar.api.server.rule.RulesDefinition;
-import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -96,9 +89,6 @@ public class VhdlRulesDefinition implements RulesDefinition {
 
 	private void newRule(com.linty.sonar.plugins.vhdlrc.rules.Rule r, NewRepository repository) {
 		String ruleKey = r.ruleKey;
-		if (StringUtils.isEmpty(ruleKey)) {
-			throw new IllegalArgumentException("No key is defined in Rule annotation of " + r);
-		}
 		NewRule nr = repository.createRule(r.ruleKey);
 		nr.setHtmlDescription(r.buildHtmlDescritpion());
 		addMetadataTo(nr,r);

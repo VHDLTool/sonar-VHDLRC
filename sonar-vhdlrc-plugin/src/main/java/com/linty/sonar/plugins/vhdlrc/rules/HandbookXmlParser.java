@@ -1,5 +1,6 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
+import org.sonar.api.internal.apachecommons.lang.StringUtils;
 import org.sonar.api.internal.apachecommons.lang.exception.ExceptionUtils;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -65,22 +66,15 @@ public class HandbookXmlParser {
 				}
 			}
 			else if(file==null)
-				throw new NullPointerException();			
+				throw new IllegalArgumentException("Null argument in HandbookXmlParser");			
 			else 
 			{
 				LOG.warn("File {} was not found or is not a file and won't be analysed", file.getPath());
 				return NULL;
 			}
 			
-		} catch (NullPointerException e) {
-			LOG.error("Null argument in parseXML()");
-			if (LOG.isDebugEnabled()) {
-				LOG.debug(ExceptionUtils.getFullStackTrace(e));
-			}
-			throw new IllegalStateException(e);
-			
-		} catch ( XMLStreamException e) {
-			LOG.error("Error when parsing xml file: {} at line: {}",file.getPath(),e.getLocation().getLineNumber());
+		} catch (XMLStreamException e) {
+			LOG.error("Error when parsing xml file: {} at line: {}\n{}",file.getPath(),e.getLocation().getLineNumber(),e.getMessage());
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("XML file parsing failed because of :{}",ExceptionUtils.getFullStackTrace(e));
 			}
@@ -96,6 +90,9 @@ public class HandbookXmlParser {
 		while (ruleCursor.asEvent() != null) {
 			Rule r = new Rule();
 			r.ruleKey = ruleCursor.getAttrValue("UID");	
+			if (StringUtils.isEmpty(r.ruleKey)) {
+				throw new XMLStreamException("No mandatory RuleUID is defined", ruleCursor.getCursorLocation());
+			}
 			collectRule(r, ruleCursor.childCursor(filter).advance());
 			rules.add(r);
 			ruleCursor.advance();

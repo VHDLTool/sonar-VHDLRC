@@ -97,7 +97,7 @@ public class HandbookXmlParserTest {
 	}
 	
 
-	@Test (expected = IllegalStateException.class)
+	@Test (expected = IllegalArgumentException.class)
 	public void should_not_log_debug_when_null_argument() {
 		File nullFile = null;
 		rl1 = XmlParser.parseXML(nullFile);
@@ -105,7 +105,7 @@ public class HandbookXmlParserTest {
 		assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
 	}
 	
-	@Test (expected = IllegalStateException.class)
+	@Test (expected = IllegalArgumentException.class)
 	  public void should_log_debug_when_null_argument() {
 	    logTester.setLevel(LoggerLevel.DEBUG);
 	    File nullFile = null;
@@ -133,8 +133,16 @@ public class HandbookXmlParserTest {
 	    assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1).contains("XML file parsing failed because of : org.xml.sax.SAXParseException; systemId: file: ");
 	}
 	
+	@Test (expected = IllegalStateException.class)
+	public void no_rule_key_should_be_is_illegale() {
+		rl1 = XmlParser.parseXML(new File("src/test/files/handbooks/no_rule_key.xml"));
+	    String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/no_rule_key.xml");
+	    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Error when parsing xml file: " + filename + " at line: 28"
+	    		+"\nNo mandatory RuleUID is defined");
+		
+	}
 	
-	
+	//@Test (expected )
 	
 
 }
