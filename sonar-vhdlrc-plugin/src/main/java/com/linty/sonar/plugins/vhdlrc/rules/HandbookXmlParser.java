@@ -54,13 +54,13 @@ public class HandbookXmlParser {
 		try {
 			if (fileExists(file)) {
 				if (file.length() == 0) {
-					LOG.warn("File {} is empty and won't be analyzed.", file.getPath());
+					LOG.warn("File is empty and won't be analyzed : {}", file.getPath());
 					return NULL;
 				}
 				else {
 					List<Rule> rules = new ArrayList<>();
 					collectRules(file,rules);					
-					LOG.info("Parsing {}", file.getPath());
+					LOG.info("Parsing {}", file.getPath());//TODO:remove this test flag
 					return rules;
 				}
 			}

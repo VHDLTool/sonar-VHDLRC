@@ -1,8 +1,6 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,7 +18,7 @@ public class VhdlRulesDefinitiontest {
 	
 	
 	MapSettings settings = new MapSettings();
-	File ServerHome = new File("src/test/files/handbooks/");
+	File ServerHome = new File("src/test/files/handbooks");
 	@Rule
 	public LogTester logTester = new LogTester();
 	
@@ -44,8 +42,8 @@ public class VhdlRulesDefinitiontest {
 	
 	@Test
 	  public void test_absolute_path() {
-		String absolutePath = FilenameUtils.separatorsToUnix(System.getProperty("user.dir") + "/src/test/files/handbooks/VHDL_Handbook_STD-master");
-		System.out.println(absolutePath);
+		String absolutePath = FilenameUtils.separatorsToUnix(System.getProperty("user.dir") + "/src/test/files/handbooks/VHDL_Handbook_STD-master/");
+		//System.out.println(absolutePath);
 		settings.setProperty(VhdlRulesDefinition.HANDBOOK_PATH_KEY, absolutePath );
 	    VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
 	    RulesDefinition.Context context = new RulesDefinition.Context();
@@ -78,7 +76,7 @@ public class VhdlRulesDefinitiontest {
 	    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
 	}
 	
-	@Test (expected = IllegalStateException.class)
+	@Test
 	public void wrong_handbook_path_should_log_error() {
 		MapSettings settings = new MapSettings();
 		settings.setProperty(VhdlRulesDefinition.HANDBOOK_PATH_KEY, "None_existing_hb");
@@ -88,10 +86,10 @@ public class VhdlRulesDefinitiontest {
 	    definition.define(context);	    
 	    
 		assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
-		assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Wrong path to handbook : " + filename +" ; Check parameter " + VhdlRulesDefinition.HANDBOOK_PATH_KEY );
+		assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Handbook directory not found : " + filename +" ; Check parameter " + VhdlRulesDefinition.HANDBOOK_PATH_KEY );
 	}
 	
-	@Test (expected = IllegalStateException.class)
+	@Test 
 	public void no_matching_hb_should_log_error() {
 		MapSettings settings = new MapSettings();
 		settings.setProperty(VhdlRulesDefinition.HANDBOOK_PATH_KEY, "bad_handbook");
@@ -101,7 +99,7 @@ public class VhdlRulesDefinitiontest {
 	    definition.define(context);	    
 	    
 		assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
-		assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("No handbook found in : " + filename);
+		assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("No handbook.xml found in : " + filename);
 	}
 	
 	@Test
@@ -114,7 +112,7 @@ public class VhdlRulesDefinitiontest {
 	    definition.define(context);	    
 	    
 		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-		assertThat(logTester.logs(LoggerLevel.WARN)).contains("File " + filename + " is empty and won't be analyzed.");
-		assertThat(logTester.logs(LoggerLevel.WARN)).contains("No rules loaded!");
+		assertThat(logTester.logs(LoggerLevel.WARN)).contains("File is empty and won't be analyzed : " + filename);
+		assertThat(logTester.logs(LoggerLevel.WARN)).contains("No VHDL RuleCheker rules loaded!");
 	}
 }

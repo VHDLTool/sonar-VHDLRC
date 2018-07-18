@@ -74,7 +74,7 @@ public class HandbookXmlParserTest {
 		rl1 = XmlParser.parseXML(new File("src/test/files/handbooks/empty_file.xml"));
 		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
 		String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/empty_file.xml");
-		assertThat(logTester.logs(LoggerLevel.WARN)).contains("File " + filename + " is empty and won't be analyzed.");
+		assertThat(logTester.logs(LoggerLevel.WARN)).contains("File is empty and won't be analyzed : " + filename);
 	}
 	
 	//File not found should return a null List<Rule> and raise a warning,
