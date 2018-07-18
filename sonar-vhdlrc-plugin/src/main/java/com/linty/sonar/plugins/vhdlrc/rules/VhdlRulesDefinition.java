@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import com.linty.sonar.plugins.vhdlrc.Vhdl;
+
+import org.apache.commons.io.FilenameUtils;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.config.Configuration;
-import org.sonar.api.internal.apachecommons.io.FilenameUtils;
 import org.sonar.api.platform.ServerFileSystem;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.ServerSide;
