@@ -16,7 +16,7 @@ public class RuleTest {
         r.subCategoty=      "Naming";    
         r.rationale=        "Labels improve readability of simulations, VHDL source code and synthesis logs.";
         r.shortDescription= "Processes are identified by a label.";
-        r.longDescription=  "No additional information.";         
+        r.longDescription=  "A long description";         
         r.goodExDesc=       "Extracted from STD_00400_good.vhd";
         r.goodExampleRef=   "STD_00400_good";
         r.goodExampleCode=  "if() \n then \n else";
@@ -26,7 +26,29 @@ public class RuleTest {
         assertThat(r.figureDesc).isNotNull();
         
         String htmlDesc = r.buildHtmlDescritpion();
-        System.out.println(htmlDesc);
+	}
+	
+	@Test
+	public void no_additionnal_info_should_not_be_a_desc() {
+		Rule r = new Rule();
+		r.name=             "A other rule name";       
+        r.remediationEffort="Easy";
+        r.sonarSeverity=    "Major";
+        r.type=             "BUG";
+        r.category=         "Traceability";
+        r.subCategoty=      "Naming";    
+        r.rationale=        "Labels improve readability of simulations, VHDL source code and synthesis logs.";
+        r.shortDescription= "Processes are identified by a label.";
+        r.longDescription=  "No additional information.";         
+        r.goodExDesc=       "Extracted from STD_00400_good.vhd";
+        r.goodExampleRef=   "STD_00400_good";
+        r.goodExampleCode=  "";
+        r.badExDesc=        "Extracted from STD_00400_bad.vhd";
+        r.badExampleRef=    "STD_00400_bad";       
+        
+        assertThat(r.figureDesc).isNotNull();
+        
+        String htmlDesc = r.buildHtmlDescritpion();
 	}
 	
 	

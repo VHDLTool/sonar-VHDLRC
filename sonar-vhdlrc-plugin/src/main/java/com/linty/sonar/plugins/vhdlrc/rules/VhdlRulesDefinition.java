@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.linty.sonar.plugins.vhdlrc.Vhdl;
 
 import org.apache.commons.io.FilenameUtils;
@@ -88,8 +90,8 @@ public class VhdlRulesDefinition implements RulesDefinition {
 		}
 	}
 
-	private void newRule(com.linty.sonar.plugins.vhdlrc.rules.Rule r, NewRepository repository) {
-		String ruleKey = r.ruleKey;
+	@VisibleForTesting
+	protected void newRule(com.linty.sonar.plugins.vhdlrc.rules.Rule r, NewRepository repository) {
 		NewRule nr = repository.createRule(r.ruleKey);
 		nr.setHtmlDescription(r.buildHtmlDescritpion());
 		addMetadataTo(nr,r);
@@ -102,12 +104,15 @@ public class VhdlRulesDefinition implements RulesDefinition {
 		.setSeverity(SEVERITY_MAP.getOrDefault(r.sonarSeverity, Severity.MINOR).toString())
 		.setType(TYPE_MAP.getOrDefault(r.type, RuleType.CODE_SMELL))
 		.setDebtRemediationFunction(nr.debtRemediationFunctions().constantPerIssue(DEBT_MAP.getOrDefault(r.remediationEffort,DEBT_MAP.get("easy"))))
-		.addTags(toSonarTags(r.tag),toSonarTags(r.category))
-		;				
+		;
+		addTags(nr,r.tag);
+		addTags(nr,r.category);				
 	}
 
-	private String toSonarTags(String tag) {
-			return RuleTagFormat.isValid(tag) ? tag : tag.toLowerCase().replaceAll("[^a-z0-9\\\\+#\\\\-\\\\.]", "-");
+	private void addTags(NewRule nr, String tag) {
+		if(!tag.isEmpty()) {
+			 nr.addTags(RuleTagFormat.isValid(tag) ? tag : tag.toLowerCase().replaceAll("[^a-z0-9\\\\+#\\\\-\\\\.]", "-"));
+		}
 	}
 
 	private File getHandbook() throws FileNotFoundException {

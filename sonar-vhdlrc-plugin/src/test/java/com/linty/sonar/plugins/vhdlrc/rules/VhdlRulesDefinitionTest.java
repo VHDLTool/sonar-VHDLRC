@@ -1,19 +1,20 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 import java.io.File;
-
+import com.google.common.annotations.VisibleForTesting;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.internal.apachecommons.io.FilenameUtils;
 import org.sonar.api.server.rule.RulesDefinition;
+import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
 
 import com.linty.sonar.plugins.vhdlrc.utils.ServerFileSystemTester;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class VhdlRulesDefinitiontest {
+public class VhdlRulesDefinitionTest {
 	
 	
 	
@@ -21,6 +22,17 @@ public class VhdlRulesDefinitiontest {
 	File ServerHome = new File("src/test/files/handbooks");
 	@Rule
 	public LogTester logTester = new LogTester();
+	
+	@Test
+	public void test_new_rule() {
+		MapSettings settings = new MapSettings();
+		VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
+	    RulesDefinition.Context context = new RulesDefinition.Context();
+		com.linty.sonar.plugins.vhdlrc.rules.Rule r = new com.linty.sonar.plugins.vhdlrc.rules.Rule();
+		r.ruleKey="TEST_1000";
+		NewRepository repository = context.createRepository("test", "vhdl").setName("test-repo");
+		definition.newRule(r,repository);
+	}
 	
 	
 	@Test

@@ -1,6 +1,7 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
+import org.apache.commons.lang.StringUtils;
 
 public class Rule {
 	
@@ -87,7 +88,7 @@ public class Rule {
     	 .append("<p>")
     	 .append(formatToHtml(this.shortDescription));
     	 
-    	 if(this.longDescription != null && ! "No additional information.".equals(this.longDescription)){
+    	 if(! "No additional information.".equals(this.longDescription)){
     		 desc.append("<br>").append(formatToHtml(this.longDescription));
     	 }
     	 desc.append("</p></div>\n");
@@ -108,7 +109,7 @@ public class Rule {
     
     private String theExamplesSection() {
     	StringBuilder example = new StringBuilder();  	
-    	if(this.goodExampleCode!=null && !this.goodExampleCode.isEmpty()) {  		
+    	if(!StringUtils.isEmpty(this.goodExampleCode)) {  		
     		example
     		.append("<div>")
     		.append("<h1><b>Compliant code example</b></h1>")
@@ -118,7 +119,7 @@ public class Rule {
     		.append("</font></p>")
     		.append("</div>\n");
     	}
-    	if(this.badExampleCode!=null && !this.badExampleCode.isEmpty()) {
+    	if(!StringUtils.isEmpty(this.badExampleCode)) {
     		example
     		.append("<div>")
     		.append("<h1><b>Non compliant code example</b></h2>")
