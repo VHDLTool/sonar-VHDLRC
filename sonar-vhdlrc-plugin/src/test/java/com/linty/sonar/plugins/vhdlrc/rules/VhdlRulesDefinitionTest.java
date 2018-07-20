@@ -1,7 +1,6 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 import java.io.File;
-import com.google.common.annotations.VisibleForTesting;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.config.internal.MapSettings;
@@ -41,15 +40,16 @@ public class VhdlRulesDefinitionTest {
 	    VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));     
 	    RulesDefinition.Context context = new RulesDefinition.Context();
 	    definition.define(context);	    
-	    RulesDefinition.Repository repository = context.repository("vhdl-repository");
+	    RulesDefinition.Repository repository = context.repository("vhdlrc-repository");
 	    
 	    assertThat(repository).isNotNull();
-	    assertThat(repository.name()).isEqualTo("VhdlRulecker");
+	    assertThat(repository.name()).isEqualTo("VhdlRuleChecker");
 	    assertThat(repository.language()).isEqualTo("vhdl");
 	    assertThat(repository.rules()).hasSize(74);
 	    assertThat(repository.rules()).isNotNull().isNotEmpty();
 	    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
 	    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+	    
 	}
 	
 	@Test
@@ -60,10 +60,10 @@ public class VhdlRulesDefinitionTest {
 	    VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
 	    RulesDefinition.Context context = new RulesDefinition.Context();
 	    definition.define(context);	    
-	    RulesDefinition.Repository repository = context.repository("vhdl-repository");
+	    RulesDefinition.Repository repository = context.repository("vhdlrc-repository");
 	    
 	    assertThat(repository).isNotNull();
-	    assertThat(repository.name()).isEqualTo("VhdlRulecker");
+	    assertThat(repository.name()).isEqualTo("VhdlRuleChecker");
 	    assertThat(repository.language()).isEqualTo("vhdl");
 	    assertThat(repository.rules()).hasSize(74);
 	    assertThat(repository.rules()).isNotNull().isNotEmpty();
@@ -71,22 +71,30 @@ public class VhdlRulesDefinitionTest {
 	    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
 	}
 	
-	@Test
-	  public void test_with_default_handbook_path() {
-		MapSettings settings = new MapSettings();
-		VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
-	    RulesDefinition.Context context = new RulesDefinition.Context();
-	    definition.define(context);	    
-	    RulesDefinition.Repository repository = context.repository("vhdl-repository");
-	    
-	    assertThat(repository).isNotNull();
-	    assertThat(repository.name()).isEqualTo("VhdlRulecker");
-	    assertThat(repository.language()).isEqualTo("vhdl");
-	    assertThat(repository.rules()).hasSize(74);
-	    assertThat(repository.rules()).isNotNull().isNotEmpty();
-	    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
-	    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-	}
+//	@Test
+//	  public void test_with_default_embedded_handbook() {
+//		MapSettings settings = new MapSettings();
+//		VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
+//	    RulesDefinition.Context context = new RulesDefinition.Context();
+//	    definition.define(context);	    
+//	    RulesDefinition.Repository repository = context.repository("vhdlrc-repository");
+//	    
+//	    assertThat(repository).isNotNull();
+//	    assertThat(repository.name()).isEqualTo("VhdlRuleChecker");
+//	    assertThat(repository.language()).isEqualTo("vhdl");
+//	    assertThat(repository.rules()).hasSize(74);
+//	    assertThat(repository.rules()).isNotNull().isNotEmpty();
+//	    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
+//	    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+//	    
+//	    for(RulesDefinition.Rule r : repository.rules()) {
+//	    	assertThat(r.key()).isNotNull().isNotEmpty();
+//	    	for(String t : r.tags()) {
+//	    		assertThat(RuleTagFormat.isValid(t)).isTrue();
+//	    		assertThat(t).isNotEqualToIgnoringCase("tbd");
+//	    	}
+//	    }
+//	}
 	
 	@Test
 	public void wrong_handbook_path_should_log_error() {

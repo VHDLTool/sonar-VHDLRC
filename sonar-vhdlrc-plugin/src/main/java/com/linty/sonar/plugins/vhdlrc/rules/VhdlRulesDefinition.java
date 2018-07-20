@@ -27,11 +27,12 @@ public class VhdlRulesDefinition implements RulesDefinition {
 
 	
 	public static final String HANDBOOK_PATH_KEY = "sonar.vhdlrc.handbook.path";
-    public static final String DEFAULT_HANDBOOK_PATH = "rulechecker/default/VHDL_Handbook_STD-master";
+    private static final String DEFAULT_HANDBOOK_PATH = "rulechecker/default/VHDL_Handbook_STD-master" ;
+    		//TODO : set an internal default handbook "com/linty/sonar/plugins/vhdlrc/rules/conf/Default_handbook";
     public static final String HANDBOOK_PATH_DESC = "Path to the handbook directory. The path may be absolute or relative to the SonarQube server base directory.";
 	
     private static final String RULE_SETS_PATH = "Rulesets";
-    private static final String EXTRAS_PATH = "Extras";
+
     
     private final ServerFileSystem serverFileSystem;
     private final Configuration configuration;
@@ -70,15 +71,15 @@ public class VhdlRulesDefinition implements RulesDefinition {
 	public void define(Context context) {
 
 		NewRepository repository = context
-				.createRepository("vhdl-repository", Vhdl.KEY)
-				.setName("VhdlRulecker");
+				.createRepository("vhdlrc-repository", Vhdl.KEY)
+				.setName("VhdlRuleChecker");
 		try {
-			File hb = getHandbook();
-			List<com.linty.sonar.plugins.vhdlrc.rules.Rule> rules = new HandbookXmlParser().parseXML(hb);
+			File hbDir = getHandbookDir();
+			List<com.linty.sonar.plugins.vhdlrc.rules.Rule> rules = new HandbookXmlParser().parseXML(handbookXml(hbDir));
 			if(rules == null) {
 				LOG.warn("No VHDL RuleCheker rules loaded!");
 			} else {
-				//new ruleExampleAndFigureLoader().load(rules);
+				//new ExampleAndFigureLoader.load(hbDir.toPath(),rules);
 				for(com.linty.sonar.plugins.vhdlrc.rules.Rule r : rules) {
 					newRule(r,repository);
 				}
@@ -86,6 +87,7 @@ public class VhdlRulesDefinition implements RulesDefinition {
 			}
 		}
 		catch (FileNotFoundException e) {
+			System.out.println(e.getMessage());
 			LOG.error(e.getMessage());
 		}
 	}
@@ -110,30 +112,30 @@ public class VhdlRulesDefinition implements RulesDefinition {
 	}
 
 	private void addTags(NewRule nr, String tag) {
-		if(!tag.isEmpty()) {
+		if(!tag.isEmpty() && !"tbd".equalsIgnoreCase(tag) ) {
 			 nr.addTags(RuleTagFormat.isValid(tag) ? tag : tag.toLowerCase().replaceAll("[^a-z0-9\\\\+#\\\\-\\\\.]", "-"));
 		}
 	}
 
-	private File getHandbook() throws FileNotFoundException {
-		File handbookDir = new File(FilenameUtils.separatorsToUnix(configuration.get(HANDBOOK_PATH_KEY).orElse("")));
+	private File getHandbookDir() throws FileNotFoundException {
+		File handbookDir;	
+		handbookDir = new File(FilenameUtils.separatorsToUnix(configuration.get(HANDBOOK_PATH_KEY).orElse(DEFAULT_HANDBOOK_PATH)));	
 		if(!handbookDir.isAbsolute()) {
 			handbookDir = new File(serverFileSystem.getHomeDir(),handbookDir.getPath());
-		}
-		File ruleSetDir = new File(handbookDir,RULE_SETS_PATH);
+		}		
 		if(handbookDir.exists() && handbookDir.isDirectory()){
-			return findHandbookIn(ruleSetDir);
+			return handbookDir;
 		}
 		else throw new FileNotFoundException("Handbook directory not found : " + handbookDir.getPath() +" ; Check parameter " + VhdlRulesDefinition.HANDBOOK_PATH_KEY);
 	}
 
-	private File findHandbookIn(File dir) throws FileNotFoundException {
+	private File handbookXml(File dir) throws FileNotFoundException {
 		//File[] is used in case multiple handbooks must be handle
-		File[] fileList = dir.listFiles((directory,name) -> !name.contains("header") && name.matches(".*handbook.*\\.xml"));
-        if(fileList.length != 0) {
+		File[] fileList = (new File(dir,RULE_SETS_PATH)).listFiles((directory,name) -> !name.contains("header") && name.matches(".*handbook.*\\.xml"));
+        if(fileList != null && fileList.length != 0) {
         	return fileList[0];
         }
-        else throw new FileNotFoundException("No handbook.xml found in : " + dir.getPath());
+        else throw new FileNotFoundException("No handbook.xml found in : " + dir.getPath() + File.separator + RULE_SETS_PATH);
 	}
 
 	

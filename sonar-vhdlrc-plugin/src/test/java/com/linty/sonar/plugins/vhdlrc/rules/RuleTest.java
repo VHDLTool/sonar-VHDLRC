@@ -44,10 +44,31 @@ public class RuleTest {
         r.goodExampleRef=   "STD_00400_good";
         r.goodExampleCode=  "";
         r.badExDesc=        "Extracted from STD_00400_bad.vhd";
-        r.badExampleRef=    "STD_00400_bad";       
+        r.badExampleRef=    "STD_00400_bad"; 
+        r.figure = new FigureSvg();
         
         assertThat(r.figureDesc).isNotNull();
+        assertThat(r.figure.hasImage()).isFalse();
         
+        String htmlDesc = r.buildHtmlDescritpion();
+	}
+	@Test
+	public void with_bad_Example_code_and_figure() {
+		Rule r = new Rule();
+		r.name=             "A other rule name";       
+        r.longDescription=  "No additional information.";         
+        r.goodExDesc=       "Extracted from STD_00400_good.vhd";
+        r.goodExampleRef=   "STD_00400_good";
+        r.goodExampleCode=  "";
+        r.badExDesc=        "Extracted from STD_00400_bad.vhd";
+        r.badExampleRef=    "STD_00400_bad";  
+        r.badExampleCode=   "code code code";
+        r.figure = new FigureSvg();
+        r.figure.figureCode="< image>";
+        
+        assertThat(r.figureDesc).isNotNull();
+        assertThat(r.figure.height).isEqualTo("300px");
+        assertThat(r.figure.figureCode).isNotNull();
         String htmlDesc = r.buildHtmlDescritpion();
 	}
 	

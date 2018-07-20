@@ -1,14 +1,10 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
-import org.sonar.api.internal.apachecommons.lang.StringUtils;
-import org.sonar.api.internal.apachecommons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-
 import com.google.common.collect.ImmutableList;
-
-
 import com.linty.sonar.plugins.vhdlrc.rules.Rule;
 
 import org.codehaus.staxmate.SMInputFactory;
@@ -22,6 +18,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HandbookXmlParser {
@@ -76,7 +73,7 @@ public class HandbookXmlParser {
 		} catch (XMLStreamException e) {
 			LOG.error("Error when parsing xml file: {} at line: {}\n{}",file.getPath(),e.getLocation().getLineNumber(),e.getMessage());
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("XML file parsing failed because of :{}",ExceptionUtils.getFullStackTrace(e));
+				LOG.debug("XML file parsing failed because of :{}",Arrays.toString(e.getStackTrace()));
 			}
 			throw new IllegalStateException(e);
 		}

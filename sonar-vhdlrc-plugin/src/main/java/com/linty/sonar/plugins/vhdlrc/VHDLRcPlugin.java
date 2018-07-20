@@ -34,7 +34,6 @@ public class VHDLRcPlugin implements Plugin {
 	    		.onQualifiers(Qualifiers.PROJECT)
 	    		.build());
 	    builder.add(PropertyDefinition.builder(VhdlRulesDefinition.HANDBOOK_PATH_KEY)
-	    		.defaultValue(VhdlRulesDefinition.DEFAULT_HANDBOOK_PATH)
 	    		.category(Vhdl.NAME)
 	    		.subCategory(VHDL_RULECHEKER_CATEGORY)
 	    		.name("Handbook Directory Path")

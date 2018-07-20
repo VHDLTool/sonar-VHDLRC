@@ -3,6 +3,8 @@ package com.linty.sonar.plugins.vhdlrc.rules;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+
 public class FigureSvg {
 	
 	String figureRef;
@@ -31,7 +33,7 @@ public class FigureSvg {
 	}
 	
 	public boolean hasImage() {
-		return !this.figureCode.isEmpty();
+		return !StringUtils.isEmpty(this.figureCode);
 	}
 
 
