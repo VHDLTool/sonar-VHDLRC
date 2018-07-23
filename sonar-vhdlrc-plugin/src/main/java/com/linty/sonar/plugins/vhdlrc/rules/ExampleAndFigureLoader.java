@@ -1,8 +1,6 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -11,12 +9,14 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.VisibleForTesting;
+
 public class ExampleAndFigureLoader {
 	
     private static final String IMAGES_PATH = "Extras/Images";
     private static final String EXAMPLES_PATH = "Extras/VHDL";
     public static final String CODE_BALISE = "--CODE";
-    public static final String NOT_FOUND_EXAMPLE_MSG = "Code not found : ";
+    public static final String NOT_FOUND_EXAMPLE_MSG = "Example not found : ";
 	public static final String NOT_FOUND_IAMGE_MSG = "Image not found : ";
     
 	private final Path examplePath;
@@ -35,28 +35,28 @@ public class ExampleAndFigureLoader {
 			if(!StringUtils.isEmpty(r.badExampleRef)) {
 				r.badExampleCode = collectExample(r.badExampleRef);
 			}
-			if(r.figure != null)
-			collectImage(r);
+			if(r.figure != null) {
+				r.figure.figureCode = collectImage(r.figure.figureRef);	
+			}
+			
 		}
 	}
 
 	
-
-	private String collectExample(String fileRef) {
-		
+	@VisibleForTesting
+	protected String collectExample(String fileRef) {		
 		StringBuilder codeExample = new StringBuilder();	
 		String fileName = fileRef.concat(".vhd");
-		//System.out.println(this.imagePath.resolve(fileName).toString());//TODO
 		try(BufferedReader reader = Files.newBufferedReader(this.examplePath.resolve(fileName), Charset.forName("UTF-8"))){		      
-			String Line = null;
-			System.out.println("Parsing : " + fileName);
-			while((Line = reader.readLine()) != null){
-				if(Line.contains(CODE_BALISE)) {
-					while((Line = reader.readLine()) != null && !Line.contains(CODE_BALISE)){
-						codeExample.append(Line).append("\n");
-					}
-				}
+
+			String line = reader.readLine();
+			while(line != null && !line.contains(CODE_BALISE)) {//waiting for 1rst --CODE to start
+				line=reader.readLine();
 			}
+			while((line = reader.readLine()) != null && !line.contains(CODE_BALISE)){//waiting for 2nd --CODE to stop
+				codeExample.append(line).append("\r\n");
+			}
+			
 		} catch (IOException e) {
 			System.out.println(NOT_FOUND_EXAMPLE_MSG + fileName);//TODO
 			return NOT_FOUND_EXAMPLE_MSG + fileName;		
@@ -64,15 +64,24 @@ public class ExampleAndFigureLoader {
 		return String.valueOf(codeExample);
 	}
 	
-	private void collectImage(Rule r) {
-		
-//		 try(BufferedReader reader = Files.newBufferedReader(this.imagePath.resolve(), Charset.forName("UTF-8"))){
-//
-//		      
-//		      String currentLine = null;
-//		      while((currentLine = reader.readLine()) != null){}
-//		        
-//		 }
-	}
+	protected String collectImage(String fileName) {
+		StringBuilder figureCode = new StringBuilder();
+		try(BufferedReader reader = Files.newBufferedReader(this.imagePath.resolve(fileName), Charset.forName("UTF-8"))){
+			String line = reader.readLine();
+			while(line != null && !line.contains("<svg")) {
+				line=reader.readLine();
+			}
+			if(line!=null) {
+				figureCode.append(line).append("\r\n");
+			}
+			while((line = reader.readLine()) != null){
+				figureCode.append(line).append("\r\n");
+			}
 
+		 } catch (IOException e) {
+			 System.out.println(NOT_FOUND_IAMGE_MSG + fileName);//TODO
+			 return NOT_FOUND_IAMGE_MSG + fileName;
+		}
+		 return String.valueOf(figureCode);
+	}
 }

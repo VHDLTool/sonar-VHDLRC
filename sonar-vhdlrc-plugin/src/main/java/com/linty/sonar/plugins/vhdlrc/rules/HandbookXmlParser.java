@@ -176,7 +176,7 @@ public class HandbookXmlParser {
 				r.goodExampleRef = cursor.getElemStringValue();
 				break;
 			case "BadExDesc":
-				r.badExampleRef = cursor.getElemStringValue();
+				r.badExDesc = cursor.getElemStringValue();
 				break;
 			case "BadExample":
 				r.badExampleRef = cursor.getElemStringValue();

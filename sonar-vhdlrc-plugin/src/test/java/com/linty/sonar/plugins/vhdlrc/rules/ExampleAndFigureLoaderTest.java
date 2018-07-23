@@ -1,6 +1,7 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,13 +68,13 @@ public class ExampleAndFigureLoaderTest {
 				"         i_S => i_Sel,\r\n" + 
 				"         o_O => o_Mux_Output\r\n" + 
 				"         );\r\n" + 
-				"end Behavioral;");
+				"end Behavioral;\r\n");
 		assertThat(r1.badExampleCode).isEqualTo(
 				"architecture Behavioral of STD_01400_bad is\r\n" + 
 				"begin\r\n" + 
 				"   Mux1 : Mux\r\n" + 
 				"      port map (i_Mux_Input1, i_Mux_Input2, i_Sel, o_Mux_Output);\r\n" + 
-				"end Behavioral;");
+				"end Behavioral;\r\n");
 		assertThat(r2.figure).isNull();
 	}
 	
@@ -86,14 +87,14 @@ public class ExampleAndFigureLoaderTest {
 	
 	@Test //r3
 	public void test_with_Example_and_figure() {	
-		assertThat(r3.goodExampleCode).startsWith("entity STD_03700_good is").endsWith("end Behavioral;\n");
+		assertThat(r3.goodExampleCode).startsWith("entity STD_03700_good is").endsWith("\r\nend Behavioral;\r\n");
 		assertThat(r3.badExampleCode).isNull();
 		assertThat(r3.figure.figureCode).startsWith("<svg\r\n" + 
-				"   xmlns");
+				"   xmlns:dc");
 		assertThat(r3.figure.figureCode).endsWith(" ry=\"3.8890872\" />\r\n" + 
 				"    </g>\r\n" + 
 				"  </g>\r\n" + 
-				"</svg>");
+				"</svg>\r\n");
 	}
 	
 	@Test //r4
@@ -101,16 +102,35 @@ public class ExampleAndFigureLoaderTest {
 		assertThat(r4.goodExampleCode).isNotNull().isNotEmpty().doesNotContain(ExampleAndFigureLoader.NOT_FOUND_EXAMPLE_MSG);
 		assertThat(r4.badExampleCode).isNotNull().isNotEmpty().doesNotContain(ExampleAndFigureLoader.NOT_FOUND_EXAMPLE_MSG);
 		assertThat(r4.figure.figureCode).isNotNull().isNotEmpty();
-		assertThat(r4.figure).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_IAMGE_MSG + "STD_00000.svg");
+		assertThat(r4.figure.figureCode).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_IAMGE_MSG + "STD_00000.svg");
 	}
 	
 	@Test //r5
 	public void no_examples_should_not_display_message() {	
 		assertThat(r5.goodExampleCode).isNullOrEmpty();
-		assertThat(r5.goodExampleCode).doesNotContain(ExampleAndFigureLoader.NOT_FOUND_EXAMPLE_MSG);
-		assertThat(r5.badExampleCode).isNullOrEmpty();;
-		assertThat(r5.badExampleCode).doesNotContain(ExampleAndFigureLoader.NOT_FOUND_EXAMPLE_MSG);
+		assertThat(r5.badExampleCode).isNullOrEmpty();
 		assertThat(r5.figure.figureCode).isNotNull();
+	}
+	
+	@Test
+	public void empty_file_should_not_log_anything() {	
+		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("src/test/files/handbooks"));
+		String s = loader.collectExample("empty_file");
+		assertThat(s).isNullOrEmpty();
+	}
+	
+	@Test
+	public void not_foud_balise_should_not_log_anything() {
+		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("src/test/files/handbooks"));
+		String s = loader.collectExample("no_balises");
+		assertThat(s).isNullOrEmpty();
+	}
+	
+	@Test
+	public void empty_image_should_not_log_anything() {
+		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("src/test/files/handbooks"));
+		String s = loader.collectImage("empty_image.svg");
+		assertThat(s).isNullOrEmpty();
 	}
 	
 	

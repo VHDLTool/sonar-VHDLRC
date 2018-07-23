@@ -14,8 +14,8 @@ public class FigureSvg {
 	
 	private static final String DEFAULT_DIM = "300px";
 	
-	private Pattern widthPattern = Pattern.compile(".*width=\\\"(\\d*\\.\\d+|\\d+\\.\\d*)\\\"");
-	private Pattern heightPattern = Pattern.compile(".*height=\\\"(\\d*\\.\\d+|\\d+\\.\\d*)\\\"");
+	private Pattern widthPattern = Pattern.compile(".*width=\\\"(\\d+|\\d*\\.\\d+|\\d+\\.\\d*)\\\"");
+	private Pattern heightPattern = Pattern.compile(".*height=\\\"(\\d+|\\d*\\.\\d+|\\d+\\.\\d*)\\\"");
 	
 	//For testing
 	public FigureSvg() {

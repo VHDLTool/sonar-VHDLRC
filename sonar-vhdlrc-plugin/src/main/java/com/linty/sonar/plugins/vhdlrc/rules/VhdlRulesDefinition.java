@@ -79,7 +79,7 @@ public class VhdlRulesDefinition implements RulesDefinition {
 			if(rules == null) {
 				LOG.warn("No VHDL RuleCheker rules loaded!");
 			} else {
-				//new ExampleAndFigureLoader.load(hbDir.toPath(),rules);
+				new ExampleAndFigureLoader(hbDir.toPath()).load(rules);
 				for(com.linty.sonar.plugins.vhdlrc.rules.Rule r : rules) {
 					newRule(r,repository);
 				}
