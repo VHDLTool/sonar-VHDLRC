@@ -26,7 +26,7 @@ public class VHDLRcPluginTest {
 		SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_6_7, SonarQubeSide.SERVER);
 		Plugin.Context context = new Plugin.Context(runtime);
 		vhdlRcPlugin.define(context);		
-		assertThat(context.getExtensions()).hasSize(4);
+		assertThat(context.getExtensions()).hasSize(5);
 		runtime.getApiVersion().isGreaterThanOrEqual(Version.create(6, 5));
 	}
 	

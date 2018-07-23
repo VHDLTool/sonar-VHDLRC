@@ -28,7 +28,9 @@ public class VhdlRulesDefinition implements RulesDefinition {
 	
 	public static final String HANDBOOK_PATH_KEY = "sonar.vhdlrc.handbook.path";
     private static final String DEFAULT_HANDBOOK_PATH = "rulechecker/default/VHDL_Handbook_STD-master" ;
-    		//TODO : set an internal default handbook "com/linty/sonar/plugins/vhdlrc/rules/conf/Default_handbook";
+    		/*TODO : set an internal default handbook "com/linty/sonar/plugins/vhdlrc/rules/conf/Default_handbook"
+    		 Make a build in Quality Profile with the embbedded Handbook, in addition of the one created here. Internal HANDBOOk is always loaded.
+    		 */
     public static final String HANDBOOK_PATH_DESC = "Path to the handbook directory. The path may be absolute or relative to the SonarQube server base directory.";
 	
     private static final String RULE_SETS_PATH = "Rulesets";

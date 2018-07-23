@@ -24,7 +24,8 @@ public class VHDLRcPlugin implements Plugin {
 	    }
 	    builder.add(
 	    		Vhdl.class,
-	    		VhdlRulesDefinition.class
+	    		VhdlRulesDefinition.class,
+	    		VhdlRcProfile.class
 	    		);
 	    builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
 	    		.defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
