@@ -22,9 +22,7 @@ public class FigureSvgTest {
 				;
 		figure.loadOriginialDim();
 		assertEquals("722.12146",figure.originalWidth());
-		assertEquals("971.87701",figure.originalHeight());
-		System.out.println("Orifinal width >" + figure.originalWidth());
-		System.out.println("Orifinal height >" + figure.originalHeight());		
+		assertEquals("971.87701",figure.originalHeight());	
 	}
 	
 	@Test
@@ -38,9 +36,7 @@ public class FigureSvgTest {
 				;
 		figure.loadOriginialDim();
 		assertEquals("450",figure.originalWidth());
-		assertEquals("650",figure.originalHeight());
-		System.out.println("Orifinal width >" + figure.originalWidth());
-		System.out.println("Orifinal height >" + figure.originalHeight());		
+		assertEquals("650",figure.originalHeight());	
 	}
 	
 	@Test
@@ -56,9 +52,7 @@ public class FigureSvgTest {
 				;
 		figure.loadOriginialDim();
 		assertEquals("165",figure.originalWidth());
-		assertEquals("137",figure.originalHeight());
-		System.out.println("Orifinal width >" + figure.originalWidth());
-		System.out.println("Orifinal height >" + figure.originalHeight());		
+		assertEquals("137",figure.originalHeight());		
 	}
 	
 	@Test
@@ -220,9 +214,7 @@ public class FigureSvgTest {
 				"   height=\"971.87701\"\r\n"
 				;
 		
-		//System.out.println(figure.figureCode+"\n---end1------");//
 		figure.changeToScalable();
-		//System.out.println(figure.figureCode+"\n----end2-----");//
 		
 		assertEquals(figure.figureCode, 
 				"   xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\r\n" +  

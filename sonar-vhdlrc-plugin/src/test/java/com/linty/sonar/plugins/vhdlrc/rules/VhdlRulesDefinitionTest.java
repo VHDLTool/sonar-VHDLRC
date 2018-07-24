@@ -56,7 +56,6 @@ public class VhdlRulesDefinitionTest {
 	@Test
 	  public void test_absolute_path() {
 		String absolutePath = FilenameUtils.separatorsToUnix(System.getProperty("user.dir") + "/src/test/files/handbooks/VHDL_Handbook_STD-master/");
-		//System.out.println(absolutePath);
 		settings.setProperty(VhdlRulesDefinition.HANDBOOK_PATH_KEY, absolutePath );
 	    VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
 	    RulesDefinition.Context context = new RulesDefinition.Context();
@@ -90,7 +89,6 @@ public class VhdlRulesDefinitionTest {
 	    
 	    for(RulesDefinition.Rule r : repository.rules()) {
 	    	assertThat(r.key()).isNotNull().isNotEmpty();
-	    	if(r.key().equals("STD_05700"))System.out.println(r.htmlDescription());
 	    	for(String t : r.tags()) {
 	    		assertThat(RuleTagFormat.isValid(t)).isTrue();
 	    		assertThat(t).isNotEqualToIgnoringCase("tbd");
