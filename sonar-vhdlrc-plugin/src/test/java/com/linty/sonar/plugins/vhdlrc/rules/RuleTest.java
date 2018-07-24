@@ -65,9 +65,10 @@ public class RuleTest {
         r.badExampleCode=   "code code code";
         r.figure = new FigureSvg();
         r.figure.figureCode="< image>";
+        r.figureDesc="this is a figure";
         
         assertThat(r.figureDesc).isNotNull();
-        assertThat(r.figure.height).isEqualTo("300px");
+        assertThat(r.figure.height).isEqualTo("300");
         assertThat(r.figure.figureCode).isNotNull();
         String htmlDesc = r.buildHtmlDescritpion();
 	}

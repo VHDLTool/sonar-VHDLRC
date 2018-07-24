@@ -89,12 +89,8 @@ public class ExampleAndFigureLoaderTest {
 	public void test_with_Example_and_figure() {	
 		assertThat(r3.goodExampleCode).startsWith("entity STD_03700_good is").endsWith("\r\nend Behavioral;\r\n");
 		assertThat(r3.badExampleCode).isNull();
-		assertThat(r3.figure.figureCode).startsWith("<svg\r\n" + 
-				"   xmlns:dc");
-		assertThat(r3.figure.figureCode).endsWith(" ry=\"3.8890872\" />\r\n" + 
-				"    </g>\r\n" + 
-				"  </g>\r\n" + 
-				"</svg>\r\n");
+		assertThat(r3.figure.figureCode).startsWith("<svg");
+		assertThat(r3.figure.figureCode).endsWith("</svg>\r\n");
 	}
 	
 	@Test //r4

@@ -8,8 +8,76 @@ public class FigureSvgTest {
 	
 	
 	@Test
+	public void test_get_original_dim_decimal() {
+		FigureSvg figure = new FigureSvg("","","");
+		figure.figureCode=
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n" + 
+				"<!-- Created with Inkscape (http://www.inkscape.org/) -->\r\n" + 
+				"\r\n" + 
+				"<svg\r\n" + 
+				"   xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\r\n" + 
+				"   width=\"722.12146\"\r\n" + 
+				"   height=\"971.87701\"\r\n" + 
+				"   id=\"svg3507\"\r\n" 
+				;
+		figure.loadOriginialDim();
+		assertEquals("722.12146",figure.originalWidth());
+		assertEquals("971.87701",figure.originalHeight());
+		System.out.println("Orifinal width >" + figure.originalWidth());
+		System.out.println("Orifinal height >" + figure.originalHeight());		
+	}
+	
+	@Test
+	public void test_get_original_dim_round_number() {
+		FigureSvg figure = new FigureSvg("",null,null);
+		figure.figureCode=
+				"xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\r\n" + 
+				"   width=\"450\"\r\n" + 
+				"   height=\"650\"\r\n" + 
+				"   viewBox=\"0 0 449.99998 649.99999\""
+				;
+		figure.loadOriginialDim();
+		assertEquals("450",figure.originalWidth());
+		assertEquals("650",figure.originalHeight());
+		System.out.println("Orifinal width >" + figure.originalWidth());
+		System.out.println("Orifinal height >" + figure.originalHeight());		
+	}
+	
+	@Test
+	public void test_get_original_dim_with_unit() {
+		FigureSvg figure = new FigureSvg();
+		figure.figureCode=
+				" xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\r\n" + 
+				"   width=\"165mm\"\r\n" + 
+				"   height=\"137px\"\r\n" + 
+				"   viewBox=\"0 0 584.64567 485.43307\"\r\n" + 
+				"   id=\"svg2\"\r\n" + 
+				"   version=\"1.1\""
+				;
+		figure.loadOriginialDim();
+		assertEquals("165",figure.originalWidth());
+		assertEquals("137",figure.originalHeight());
+		System.out.println("Orifinal width >" + figure.originalWidth());
+		System.out.println("Orifinal height >" + figure.originalHeight());		
+	}
+	
+	@Test
+	public void test_get_original_dim_with_no_dims() {
+		FigureSvg figure = new FigureSvg();
+		figure.figureCode=
+				" xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\r\n" + 
+				"   viewBox=\"0 0 584.64567 485.43307\"\r\n" + 
+				"   id=\"svg2\"\r\n" + 
+				"   version=\"1.1\""
+				;
+		figure.loadOriginialDim();
+		assertEquals("300",figure.originalWidth());
+		assertEquals("300",figure.originalHeight());		
+	}
+	
+	@Test
 	public void test_no_issues() {
-		FigureSvg figure = new FigureSvg();	
+		FigureSvg figure = new FigureSvg("ref","200","300");	
 
 		figure.figureCode=
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n" + 
@@ -115,17 +183,13 @@ public class FigureSvgTest {
 				"   height=\"971.87701\"\r\n" + 
 				"   id=\"svg3507\"\r\n"
 				;
-		
-		System.out.println(figure.figureCode+"\n---end1------");//
 		figure.changeToScalable();
-		System.out.println(figure.figureCode+"\n----end2-----");//
 		
 		assertEquals(figure.figureCode, 
 				"   xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\r\n" + 
 				"   height=\"100%\"\r\n" + 
 				"   id=\"svg3507\"\r\n"
-				);
-		
+				);		
 	}
 	
 	@Test
@@ -136,14 +200,11 @@ public class FigureSvgTest {
 				"   xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\r\n" + 
 				"   id=\"svg3507\"\r\n"
 				;
-		
 		figure.changeToScalable();
-		
 		assertEquals(figure.figureCode, 
 				"   xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\r\n" +  
 				"   id=\"svg3507\"\r\n"
 				);
-		
 	}
 	
 	@Test
@@ -171,7 +232,6 @@ public class FigureSvgTest {
 				"   width=\"722.12146\"\r\n" + 
 				"   height=\"971.87701\"\r\n"
 				);
-		
 	}
 	
 	@Test

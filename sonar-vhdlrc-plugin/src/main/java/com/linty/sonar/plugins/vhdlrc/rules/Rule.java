@@ -135,19 +135,30 @@ public class Rule {
     private String theFigureSection() {
     	StringBuilder s = new StringBuilder();	 
     	if(this.figure!=null && this.figure.hasImage()) {
-    		this.figure.changeToScalable();
+    		this.figure.loadOriginialDim();
     		s
-    		.append("<div style=\"width:" + this.figure.width + ";height:" + this.figure.height + "\">")
+    		.append("<div>")
+    		.append(buildSvgHeader(figure.width,figure.height,figure.originalWidth(),figure.originalHeight()))
     		.append("\n"+this.figure.figureCode)
-    		.append("</div>\n<div>")
+    		.append("</svg>")
+    		.append("\n<div>")
     		.append("<p><font size=1 color=\"grey\">") 	
     		.append(this.figureDesc)
     		.append("</font></p>")
+    		.append("</div>\n")
     		.append("</div>\n");
     	}
     	return String.valueOf(s);
     }
     
+    private String buildSvgHeader(String w, String h, String oW, String oH) {
+    	StringBuilder s = new StringBuilder();
+    	s.append("<svg width=\"").append(w).append("\"")
+    	.append(" height=\"").append(h).append("\"")
+    	.append(" viewBox=\"0 0 ").append(oW).append(" ").append(oH)
+    	.append("\">");
+    	return String.valueOf(s);
+    }
  
     private static String formatToHtml(String s) {
     	return s.replaceAll("\\n", "<br>");   	

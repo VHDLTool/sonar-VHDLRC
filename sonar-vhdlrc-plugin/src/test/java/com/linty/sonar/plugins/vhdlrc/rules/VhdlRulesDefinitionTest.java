@@ -90,7 +90,7 @@ public class VhdlRulesDefinitionTest {
 	    
 	    for(RulesDefinition.Rule r : repository.rules()) {
 	    	assertThat(r.key()).isNotNull().isNotEmpty();
-	    	System.out.println(r.key());
+	    	if(r.key().equals("STD_05700"))System.out.println(r.htmlDescription());
 	    	for(String t : r.tags()) {
 	    		assertThat(RuleTagFormat.isValid(t)).isTrue();
 	    		assertThat(t).isNotEqualToIgnoringCase("tbd");
