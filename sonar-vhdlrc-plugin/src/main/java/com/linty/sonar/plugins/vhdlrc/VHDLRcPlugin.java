@@ -1,6 +1,6 @@
 package com.linty.sonar.plugins.vhdlrc;
 
-import java.util.Arrays;
+
 
 import org.sonar.api.Plugin;
 import org.sonar.api.config.PropertyDefinition;
@@ -39,7 +39,6 @@ public class VHDLRcPlugin implements Plugin {
 	    		.subCategory(VHDL_RULECHEKER_CATEGORY)
 	    		.name("Handbook Directory Path")
 	    		.description(VhdlRulesDefinition.HANDBOOK_PATH_DESC)
-	    		.onQualifiers(Qualifiers.PROJECT)
 	    		.build());
 	    
 //    context.addExtensions(VHDLToolConfiguration.getPropertyDefinitions());

@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.internal.apachecommons.io.FilenameUtils;
+import org.sonar.api.server.rule.RuleTagFormat;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.api.utils.log.LogTester;
@@ -71,30 +72,31 @@ public class VhdlRulesDefinitionTest {
 	    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
 	}
 	
-//	@Test
-//	  public void test_with_default_embedded_handbook() {
-//		MapSettings settings = new MapSettings();
-//		VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
-//	    RulesDefinition.Context context = new RulesDefinition.Context();
-//	    definition.define(context);	    
-//	    RulesDefinition.Repository repository = context.repository("vhdlrc-repository");
-//	    
-//	    assertThat(repository).isNotNull();
-//	    assertThat(repository.name()).isEqualTo("VhdlRuleChecker");
-//	    assertThat(repository.language()).isEqualTo("vhdl");
-//	    assertThat(repository.rules()).hasSize(74);
-//	    assertThat(repository.rules()).isNotNull().isNotEmpty();
-//	    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
-//	    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-//	    
-//	    for(RulesDefinition.Rule r : repository.rules()) {
-//	    	assertThat(r.key()).isNotNull().isNotEmpty();
-//	    	for(String t : r.tags()) {
-//	    		assertThat(RuleTagFormat.isValid(t)).isTrue();
-//	    		assertThat(t).isNotEqualToIgnoringCase("tbd");
-//	    	}
-//	    }
-//	}
+	@Test
+	  public void test_with_default_embedded_handbook() {
+		MapSettings settings = new MapSettings();
+		VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
+	    RulesDefinition.Context context = new RulesDefinition.Context();
+	    definition.define(context);	    
+	    RulesDefinition.Repository repository = context.repository("vhdlrc-repository");
+	    
+	    assertThat(repository).isNotNull();
+	    assertThat(repository.name()).isEqualTo("VhdlRuleChecker");
+	    assertThat(repository.language()).isEqualTo("vhdl");
+	    assertThat(repository.rules()).hasSize(74);
+	    assertThat(repository.rules()).isNotNull().isNotEmpty();
+	    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
+	    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+	    
+	    for(RulesDefinition.Rule r : repository.rules()) {
+	    	assertThat(r.key()).isNotNull().isNotEmpty();
+	    	System.out.println(r.key());
+	    	for(String t : r.tags()) {
+	    		assertThat(RuleTagFormat.isValid(t)).isTrue();
+	    		assertThat(t).isNotEqualToIgnoringCase("tbd");
+	    	}
+	    }
+	}
 	
 	@Test
 	public void wrong_handbook_path_should_log_error() {
