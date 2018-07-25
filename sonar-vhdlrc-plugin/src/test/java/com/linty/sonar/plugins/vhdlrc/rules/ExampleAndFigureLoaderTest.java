@@ -1,6 +1,7 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -129,6 +130,21 @@ public class ExampleAndFigureLoaderTest {
 		assertThat(s).isNullOrEmpty();
 	}
 	
+	@Test
+	public void not_existing_path_should_right_error_msg() {
+		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("does/not/exists"));
+		String im = loader.collectImage("STD_05500.svg");
+		String ex = loader.collectExample("STD_05500_good");
+		assertThat(im).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_IAMGE_MSG + "STD_05500.svg");
+		assertThat(ex).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_EXAMPLE_MSG + "STD_05500_good.vhd");
+	}
 	
-
+	@Test
+	public void special_caractere_in_File_names_should_right_error_msg() {
+		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("src/test/files/handbooks"));
+		String im = loader.collectImage("P@!$%\"%7B%7Dog_r()a%20m[1].cs");
+		String ex = loader.collectExample("\".%7B%7Dog_r()a%20m[1].cs\"");
+		assertThat(im).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_IAMGE_MSG + "P@!$%\"%7B%7Dog_r()a%20m[1].cs");
+		assertThat(ex).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_EXAMPLE_MSG + "\".%7B%7Dog_r()a%20m[1].cs\".vhd");
+	}
 }

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -57,8 +58,8 @@ public class ExampleAndFigureLoader {
 				codeExample.append(line).append("\r\n");
 			}
 			
-		} catch (IOException e) {
-			System.out.println(NOT_FOUND_EXAMPLE_MSG + fileName);//TODO
+		} catch (IOException | InvalidPathException e) {
+			System.out.println(NOT_FOUND_EXAMPLE_MSG + fileName + ".vhd");//TODO
 			return NOT_FOUND_EXAMPLE_MSG + fileName;		
 		}
 		return String.valueOf(codeExample);
@@ -78,7 +79,7 @@ public class ExampleAndFigureLoader {
 				figureCode.append(line).append("\r\n");
 			}
 
-		 } catch (IOException e) {
+		 } catch (IOException | InvalidPathException e) {
 			 System.out.println(NOT_FOUND_IAMGE_MSG + fileName);//TODO
 			 return NOT_FOUND_IAMGE_MSG + fileName;
 		}
