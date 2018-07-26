@@ -36,7 +36,8 @@ public class ReportXmlParser {
 			"Process",
 			"Sensitivity",
 			"RuleCheckerVersion",
-			"ExecutionDate"
+			"ExecutionDate",
+			"SonarRemediationMsg"
 			);
 	
 	private SMFilter filter = new IgnoreSomeRuleElements();
@@ -51,10 +52,12 @@ public class ReportXmlParser {
 	
 	public List<Issue> parseXML() throws XMLStreamException {
 		SMInputFactory xmlFactory = new SMInputFactory(XMLInputFactory.newInstance());
-		SMInputCursor cursor = xmlFactory.rootElementCursor(reportPath.toFile()).advance();			
-		this.RuleKey = cursor.getLocalName();
-		if(!Strings.isNullOrEmpty(RuleKey)){
-			collectIssues(cursor.childCursor(filter).advance());
+		SMInputCursor rootCursor = xmlFactory.rootElementCursor(reportPath.toFile()).advance();
+		SMInputCursor cursor = rootCursor.childCursor(filter).advance();
+		if("RuleName".equals(cursor.getLocalName())){
+			this.RuleKey = cursor.getElemStringValue();
+			System.out.println(RuleKey);//TODO
+			collectIssues(cursor.advance());//<rc:RuleFailure>
 		} else {
 			LOG.error("No RuleKey found in {}. No issues will not be imported from this report", this.reportPath.getFileName());
 		}
@@ -62,8 +65,10 @@ public class ReportXmlParser {
 	}
 
 	private void collectIssues(SMInputCursor cursor) throws XMLStreamException {
+		System.out.println("-" + cursor.getLocalName());//TODO
 		issues = new ArrayList<>();
 		while(cursor.asEvent() != null){
+			System.out.println(cursor.getCursorLocation().getLineNumber());//TODO
 			collectIssue(cursor.childCursor(filter).advance());
 			cursor.advance();
 		}
@@ -74,6 +79,7 @@ public class ReportXmlParser {
 	private void collectIssue(SMInputCursor cursor) throws XMLStreamException {
 		String localName;
 		Issue i = new Issue();
+		i.ruleKey = this.RuleKey;
 		while(cursor.asEvent() != null) {
 			localName = cursor.getLocalName();
 			if("File".equals(localName)) {
@@ -85,14 +91,11 @@ public class ReportXmlParser {
 			}
 			cursor.advance();
 		}
-//		if(i.file.toFile().length() != 0 && i.line) {
-//			issues.add(i);
-//		}
-
+		issues.add(i);
 	}
 
-	private String collectSonarMsg(SMInputCursor advance) {
-		return "";
+	private String collectSonarMsg(SMInputCursor cursor) throws XMLStreamException {
+		return cursor.childCursor(filter).advance().getElemStringValue();
 	}
 
 

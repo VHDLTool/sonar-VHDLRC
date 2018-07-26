@@ -14,6 +14,7 @@ import com.linty.sonar.plugins.vhdlrc.issues.Issue;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.sonar.api.internal.apachecommons.io.FilenameUtils;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
 
@@ -28,6 +29,7 @@ public class ReportXmlParserTest {
 	
 	@Test
 	public void test() throws XMLStreamException {
+		System.out.println("------test");/////////////
 		List<Issue> issues = ReportXmlParser.getIssues(report_no_issue);
 		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
 		assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
@@ -37,10 +39,12 @@ public class ReportXmlParserTest {
 			assertThat(i.errorMsg).isNotEmpty();
 			assertThat(i.file).isNotNull();
 		}
+		assertThat(issues.get(3).file.toString()).isEqualTo(FilenameUtils.separatorsToSystem("./I2C/top.vhd"));
 	}
 	
 	@Test
 	public void no_found_rule_key_should_log_error() throws XMLStreamException {
+		System.out.println("-------no_rule_key.xml");/////////////////
 		Path report =  reports_path.resolve("report_with_issues/no_rule_key.xml");
 		List<Issue> issues = ReportXmlParser.getIssues(report);
 		assertThat(logTester.logs(LoggerLevel.ERROR)).contains("No RuleKey found in no_rule_key.xml. No issues will not be imported from this report" );
@@ -49,6 +53,7 @@ public class ReportXmlParserTest {
 	
 	@Test (expected = XMLStreamException.class)
 	public void non_found_report_should_throw_error() throws XMLStreamException  {
+		System.out.println("--------no/found/file");/////////////////
 		Path report =  reports_path.resolve("no/found/file");
 		List<Issue> issues = ReportXmlParser.getIssues(report);
 		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
@@ -56,6 +61,7 @@ public class ReportXmlParserTest {
 	
 	@Test (expected = XMLStreamException.class)
 	public void parse_error_should_throw_error() throws XMLStreamException {
+		System.out.println("----------xml_parse_error.xml");/////////////////
 		Path report =  reports_path.resolve("report_with_issues/xml_parse_error.xml");
 		List<Issue> issues = ReportXmlParser.getIssues(report);
 		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
