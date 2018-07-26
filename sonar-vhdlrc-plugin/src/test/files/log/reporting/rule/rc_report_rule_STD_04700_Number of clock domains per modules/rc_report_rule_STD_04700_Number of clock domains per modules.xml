@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>5.0.1.201712191528</rc:RuleCheckerVersion>
+  <rc:RuleName>STD_04700</rc:RuleName>
+  <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>405</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04700>
+      <rc:SourceTag>clockSource4</rc:SourceTag>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:SignalType>Signal Assignment</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Too many clock domains in the entity TOP</rc:SonarError>
+        <rc:SonarRemediationMsg>Lower clock domain from 3 to LT 2 inside TOP</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04700>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>1697</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04700>
+      <rc:SourceTag>clockSource5</rc:SourceTag>
+      <rc:Clock>CLK_66M_IBUF_OUT</rc:Clock>
+      <rc:SignalType>Instance Output</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Too many clock domains in the entity TOP</rc:SonarError>
+        <rc:SonarRemediationMsg>Lower clock domain from 3 to LT 2 inside TOP</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04700>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>1696</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04700>
+      <rc:SourceTag>clockSource6</rc:SourceTag>
+      <rc:Clock>CLK_80M</rc:Clock>
+      <rc:SignalType>Instance Output</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Too many clock domains in the entity TOP</rc:SonarError>
+        <rc:SonarRemediationMsg>Lower clock domain from 3 to LT 2 inside TOP</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04700>
+  </rc:RuleFailure>
+</rc:ReportRule>

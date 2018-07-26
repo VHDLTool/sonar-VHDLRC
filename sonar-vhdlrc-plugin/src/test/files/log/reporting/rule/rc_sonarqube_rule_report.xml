@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<coverage version="1">
+  <file path="./I2C/aiguillage.vhd">
+    <lineToCover covered="false" lineNumber="42" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="43" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="124" rule="STD_05300"/>
+    <lineToCover covered="false" lineNumber="151" rule="STD_05300"/>
+    <lineToCover covered="false" lineNumber="183" rule="STD_05300"/>
+    <lineToCover covered="false" lineNumber="185" rule="STD_05300"/>
+  </file>
+  <file path="./I2C/ascii_to_hex.vhd">
+    <lineToCover covered="false" lineNumber="16" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="17" rule="STD_01800"/>
+  </file>
+  <file path="./I2C/emission.vhd">
+    <lineToCover covered="false" lineNumber="0" rule="STD_03600"/>
+    <lineToCover covered="false" lineNumber="16" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="17" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="22" rule="STD_03700"/>
+    <lineToCover covered="false" lineNumber="23" rule="STD_04600"/>
+    <lineToCover covered="false" lineNumber="65" rule="STD_05000"/>
+  </file>
+  <file path="./I2C/hex_to_ascii.vhd">
+    <lineToCover covered="false" lineNumber="16" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="17" rule="STD_01800"/>
+  </file>
+  <file path="./I2C/I2C_slave.vhd">
+    <lineToCover covered="false" lineNumber="0" rule="STD_03600"/>
+    <lineToCover covered="false" lineNumber="20" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="21" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="25" rule="STD_04600"/>
+    <lineToCover covered="false" lineNumber="26" rule="STD_03700"/>
+    <lineToCover covered="false" lineNumber="161" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="250" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="366" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="390" rule="STD_03800"/>
+  </file>
+  <file path="./I2C/read_agent.vhd">
+    <lineToCover covered="false" lineNumber="21" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="65" rule="STD_00400"/>
+  </file>
+  <file path="./I2C/read_write2 copie.vhd">
+    <lineToCover covered="false" lineNumber="0" rule="STD_03600"/>
+    <lineToCover covered="false" lineNumber="2" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="3" rule="STD_01800"/>
+  </file>
+  <file path="./I2C/reception.vhd">
+    <lineToCover covered="false" lineNumber="0" rule="STD_03600"/>
+    <lineToCover covered="false" lineNumber="17" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="18" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="23" rule="STD_03700"/>
+    <lineToCover covered="false" lineNumber="24" rule="STD_04600"/>
+  </file>
+  <file path="./I2C/sequencer.vhd">
+    <lineToCover covered="false" lineNumber="0" rule="STD_03600"/>
+    <lineToCover covered="false" lineNumber="2" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="3" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="4" rule="STD_01800"/>
+  </file>
+  <file path="./I2C/top.vhd">
+    <lineToCover covered="false" lineNumber="0" rule="STD_03600"/>
+    <lineToCover covered="false" lineNumber="25" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="26" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="27" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="364" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="374" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="386" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="387" rule="STD_03700"/>
+    <lineToCover covered="false" lineNumber="400" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="405" rule="STD_04600"/>
+    <lineToCover covered="false" lineNumber="434" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="451" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="462" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="473" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="484" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="495" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="502" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="526" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="548" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="575" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="591" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="621" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="645" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="646" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="647" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="679" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="817" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="1000" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="1190" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="1196" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="1221" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="1224" rule="STD_05300"/>
+    <lineToCover covered="false" lineNumber="1225" rule="STD_05300"/>
+    <lineToCover covered="false" lineNumber="1227" rule="STD_05300"/>
+    <lineToCover covered="false" lineNumber="1228" rule="STD_05300"/>
+    <lineToCover covered="false" lineNumber="1233" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="1252" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="1447" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="1470" rule="STD_00400"/>
+    <lineToCover covered="false" lineNumber="1514" rule="STD_03800"/>
+    <lineToCover covered="false" lineNumber="1696" rule="STD_04600"/>
+    <lineToCover covered="false" lineNumber="1697" rule="STD_04600"/>
+  </file>
+  <file path="./I2C/top_interp_donnee.vhd">
+    <lineToCover covered="false" lineNumber="21" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="22" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="23" rule="STD_01800"/>
+    <lineToCover covered="false" lineNumber="27" rule="STD_04600"/>
+    <lineToCover covered="false" lineNumber="28" rule="STD_03700"/>
+  </file>
+  <file path="./I2C/top_n7_tb.vhd">
+    <lineToCover covered="false" lineNumber="29" rule="STD_01800"/>
+  </file>
+</coverage>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>5.0.1.201712191528</rc:RuleCheckerVersion>
+  <rc:RuleName>STD_04500</rc:RuleName>
+  <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>405</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04500>
+      <rc:SourceTag>clockSource4</rc:SourceTag>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:SignalType>Signal Assignment</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Clock signal CLK_40M is reassigned to CLK_40M</rc:SonarError>
+        <rc:SonarRemediationMsg>Remove this assignment and replace CLK_40M with CLK_40M</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04500>
+  </rc:RuleFailure>
+</rc:ReportRule>

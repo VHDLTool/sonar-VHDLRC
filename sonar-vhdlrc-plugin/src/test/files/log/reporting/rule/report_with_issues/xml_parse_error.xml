@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>5.0.1.201712191528</rc:RuleCheckerVersion>
+  <rc:RuleName>STD_01800</rc:RuleName>
+  <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./I2C/sequencer.vhd</rc:File>
+    <rc:Line>4</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.NUMERIC_STD.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:Rule

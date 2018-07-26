@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>5.0.1.201712191528</rc:RuleCheckerVersion>
+  <rc:RuleName>STD_03600</rc:RuleName>
+  <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./I2C/sequencer.vhd</rc:File>
+    <rc:Line>0</rc:Line>
+    <rc:Entity>SEQUENCER</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_03600_R2>
+      <rc:SourceTag>resetSource0</rc:SourceTag>
+      <rc:Level>low</rc:Level>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset signal I_RST_N is active low on contrary of other reset signal inside the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Choose a unique reset polarity for every reset signal in the design</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03600_R2>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/read_write2 copie.vhd</rc:File>
+    <rc:Line>0</rc:Line>
+    <rc:Entity>READ_WRITE</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_03600_R2>
+      <rc:SourceTag>resetSource0</rc:SourceTag>
+      <rc:Level>low</rc:Level>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset signal I_RST_N is active low on contrary of other reset signal inside the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Choose a unique reset polarity for every reset signal in the design</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03600_R2>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/reception.vhd</rc:File>
+    <rc:Line>0</rc:Line>
+    <rc:Entity>RECEPTION</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_03600_R2>
+      <rc:SourceTag>resetSource1</rc:SourceTag>
+      <rc:Level>low</rc:Level>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset signal I_RST_N is active low on contrary of other reset signal inside the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Choose a unique reset polarity for every reset signal in the design</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03600_R2>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/I2C_slave.vhd</rc:File>
+    <rc:Line>0</rc:Line>
+    <rc:Entity>I2C_SLAVE</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_03600_R2>
+      <rc:SourceTag>resetSource2</rc:SourceTag>
+      <rc:Level>low</rc:Level>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset signal I_RST_N is active low on contrary of other reset signal inside the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Choose a unique reset polarity for every reset signal in the design</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03600_R2>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/emission.vhd</rc:File>
+    <rc:Line>0</rc:Line>
+    <rc:Entity>EMISSION</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_03600_R2>
+      <rc:SourceTag>resetSource3</rc:SourceTag>
+      <rc:Level>low</rc:Level>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset signal I_RST_N is active low on contrary of other reset signal inside the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Choose a unique reset polarity for every reset signal in the design</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03600_R2>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>0</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_03600_R2>
+      <rc:SourceTag>resetSource4</rc:SourceTag>
+      <rc:Level>high</rc:Level>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset signal RESET_HARD is active high on contrary of other reset signal inside the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Choose a unique reset polarity for every reset signal in the design</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03600_R2>
+  </rc:RuleFailure>
+</rc:ReportRule>

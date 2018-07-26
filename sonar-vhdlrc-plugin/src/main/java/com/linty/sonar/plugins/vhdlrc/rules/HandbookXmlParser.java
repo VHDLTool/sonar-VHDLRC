@@ -58,7 +58,7 @@ public class HandbookXmlParser {
 				else {
 					List<Rule> rules = new ArrayList<>();
 					collectRules(file,rules);					
-					LOG.info("Parsing {}", file.getPath());//TODO:remove this test flag
+					LOG.info("Parsing {}", file.getPath());
 					return rules;
 				}
 			}

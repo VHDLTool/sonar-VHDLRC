@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>5.0.1.201712191528</rc:RuleCheckerVersion>
+  <rc:RuleName>STD_03700</rc:RuleName>
+  <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top_interp_donnee.vhd</rc:File>
+    <rc:Line>28</rc:Line>
+    <rc:Entity>TOP_INTERP_DONNEE</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03700>
+      <rc:Reset>I_RST_N</rc:Reset>
+      <rc:SignalType>Input Port</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset generation identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Control reset generation mechanism</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03700>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/reception.vhd</rc:File>
+    <rc:Line>23</rc:Line>
+    <rc:Entity>RECEPTION</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03700>
+      <rc:Reset>I_RST_N</rc:Reset>
+      <rc:SignalType>Input Port</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset generation identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Control reset generation mechanism</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03700>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/I2C_slave.vhd</rc:File>
+    <rc:Line>26</rc:Line>
+    <rc:Entity>I2C_SLAVE</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03700>
+      <rc:Reset>I_RST_N</rc:Reset>
+      <rc:SignalType>Input Port</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset generation identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Control reset generation mechanism</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03700>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/emission.vhd</rc:File>
+    <rc:Line>22</rc:Line>
+    <rc:Entity>EMISSION</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03700>
+      <rc:Reset>I_RST_N</rc:Reset>
+      <rc:SignalType>Input Port</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset generation identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Control reset generation mechanism</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03700>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>387</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03700>
+      <rc:Reset>RESET_HARD</rc:Reset>
+      <rc:SignalType>Signal Assignment</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Reset generation identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Control reset generation mechanism</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03700>
+  </rc:RuleFailure>
+</rc:ReportRule>

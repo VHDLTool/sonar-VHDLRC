@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ruleReporting xmlns:rc="RULECHECKER">
+  <rc:ruleCheckerVersion>5.0.1.201712191528</rc:ruleCheckerVersion>
+  <rc:executionDate>Wed Jul 25 14:59:03 CEST 2018</rc:executionDate>
+  <rc:Inputs>
+    <rc:File>./I2C/sequencer.vhd</rc:File>
+    <rc:File>./I2C/read_write2 copie.vhd</rc:File>
+    <rc:File>./I2C/hex_to_ascii.vhd</rc:File>
+    <rc:File>./I2C/read_write.vhd</rc:File>
+    <rc:File>./I2C/reception.vhd</rc:File>
+    <rc:File>./I2C/ascii_to_hex.vhd</rc:File>
+    <rc:File>./I2C/top_interp_donnee.vhd</rc:File>
+    <rc:File>./I2C/read_agent.vhd</rc:File>
+    <rc:File>./I2C/top_n7_tb.vhd</rc:File>
+    <rc:File>./I2C/I2C_slave.vhd</rc:File>
+    <rc:File>./I2C/aiguillage.vhd</rc:File>
+    <rc:File>./I2C/emission.vhd</rc:File>
+    <rc:File>./I2C/read_write2.vhd</rc:File>
+    <rc:File>./I2C/I2C_slave copie.vhd</rc:File>
+    <rc:File>./I2C/top.vhd</rc:File>
+  </rc:Inputs>
+  <rc:Rule UID="STD_00600">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_00800">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_00900">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_00100">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_00200">
+    <rc:status>Passed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_00300">
+    <rc:status>Passed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_00400">
+    <rc:status>Failed</rc:status>
+    <rc:nbFailed>15</rc:nbFailed>
+    <rc:fileName>./rule_checker/reporting/rule/rc_report_rule_STD_00400_Label for Process/rc_report_rule_STD_00400_Label for Process.xml</rc:fileName>
+  </rc:Rule>
+  <rc:Rule UID="STD_00500">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_00700">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_00701">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_01100">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_01200">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_01300">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_01400">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_01000">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_01900">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_02000">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_01500">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_01600">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_01700">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_01800">
+    <rc:status>Reported</rc:status>
+    <rc:nbFailed>25</rc:nbFailed>
+    <rc:fileName>./rule_checker/reporting/rule/rc_report_rule_STD_01800_Primitive isolation/rc_report_rule_STD_01800_Primitive isolation.xml</rc:fileName>
+  </rc:Rule>
+  <rc:Rule UID="STD_02100">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_02300">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_02200">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_02700">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_02800">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_02900">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_03000">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_02600">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_03100">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_03200">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_03300">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_03400">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_03500">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_03600">
+    <rc:status>Failed</rc:status>
+    <rc:nbFailed>6</rc:nbFailed>
+    <rc:fileName>./rule_checker/reporting/rule/rc_report_rule_STD_03600_Reset Sensitive Level/</rc:fileName>
+  </rc:Rule>
+  <rc:Rule UID="STD_03700">
+    <rc:status>Reported</rc:status>
+    <rc:nbFailed>5</rc:nbFailed>
+    <rc:fileName>./rule_checker/reporting/rule/rc_report_rule_STD_03700_Reset Assertion and Deassertion/rc_report_rule_STD_03700_Reset Assertion and Deassertion.xml</rc:fileName>
+  </rc:Rule>
+  <rc:Rule UID="STD_03800">
+    <rc:status>Failed</rc:status>
+    <rc:nbFailed>21</rc:nbFailed>
+    <rc:fileName>./rule_checker/reporting/rule/rc_report_rule_STD_03800_Synchronous Elements Initialization/rc_report_rule_STD_03800_Synchronous Elements Initialization.xml</rc:fileName>
+  </rc:Rule>
+  <rc:Rule UID="STD_03900">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_04000">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_04800">
+    <rc:status>Passed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_04100">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_04200">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_04300">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_04400">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_04600">
+    <rc:status>Failed</rc:status>
+    <rc:nbFailed>7</rc:nbFailed>
+    <rc:fileName>./rule_checker/reporting/rule/rc_report_rule_STD_04600_Clock domain number in the design/rc_report_rule_STD_04600_Clock domain number in the design.xml</rc:fileName>
+  </rc:Rule>
+  <rc:Rule UID="STD_04700">
+    <rc:status>Failed</rc:status>
+    <rc:nbFailed>3</rc:nbFailed>
+    <rc:fileName>./rule_checker/reporting/rule/rc_report_rule_STD_04700_Number of clock domains per modules/rc_report_rule_STD_04700_Number of clock domains per modules.xml</rc:fileName>
+  </rc:Rule>
+  <rc:Rule UID="STD_05000">
+    <rc:status>Failed</rc:status>
+    <rc:nbFailed>3</rc:nbFailed>
+    <rc:fileName>./rule_checker/reporting/rule/rc_report_rule_STD_05000_Sensitivity List for Synchronous Processes/rc_report_rule_STD_05000_Sensitivity List for Synchronous Processes.xml</rc:fileName>
+  </rc:Rule>
+  <rc:Rule UID="STD_05100">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_04900">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_05200">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_05300">
+    <rc:status>Failed</rc:status>
+    <rc:nbFailed>22</rc:nbFailed>
+    <rc:fileName>./rule_checker/reporting/rule/rc_report_rule_STD_05300_Sensitivity list for combinational processes/rc_report_rule_STD_05300_Sensitivity list for combinational processes.xml</rc:fileName>
+  </rc:Rule>
+  <rc:Rule UID="STD_05500">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_05600">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_05700">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_05400">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_05900">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_06000">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_06100">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_05800">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_06300">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_06200">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_06400">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_06500">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_06700">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_06900">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_06800">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_07200">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_07300">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_07100">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_02400">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_02500">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_04500">
+    <rc:status>Failed</rc:status>
+    <rc:nbFailed>1</rc:nbFailed>
+    <rc:fileName>./rule_checker/reporting/rule/rc_report_rule_STD_04500_Clock Reassignment/rc_report_rule_STD_04500_Clock Reassignment.xml</rc:fileName>
+  </rc:Rule>
+  <rc:Rule UID="STD_06600">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+  <rc:Rule UID="STD_07000">
+    <rc:status>Not executed</rc:status>
+  </rc:Rule>
+</rc:ruleReporting>

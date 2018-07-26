@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>5.0.1.201712191528</rc:RuleCheckerVersion>
+  <rc:RuleName>STD_03800</rc:RuleName>
+  <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./I2C/I2C_slave.vhd</rc:File>
+    <rc:Line>161</rc:Line>
+    <rc:Entity>I2C_SLAVE</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>DIR_SDA</rc:Register>
+      <rc:Clock>I_CLK</rc:Clock>
+      <rc:Process>DIR_SDA</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous DIR_SDA signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize DIR_SDA signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/I2C_slave.vhd</rc:File>
+    <rc:Line>250</rc:Line>
+    <rc:Entity>I2C_SLAVE</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>DATA_W</rc:Register>
+      <rc:Clock>I_CLK</rc:Clock>
+      <rc:Process>DATA_W</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous DATA_W signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize DATA_W signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/I2C_slave.vhd</rc:File>
+    <rc:Line>366</rc:Line>
+    <rc:Entity>I2C_SLAVE</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>START_REG</rc:Register>
+      <rc:Clock>I_CLK</rc:Clock>
+      <rc:Process>START_REG</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous START_REG signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize START_REG signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/I2C_slave.vhd</rc:File>
+    <rc:Line>390</rc:Line>
+    <rc:Entity>I2C_SLAVE</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>STOP_REG</rc:Register>
+      <rc:Clock>I_CLK</rc:Clock>
+      <rc:Process>STOP_REG</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous STOP_REG signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize STOP_REG signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>386</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>CPT_RST_FPGA</rc:Register>
+      <rc:Clock>CLK_66M_IBUF_OUT</rc:Clock>
+      <rc:Process>CPT_RST_FPGA</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous CPT_RST_FPGA signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize CPT_RST_FPGA signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>387</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>RESET_HARD</rc:Register>
+      <rc:Clock>CLK_66M_IBUF_OUT</rc:Clock>
+      <rc:Process>RESET_HARD</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous RESET_HARD signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize RESET_HARD signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>451</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>CPT_EVENT_LED_2</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>CPT_EVENT_LED_2</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous CPT_EVENT_LED_2 signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize CPT_EVENT_LED_2 signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>462</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>CPT_EVENT_LED_3</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>CPT_EVENT_LED_3</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous CPT_EVENT_LED_3 signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize CPT_EVENT_LED_3 signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>473</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>CPT_EVENT_LED_4</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>CPT_EVENT_LED_4</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous CPT_EVENT_LED_4 signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize CPT_EVENT_LED_4 signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>484</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>CPT_EVENT_LED_5</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>CPT_EVENT_LED_5</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous CPT_EVENT_LED_5 signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize CPT_EVENT_LED_5 signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>495</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>CPT_EVENT_LED_6</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>CPT_EVENT_LED_6</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous CPT_EVENT_LED_6 signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize CPT_EVENT_LED_6 signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>645</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>WRREGUSER</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>WRREGUSER</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous WRREGUSER signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize WRREGUSER signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>646</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>ADDREGUSER</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>ADDREGUSER</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous ADDREGUSER signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize ADDREGUSER signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>647</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>DATAREGUSER_WR</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>DATAREGUSER_WR</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous DATAREGUSER_WR signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize DATAREGUSER_WR signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>679</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>IP_RD_OK</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>IP_RD_OK</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous IP_RD_OK signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize IP_RD_OK signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>817</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>SELECTREGREAD</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>SELECTREGREAD</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous SELECTREGREAD signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize SELECTREGREAD signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>1000</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>DATA_FROM_IP_CMD</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>DATA_FROM_IP_CMD</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous DATA_FROM_IP_CMD signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize DATA_FROM_IP_CMD signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>1190</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>RAWUSB_WR_OK</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>RAWUSB_WR_OK</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous RAWUSB_WR_OK signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize RAWUSB_WR_OK signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>1196</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>RAW_FROM_USB</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>RAW_FROM_USB</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous RAW_FROM_USB signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize RAW_FROM_USB signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>1252</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>DATA_FROM_IP_RAW</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>DATA_FROM_IP_RAW</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous DATA_FROM_IP_RAW signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize DATA_FROM_IP_RAW signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>1514</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>DATA_FROM_FTDI</rc:Register>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:Process>DATA_FROM_FTDI</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous DATA_FROM_FTDI signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize DATA_FROM_FTDI signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+</rc:ReportRule>

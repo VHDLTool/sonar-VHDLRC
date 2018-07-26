@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>5.0.1.201712191528</rc:RuleCheckerVersion>
+  <rc:RuleName>STD_04600</rc:RuleName>
+  <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top_interp_donnee.vhd</rc:File>
+    <rc:Line>27</rc:Line>
+    <rc:Entity>TOP_INTERP_DONNEE</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04600>
+      <rc:SourceTag>clockSource0</rc:SourceTag>
+      <rc:Clock>I_CLK</rc:Clock>
+      <rc:SignalType>Input Port</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Too many clock domains in the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Lower clock domain from 7 to LET 1</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04600>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/reception.vhd</rc:File>
+    <rc:Line>24</rc:Line>
+    <rc:Entity>RECEPTION</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04600>
+      <rc:SourceTag>clockSource1</rc:SourceTag>
+      <rc:Clock>I_CLK</rc:Clock>
+      <rc:SignalType>Input Port</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Too many clock domains in the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Lower clock domain from 7 to LET 1</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04600>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/I2C_slave.vhd</rc:File>
+    <rc:Line>25</rc:Line>
+    <rc:Entity>I2C_SLAVE</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04600>
+      <rc:SourceTag>clockSource2</rc:SourceTag>
+      <rc:Clock>I_CLK</rc:Clock>
+      <rc:SignalType>Input Port</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Too many clock domains in the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Lower clock domain from 7 to LET 1</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04600>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/emission.vhd</rc:File>
+    <rc:Line>23</rc:Line>
+    <rc:Entity>EMISSION</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04600>
+      <rc:SourceTag>clockSource3</rc:SourceTag>
+      <rc:Clock>I_CLK</rc:Clock>
+      <rc:SignalType>Input Port</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Too many clock domains in the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Lower clock domain from 7 to LET 1</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04600>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>405</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04600>
+      <rc:SourceTag>clockSource4</rc:SourceTag>
+      <rc:Clock>CLK_40M</rc:Clock>
+      <rc:SignalType>Signal Assignment</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Too many clock domains in the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Lower clock domain from 7 to LET 1</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04600>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>1697</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04600>
+      <rc:SourceTag>clockSource5</rc:SourceTag>
+      <rc:Clock>CLK_66M_IBUF_OUT</rc:Clock>
+      <rc:SignalType>Instance Output</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Too many clock domains in the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Lower clock domain from 7 to LET 1</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04600>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>1696</rc:Line>
+    <rc:Entity>TOP</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_04600>
+      <rc:SourceTag>clockSource6</rc:SourceTag>
+      <rc:Clock>CLK_80M</rc:Clock>
+      <rc:SignalType>Instance Output</rc:SignalType>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Too many clock domains in the design</rc:SonarError>
+        <rc:SonarRemediationMsg>Lower clock domain from 7 to LET 1</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_04600>
+  </rc:RuleFailure>
+</rc:ReportRule>

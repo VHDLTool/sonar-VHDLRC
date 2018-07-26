@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>5.0.1.201712191528</rc:RuleCheckerVersion>
+  <rc:RuleName>STD_01800</rc:RuleName>
+  <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./I2C/sequencer.vhd</rc:File>
+    <rc:Line>4</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.NUMERIC_STD.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/hex_to_ascii.vhd</rc:File>
+    <rc:Line>17</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.NUMERIC_STD.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/reception.vhd</rc:File>
+    <rc:Line>18</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.NUMERIC_STD.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/ascii_to_hex.vhd</rc:File>
+    <rc:Line>17</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.NUMERIC_STD.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top_interp_donnee.vhd</rc:File>
+    <rc:Line>23</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.NUMERIC_STD.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/I2C_slave.vhd</rc:File>
+    <rc:Line>21</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.NUMERIC_STD.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/aiguillage.vhd</rc:File>
+    <rc:Line>43</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.NUMERIC_STD.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/emission.vhd</rc:File>
+    <rc:Line>17</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.NUMERIC_STD.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>26</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_ARITH.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/sequencer.vhd</rc:File>
+    <rc:Line>2</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/read_write2 copie.vhd</rc:File>
+    <rc:Line>2</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/hex_to_ascii.vhd</rc:File>
+    <rc:Line>16</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/reception.vhd</rc:File>
+    <rc:Line>17</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/ascii_to_hex.vhd</rc:File>
+    <rc:Line>16</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top_interp_donnee.vhd</rc:File>
+    <rc:Line>21</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/read_agent.vhd</rc:File>
+    <rc:Line>21</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top_n7_tb.vhd</rc:File>
+    <rc:Line>29</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/I2C_slave.vhd</rc:File>
+    <rc:Line>20</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/aiguillage.vhd</rc:File>
+    <rc:Line>42</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/emission.vhd</rc:File>
+    <rc:Line>16</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>25</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_1164.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/sequencer.vhd</rc:File>
+    <rc:Line>3</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_UNSIGNED.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/read_write2 copie.vhd</rc:File>
+    <rc:Line>3</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_UNSIGNED.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top_interp_donnee.vhd</rc:File>
+    <rc:Line>22</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_UNSIGNED.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./I2C/top.vhd</rc:File>
+    <rc:Line>27</rc:Line>
+    <rc:Entity>N/A</rc:Entity>
+    <rc:Architecture>N/A</rc:Architecture>
+    <rc:STD_01800>
+      <rc:Library>IEEE.STD_LOGIC_UNSIGNED.ALL</rc:Library>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>IEEE library identified</rc:SonarError>
+        <rc:SonarRemediationMsg>Nothing to be done</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_01800>
+  </rc:RuleFailure>
+</rc:ReportRule>
