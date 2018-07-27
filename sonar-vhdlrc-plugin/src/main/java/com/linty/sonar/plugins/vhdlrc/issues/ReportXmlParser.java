@@ -16,13 +16,12 @@ import org.codehaus.staxmate.in.SMInputCursor;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 public class ReportXmlParser {
 	
 	private final Path reportPath;
-	public String RuleKey = null;
+	protected String ruleKey = null;
 	private List<Issue> issues;
 	
 	private static final Logger LOG = Loggers.get(ReportXmlParser.class);
@@ -46,8 +45,8 @@ public class ReportXmlParser {
 		this.reportPath = reportPath;
 	}
 	
-	public static List<Issue> getIssues(Path reportPath) throws XMLStreamException {
-		return new ReportXmlParser(reportPath).parseXML();
+	public static List<Issue> getIssues(Path reportsPath) throws XMLStreamException {
+		return new ReportXmlParser(reportsPath).parseXML();
 	}
 	
 	public List<Issue> parseXML() throws XMLStreamException {
@@ -55,8 +54,7 @@ public class ReportXmlParser {
 		SMInputCursor rootCursor = xmlFactory.rootElementCursor(reportPath.toFile()).advance();
 		SMInputCursor cursor = rootCursor.childCursor(filter).advance();
 		if("RuleName".equals(cursor.getLocalName())){
-			this.RuleKey = cursor.getElemStringValue();
-			System.out.println(RuleKey);//TODO
+			this.ruleKey = cursor.getElemStringValue();
 			collectIssues(cursor.advance());//<rc:RuleFailure>
 		} else {
 			LOG.error("No RuleKey found in {}. No issues will not be imported from this report", this.reportPath.getFileName());
@@ -65,10 +63,8 @@ public class ReportXmlParser {
 	}
 
 	private void collectIssues(SMInputCursor cursor) throws XMLStreamException {
-		System.out.println("-" + cursor.getLocalName());//TODO
 		issues = new ArrayList<>();
 		while(cursor.asEvent() != null){
-			System.out.println(cursor.getCursorLocation().getLineNumber());//TODO
 			collectIssue(cursor.childCursor(filter).advance());
 			cursor.advance();
 		}
@@ -79,14 +75,14 @@ public class ReportXmlParser {
 	private void collectIssue(SMInputCursor cursor) throws XMLStreamException {
 		String localName;
 		Issue i = new Issue();
-		i.ruleKey = this.RuleKey;
+		i.ruleKey = this.ruleKey;
 		while(cursor.asEvent() != null) {
 			localName = cursor.getLocalName();
 			if("File".equals(localName)) {
 				i.file = Paths.get(cursor.getElemStringValue());
 			} else if ("Line".equals(localName)) {
 				i.line = Integer.parseInt(cursor.getElemStringValue());
-			} else if (RuleKey.equals(localName)) {
+			} else if (ruleKey.equals(localName)) {
 				i.errorMsg = collectSonarMsg(cursor.childElementCursor().advance());
 			}
 			cursor.advance();

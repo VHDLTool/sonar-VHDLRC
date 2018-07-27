@@ -142,9 +142,10 @@ public class ExampleAndFigureLoaderTest {
 	@Test
 	public void special_caractere_in_File_names_should_right_error_msg() {
 		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("src/test/files/handbooks"));
-		String im = loader.collectImage("P@!$%\"%7B%7Dog_r()a%20m[1].cs");
+		String im = loader.collectImage("P@?!$%\"%7B%:|7Dog_r()a%20m[1].cs");
 		String ex = loader.collectExample("\".%7B%7Dog_r()a%20m[1].cs\"");
-		assertThat(im).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_IAMGE_MSG + "P@!$%\"%7B%7Dog_r()a%20m[1].cs");
+		assertThat(im).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_IAMGE_MSG + "P@?!$%\"%7B%:|7Dog_r()a%20m[1].cs");
 		assertThat(ex).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_EXAMPLE_MSG + "\".%7B%7Dog_r()a%20m[1].cs\".vhd");
 	}
+	
 }

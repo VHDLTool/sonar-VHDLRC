@@ -13,7 +13,7 @@ import com.linty.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
 
 public class VHDLRcPlugin implements Plugin {
 
- private static final Version SQ_6_7 = Version.create(6, 7);
+ public static final Version SQ_6_7 = Version.create(6, 7);
  private static final String VHDL_RULECHEKER_CATEGORY = "VHDL RuleChecker";
 	
  @Override 

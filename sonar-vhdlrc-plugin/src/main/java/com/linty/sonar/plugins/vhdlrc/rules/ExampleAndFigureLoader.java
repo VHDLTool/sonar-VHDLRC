@@ -1,6 +1,7 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -43,7 +44,6 @@ public class ExampleAndFigureLoader {
 		}
 	}
 
-	
 	@VisibleForTesting
 	protected String collectExample(String fileRef) {		
 		StringBuilder codeExample = new StringBuilder();	
@@ -56,10 +56,8 @@ public class ExampleAndFigureLoader {
 			}
 			while((line = reader.readLine()) != null && !line.contains(CODE_BALISE)){//waiting for 2nd --CODE to stop
 				codeExample.append(line).append("\r\n");
-			}
-			
+			}	
 		} catch (IOException | InvalidPathException e) {
-			System.out.println(NOT_FOUND_EXAMPLE_MSG + fileName + ".vhd");//TODO
 			return NOT_FOUND_EXAMPLE_MSG + fileName;		
 		}
 		return String.valueOf(codeExample);
@@ -78,11 +76,9 @@ public class ExampleAndFigureLoader {
 			while((line = reader.readLine()) != null){
 				figureCode.append(line).append("\r\n");
 			}
-
-		 } catch (IOException | InvalidPathException e) {
-			 System.out.println(NOT_FOUND_IAMGE_MSG + fileName);//TODO
-			 return NOT_FOUND_IAMGE_MSG + fileName;
+		} catch (IOException | InvalidPathException e) {
+			return NOT_FOUND_IAMGE_MSG + fileName;
 		}
-		 return String.valueOf(figureCode);
+		return String.valueOf(figureCode);
 	}
 }
