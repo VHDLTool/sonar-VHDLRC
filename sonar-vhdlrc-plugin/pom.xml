@@ -62,8 +62,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.version>6.7</sonar.version>
     <sslr.version>1.21</sslr.version>
-    <license.skip>true</license.skip> <!-- There is no license header for now -->
-    <jacoco.version>0.7.5.201505241946</jacoco.version>
+    <license.skip>true</license.skip> <!-- There is no license header for now 0.7.5.201505241946 -->
+    <jacoco.version>0.8.1</jacoco.version>
   </properties>
 
 

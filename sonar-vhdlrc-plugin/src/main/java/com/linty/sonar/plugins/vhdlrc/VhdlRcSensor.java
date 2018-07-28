@@ -1,6 +1,6 @@
 package com.linty.sonar.plugins.vhdlrc;
 
-import java.io.File;
+
 import java.nio.file.Path;
 import java.util.List;
 
@@ -35,7 +35,8 @@ public class VhdlRcSensor implements Sensor{
 
 	@Override
 	public void execute(SensorContext context) {
-		List<Path> reportFiles = ExternalReportProvider.getReportFiles(sfs.getHomeDir().toPath());
+		Path reportsDir = sfs.getHomeDir().toPath().resolve(REPORTING_PATH);
+		List<Path> reportFiles = ExternalReportProvider.getReportFiles(reportsDir);
 		reportFiles.forEach(report -> importReport(report, context));
 	}
 
@@ -47,7 +48,7 @@ public class VhdlRcSensor implements Sensor{
 			} else {
 				LOG.error("Can't find Xml report : {}", reportFile);
 			}
-		} catch (XMLStreamException e) {			
+		} catch (XMLStreamException | RuntimeException  e) {			
 			LOG.error("Can't read Xml report : {}", reportFile, e);
 		}
 	}

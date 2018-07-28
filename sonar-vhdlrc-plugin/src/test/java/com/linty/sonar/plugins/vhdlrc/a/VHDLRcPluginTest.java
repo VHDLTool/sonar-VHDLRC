@@ -6,14 +6,10 @@ import org.sonar.api.Plugin;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.internal.SonarRuntimeImpl;
-import org.sonar.api.platform.ServerFileSystem;
-
 import org.sonar.api.utils.Version;
-
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 
 public class VHDLRcPluginTest {
 	
@@ -26,7 +22,7 @@ public class VHDLRcPluginTest {
 		SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_6_7, SonarQubeSide.SERVER);
 		Plugin.Context context = new Plugin.Context(runtime);
 		vhdlRcPlugin.define(context);		
-		assertThat(context.getExtensions()).hasSize(5);
+		assertThat(context.getExtensions()).hasSize(6);
 		runtime.getApiVersion().isGreaterThanOrEqual(Version.create(6, 5));
 	}
 	
