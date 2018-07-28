@@ -54,7 +54,7 @@ public class VhdlRcSensor implements Sensor{
 	}
 
 	private void importIssue(Issue i) {
-		System.out.println("-----------Uploading an issue for" + i.file.toString());
+		System.out.println("-----------Uploading an issue for" + i.file().toString());
 		
 	}
 
