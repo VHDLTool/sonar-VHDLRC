@@ -19,7 +19,7 @@ public class ExternalReportProviderTest {
 	@Test
 	public void test() {
 		List<Path> paths = ExternalReportProvider.getReportFiles(Paths.get("src/test/files/log/reporting/rule"));
-		assertThat(paths).hasSize(15);
+		assertThat(paths).hasSize(14);
 	}
 	
 	@Test
