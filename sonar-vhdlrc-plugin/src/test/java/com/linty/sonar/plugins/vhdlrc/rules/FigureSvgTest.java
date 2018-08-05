@@ -1,3 +1,7 @@
+/**
+ * CopyRight(c) this is a temporary header
+ * Must be updated
+ */
 package com.linty.sonar.plugins.vhdlrc.rules;
 import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
 import static org.assertj.core.api.Assertions.assertThat;

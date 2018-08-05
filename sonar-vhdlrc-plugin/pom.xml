@@ -62,15 +62,41 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.version>6.7</sonar.version>
     <sslr.version>1.21</sslr.version>
-    <license.skip>true</license.skip> <!-- There is no license header for now 0.7.5.201505241946 -->
+    <license.skip>true</license.skip>
     <jacoco.version>0.8.1</jacoco.version>
   </properties>
 
-
-
    <build>
     <plugins>
-      <plugin>
+	    <!-- License information -->
+    <plugin>
+     <groupId>com.mycila.maven-license-plugin</groupId>
+     <artifactId>maven-license-plugin</artifactId>
+     <version>1.10.b1</version>
+     <configuration>
+      <header>license_header.txt</header>
+      <includes>
+       <include>src/main/java/**</include>
+       <include>src/test/java/**</include>
+      </includes>
+     </configuration>
+     <executions>
+      <execution>
+       <goals>
+        <goal>format</goal>
+       </goals>
+       <phase>process-sources</phase>
+      </execution>
+     </executions>
+     <dependencies>
+      <dependency>
+       <groupId>com.mycila</groupId>
+       <artifactId>licenses</artifactId>
+       <version>1</version>
+      </dependency>
+     </dependencies>
+    </plugin>
+      <plugin>     
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco.version}</version>
@@ -117,6 +143,6 @@
         </configuration>
       </plugin>
     </plugins>
-  </build>
+   </build>
   
 </project>
