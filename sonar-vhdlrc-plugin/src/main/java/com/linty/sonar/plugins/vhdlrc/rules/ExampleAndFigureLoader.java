@@ -42,8 +42,7 @@ public class ExampleAndFigureLoader {
 			}
 			if(r.figure != null) {
 				r.figure.figureCode = collectImage(r.figure.figureRef);	
-			}
-			
+			}		
 		}
 	}
 

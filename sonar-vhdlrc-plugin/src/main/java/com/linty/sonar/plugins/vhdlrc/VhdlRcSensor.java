@@ -5,7 +5,7 @@
 package com.linty.sonar.plugins.vhdlrc;
 
 
-import java.net.URL;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -24,8 +24,7 @@ import com.linty.sonar.plugins.vhdlrc.issues.Issue;
 import com.linty.sonar.plugins.vhdlrc.issues.ReportXmlParser;
 
 public class VhdlRcSensor implements Sensor{
-	public static final String PROJECT_PATH = "rc/ws/project";
-	public static final String REPORTING_PATH = "log/reporting/rule";
+	public static final String REPORTING_PATH = "rc/ws/project/log/reporting/rule";
 	private static final Logger LOG = Loggers.get(VhdlRcSensor.class);
 	
 
@@ -38,11 +37,9 @@ public class VhdlRcSensor implements Sensor{
 
 	@Override
 	public void execute(SensorContext context) {
-	    URL cwd = getClass().getProtectionDomain().getCodeSource().getLocation();
-		LOG.info("\no-o-o-o-o-o-o-o-o--o-o\nCurrent working directory : " + cwd.toString() + "\no-o-o-o-o-o-o-o-o-o-o-o-o-o-o");
-//		Path reportsDir = Paths.get(PROJECT_PATH).resolve(REPORTING_PATH);
-//		List<Path> reportFiles = ExternalReportProvider.getReportFiles(reportsDir);
-//		reportFiles.forEach(report -> importReport(report, context));
+		Path reportsDir = Paths.get(context.config().get("sonar.vhdlrc.rc").orElse(null)).resolve(REPORTING_PATH);
+		List<Path> reportFiles = ExternalReportProvider.getReportFiles(reportsDir);
+		reportFiles.forEach(report -> importReport(report, context));
 	}
 
 	@VisibleForTesting
