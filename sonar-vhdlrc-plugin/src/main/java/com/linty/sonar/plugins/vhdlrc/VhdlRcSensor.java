@@ -37,22 +37,19 @@ public class VhdlRcSensor implements Sensor{
 
 	@Override
 	public void execute(SensorContext context) {
-		Path reportsDir = Paths.get(context.config().get("sonar.vhdlrc.rc").orElse(null)).resolve(REPORTING_PATH);
+		Path reportsDir = Paths.get(context.config().get("sonar.vhdlrc.rc").orElse(null)).resolve(REPORTING_PATH);//TODO create a parameter
 		List<Path> reportFiles = ExternalReportProvider.getReportFiles(reportsDir);
 		reportFiles.forEach(report -> importReport(report, context));
 	}
 
 	@VisibleForTesting
 	protected void importReport(Path reportFile, SensorContext context) {
-		try {
-			if(reportFile.toFile().exists()) {
-				ReportXmlParser.getIssues(reportFile).forEach(issue -> importIssue(issue));
-			} else {
-				LOG.error("Can't find Xml report : {}", reportFile);
-			}
-		} catch (XMLStreamException | RuntimeException  e) {			
-			LOG.error("Can't read Xml report : {}", reportFile, e);
-		}
+	  try {
+	    LOG.info("Importing {}", reportFile);
+	    ReportXmlParser.getIssues(reportFile).forEach(issue -> importIssue(issue));		
+	  } catch (XMLStreamException | RuntimeException  e) {			
+	    LOG.error("Can't read Xml report : {}", reportFile, e);
+	  }
 	}
 
 	private void importIssue(Issue i) {
