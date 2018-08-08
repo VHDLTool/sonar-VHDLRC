@@ -27,25 +27,31 @@ public class VHDLRcPlugin implements Plugin {
 	      throw new IllegalStateException("SonarQube 6.7 is required for VHDL plugin");
 	    }
 	    builder.add(
-	    		Vhdl.class,
-	    		VhdlRulesDefinition.class,
-	    		VhdlRcProfile.class,
-	    		VhdlRcSensor.class
-	    		);
+	      Vhdl.class,
+	      VhdlRulesDefinition.class,
+	      VhdlRcProfile.class,
+	      VhdlRcSensor.class
+	      );
 	    builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
-	    		.defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
-	    		.name("File suffixes")
-	    		.description("Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.")
-	    		.subCategory("General")
-	    		.onQualifiers(Qualifiers.PROJECT)
-	    		.build());
+	      .defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
+	      .name("File suffixes")
+	      .description("Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.")
+	      .subCategory("General")
+	      .onQualifiers(Qualifiers.PROJECT)
+	      .build());
 	    builder.add(PropertyDefinition.builder(VhdlRulesDefinition.HANDBOOK_PATH_KEY)
-	    		.category(Vhdl.NAME)
-	    		.subCategory(VHDL_RULECHEKER_CATEGORY)
-	    		.name("Handbook Directory Path")
-	    		.description(VhdlRulesDefinition.HANDBOOK_PATH_DESC)
-	    		.build());
-	    
+	      .category(Vhdl.NAME)
+	      .subCategory(VHDL_RULECHEKER_CATEGORY)
+	      .name("Handbook Path")
+	      .description(VhdlRulesDefinition.HANDBOOK_PATH_DESC)
+	      .build());
+	    builder.add(PropertyDefinition.builder(VhdlRcSensor.RC_PATH_KEY)
+	      .category(Vhdl.NAME)
+	      .subCategory(VHDL_RULECHEKER_CATEGORY)
+	      .name("RuleChecker Path")
+	      .hidden()
+	      .build()
+	      );
 //    context.addExtensions(VHDLToolConfiguration.getPropertyDefinitions());
 //    context.addExtensions(Arrays.asList(
 //            VHDLToolProfile.class,
