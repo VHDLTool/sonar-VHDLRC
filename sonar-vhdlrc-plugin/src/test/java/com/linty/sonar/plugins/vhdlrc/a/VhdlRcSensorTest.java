@@ -4,11 +4,10 @@
  */
 package com.linty.sonar.plugins.vhdlrc.a;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import javax.xml.stream.XMLStreamException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,12 +18,13 @@ import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
-import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
+import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.internal.SonarRuntimeImpl;
+import org.sonar.api.internal.apachecommons.io.FilenameUtils;
 import org.sonar.api.rule.RuleKey;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,42 +43,74 @@ public class VhdlRcSensorTest  {
 		addRules(context1,"STD_00400","STD05000");
 		addTestFile(context1,"I2C/file1.vhd","This file has one line");
 		addTestFile(context1,"I2C/file3.vhd","This one has \r\n 3 \r\nlines");
-		addTestFile(context1,"I2C/file_no_issues.vhd","");	
+		addTestFile(context1,"I2C/file_no_issues.vhd","");
+		addTestFile(context1,"Top.vhd","One line");
 	}
 	
 	@Rule
 	public LogTester logTester = new LogTester();
 	
+//Unset path for scanner means no rule checker analysis should be performed
+	@Test
+  public void test_descriptor() {
+    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    sensor.describe(sensorDescriptor);
+    assertThat(sensorDescriptor.name()).isEqualTo("vhdlRcSensor");
+    MapSettings settings = new MapSettings();
+    assertThat(sensorDescriptor.configurationPredicate().test(settings.asConfig())).isFalse();
+    assertThat(settings.asConfig().hasKey((VhdlRcSensor.SCANNER_HOME_KEY))).isFalse();
+    settings.setProperty(VhdlRcSensor.SCANNER_HOME_KEY, "C:Tools/sonar-scanner/rc");
+    assertThat(sensorDescriptor.configurationPredicate().test(settings.asConfig())).isTrue();
+  }
+	
+	@Test (expected = IllegalStateException.class)
+	public void Unset_parameter_should_never_occure() {
+	  SensorContextTester Context = SensorContextTester.create(Paths.get("src/test/files"));
+	  sensor.execute(Context);
+	}
+	 
+	@Test
+  public void invalid_path_should_log_error() {
+    SensorContextTester Context = createContext("src/test/files","src/invalid/path/");
+    sensor.execute(Context);
+    List<Issue> issues = new ArrayList(Context.allIssues());
+    assertThat(issues).isEmpty();
+    assertThat(logTester.logs()).isNotEmpty();
+  }
+  
 	@Test
 	public void test_two_good_issues_one_failure() {
 	  sensor.execute(context1);
 	  List<Issue> issues = new ArrayList(context1.allIssues());
 	  
-	  assertThat(issues).hasSize(2);
-	  issues.forEach(i -> assertThat(i.ruleKey()).isEqualTo("STD_00400"));
+	  assertThat(issues).hasSize(4);
 	  assertNoIssueOnFile(context1,"file_no_issues.vhd");
 	  
-	  Issue issue1 = issues.get(0);
-	  assertThat(issue1.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":file1.vhd");
+	  Issue issue1 = issues.get(2);
+	  assertThat(issue1.ruleKey().rule()).isEqualTo("STD_00400");
+	  assertThat(issue1.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
 	  assertThat(issue1.primaryLocation().textRange().start().line()).isEqualTo(1);
 	  assertThat(issue1.primaryLocation().message()).isEqualTo("Label is missing");
 	  
-	  Issue issue2 = issues.get(1);
-    assertThat(issue2.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":file3.vhd");
+	  Issue issue2 = issues.get(3);
+	  assertThat(issue2.ruleKey().rule()).isEqualTo("STD_00400");
+    assertThat(issue2.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file3.vhd");
     assertThat(issue2.primaryLocation().textRange().start().line()).isEqualTo(2);
     assertThat(issue2.primaryLocation().message()).isEqualTo("Label is missing");
     
-    assertThat(logTester.logs(LoggerLevel.INFO)).contains("Importing rc_test_report_STD_00400.xml");
-    assertThat(logTester.logs(LoggerLevel.WARN)).contains("No imput file found for no_file.vhd. No issues will be imported on this file.");
-	  
-	}
-	
-	//Unset path for scanner means no rule checker analysis should be performed
-	public void no_scanner_home_path_set() {
-	  SensorContextTester unsetContext = createContext("src/test/files",null);
-	  List<Issue> issues = new ArrayList(unsetContext.allIssues());
-	  assertThat(issues).isEmpty();
-	  assertThat(logTester.logs()).isEmpty();
+    String no_file = FilenameUtils.separatorsToSystem("./I2C/Mux/no_file.vhd");
+     
+    Issue issue3 = issues.get(1);
+    assertThat(issue3.ruleKey().rule()).isEqualTo("STD_05000");
+    assertThat(issue3.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
+    assertThat(issue3.primaryLocation().textRange().start().line()).isEqualTo(1);
+    assertThat(issue3.primaryLocation().message()).isEqualTo("Signal I_VZ_CMD should not be in the sensitivity list of the process");
+    
+    assertThat(logTester.logs(LoggerLevel.INFO).get(1)).contains("Importing rc_report_rule_STD_03800.xml");   
+    assertThat(logTester.logs(LoggerLevel.WARN).get(0)).contains("Can't import an issue from rc_report_rule_STD_05000.xml : 65 is not a valid line for pointer. File I2C/file3.vhd has 3 line(s)");
+    assertThat(logTester.logs(LoggerLevel.WARN).get(1)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");  
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).isNotEmpty();
+    //assertThat(logTester.logs(LoggerLevel.WARN).size()).isEqualTo(2);
 	}
 	
 	
@@ -90,7 +122,7 @@ public class VhdlRcSensorTest  {
 	
 	public static SensorContextTester createContext(String projectHomePath, String scannerHomePath) {
     return SensorContextTester.create(Paths.get(projectHomePath))
-      .setSettings(new MapSettings().setProperty("sonar.vhdlrc.rc", scannerHomePath))
+      .setSettings(new MapSettings().setProperty(VhdlRcSensor.SCANNER_HOME_KEY, scannerHomePath))
       .setRuntime(SQ67);
 	}
 	

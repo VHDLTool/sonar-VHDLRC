@@ -45,7 +45,7 @@ public class VHDLRcPlugin implements Plugin {
 	      .name("Handbook Path")
 	      .description(VhdlRulesDefinition.HANDBOOK_PATH_DESC)
 	      .build());
-	    builder.add(PropertyDefinition.builder(VhdlRcSensor.RC_PATH_KEY)
+	    builder.add(PropertyDefinition.builder(VhdlRcSensor.SCANNER_HOME_KEY)
 	      .category(Vhdl.NAME)
 	      .subCategory(VHDL_RULECHEKER_CATEGORY)
 	      .name("RuleChecker Path")

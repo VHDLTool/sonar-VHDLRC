@@ -27,7 +27,7 @@ public class ExternalReportProviderTest {
 	}
 	
 	@Test
-	public void test_error() {
+	public void test_error_should_throws_IOException() {
 		List<Path> paths = ExternalReportProvider.getReportFiles(Paths.get("src/test/not_existing"));
 		assertThat(logTester.logs(LoggerLevel.ERROR)).isNotEmpty();
 		//System.out.println(logTester.logs(LoggerLevel.ERROR).get(0));
