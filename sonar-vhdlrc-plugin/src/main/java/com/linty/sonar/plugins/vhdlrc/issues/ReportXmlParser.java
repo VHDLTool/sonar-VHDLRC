@@ -93,7 +93,6 @@ public class ReportXmlParser {
 	}
 
 	private String collectSonarMsg(SMInputCursor cursor) throws XMLStreamException {
-	  String sonarMsg = "";
 	  while(!"SonarQubeMsg".equals(cursor.getLocalName())) {
 	    cursor.advance();
 	  }

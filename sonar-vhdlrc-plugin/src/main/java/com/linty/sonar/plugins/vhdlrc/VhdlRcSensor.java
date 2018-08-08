@@ -3,9 +3,6 @@
  * Must be updated
  */
 package com.linty.sonar.plugins.vhdlrc;
-
-
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -23,7 +20,6 @@ import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import com.google.common.base.Throwables;
 import com.linty.sonar.plugins.vhdlrc.issues.ExternalReportProvider;
 import com.linty.sonar.plugins.vhdlrc.issues.Issue;
 import com.linty.sonar.plugins.vhdlrc.issues.ReportXmlParser;
@@ -33,10 +29,6 @@ public class VhdlRcSensor implements Sensor{
 	public static final String REPORTING_PATH = "rc/ws/project/log/reporting/rule";
 	private static final Logger LOG = Loggers.get(VhdlRcSensor.class);
 	
-  private InputFile inputFile = null;
-  private NewIssueLocation issueLocation = null;
-	
-
 	@Override
 	public void describe(SensorDescriptor descriptor) {
 		descriptor
@@ -52,7 +44,7 @@ public class VhdlRcSensor implements Sensor{
 		  .get(context.config()
 		    .get(SCANNER_HOME_KEY)
 		    .orElseThrow(() -> new IllegalStateException("vhdlRcSensor should not execute without " + SCANNER_HOME_KEY)))
-		  .resolve(REPORTING_PATH);//TODO create a parameter
+		  .resolve(REPORTING_PATH);
 		List<Path> reportFiles = ExternalReportProvider.getReportFiles(reportsDir);
 		reportFiles.forEach(report -> importReport(report, context));
 	}
@@ -70,7 +62,8 @@ public class VhdlRcSensor implements Sensor{
 	}
 
 	private void importIssue(SensorContext context, Issue i) {
-	  System.out.println("-----------Uploading an issue for" + i.file().toString());
+	  InputFile inputFile;
+	  NewIssueLocation issueLocation;
 	  String filePath = i.file().toString();
 	  FilePredicates predicates = context.fileSystem().predicates();
 	  inputFile = context.fileSystem().inputFile(predicates.hasPath(filePath));

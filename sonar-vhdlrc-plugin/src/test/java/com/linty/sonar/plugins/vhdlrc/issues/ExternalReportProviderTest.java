@@ -23,7 +23,9 @@ public class ExternalReportProviderTest {
 	@Test
 	public void test() {
 		List<Path> paths = ExternalReportProvider.getReportFiles(Paths.get("src/test/files/log/reporting/rule"));
-		assertThat(paths).hasSize(14);
+		assertThat(paths).hasSize(12);
+		paths.forEach(p -> assertThat(p.getFileName().toString()).isNotEqualTo("rc_sonarqube_rule_report.xml"));
+		paths.forEach(p -> assertThat(p.getFileName().toString()).isNotEqualTo("rc_report_rule.xml"));
 	}
 	
 	@Test
