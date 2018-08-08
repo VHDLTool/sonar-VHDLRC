@@ -71,10 +71,8 @@ public class ReportXmlParser {
 		while(cursor.asEvent() != null){
 			collectIssue(cursor.childCursor(filter).advance());
 			cursor.advance();
-		}
-		
+		}	
 	}
-
 
 	private void collectIssue(SMInputCursor cursor) throws XMLStreamException {
 		String localName;
@@ -95,7 +93,11 @@ public class ReportXmlParser {
 	}
 
 	private String collectSonarMsg(SMInputCursor cursor) throws XMLStreamException {
-		return cursor.childCursor(filter).advance().getElemStringValue();
+	  String sonarMsg = "";
+	  while(!"SonarQubeMsg".equals(cursor.getLocalName())) {
+	    cursor.advance();
+	  }
+	  return cursor.childCursor(filter).advance().getElemStringValue();
 	}
 
 

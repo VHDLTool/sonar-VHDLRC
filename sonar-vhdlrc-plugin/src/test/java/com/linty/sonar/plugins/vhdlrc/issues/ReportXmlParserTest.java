@@ -46,6 +46,15 @@ public class ReportXmlParserTest {
 	}
 	
 	@Test
+	public void test_no_issues() throws XMLStreamException {
+	  Path report = reports_path.resolve("rc_report_rule_STD_03800_Synchronous Elements Initialization/rc_report_rule_STD_03800_Synchronous Elements Initialization.xml");
+	  List<Issue> issues = ReportXmlParser.getIssues(report);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
+    assertThat(issues).hasSize(21);	
+	}
+	
+	@Test
 	public void no_found_rule_key_should_log_error() throws XMLStreamException {
 		Path report =  reports_path.resolve("report_with_issues/no_rule_key.xml");
 		List<Issue> issues = ReportXmlParser.getIssues(report);
