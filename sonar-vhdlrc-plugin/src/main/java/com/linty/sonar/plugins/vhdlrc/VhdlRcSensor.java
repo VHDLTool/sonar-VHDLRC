@@ -26,7 +26,7 @@ import com.linty.sonar.plugins.vhdlrc.issues.ReportXmlParser;
 
 public class VhdlRcSensor implements Sensor{
   public static final String SCANNER_HOME_KEY ="sonar.vhdlrc.scanner.home";
-	public static final String REPORTING_PATH = "rc/ws/project/log/reporting/rule";
+	public static final String REPORTING_PATH = "rc/ws/project/log/rule_checker/reporting/rule";
 	private static final Logger LOG = Loggers.get(VhdlRcSensor.class);
 	
 	@Override
