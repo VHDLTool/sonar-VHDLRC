@@ -46,7 +46,7 @@ public class ExternalReportProvider {
 					){
 				paths.forEach(reports::add);
 			} catch (IOException e) {
-				LOG.error("Unable to get xml reports, check path : {}",reportsDir,e);
+				LOG.error("Unable to get xml reports, check path : {}",reportsDir);
 				if(LOG.isDebugEnabled()) {
 					LOG.debug("{}",e);
 				}
