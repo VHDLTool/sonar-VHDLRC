@@ -22,9 +22,7 @@ public class Vhdl extends AbstractLanguage {
 
   public static final String DEFAULT_FILE_SUFFIXES = ".vhdl,.vhd";
 
-
   private final Configuration config;
-
 
   public Vhdl(Configuration config) {
     super(KEY, NAME);

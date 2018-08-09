@@ -32,9 +32,10 @@ public class VHDLRcPlugin implements Plugin {
 	      VhdlRcProfile.class,
 	      VhdlRcSensor.class
 	      );
-	    builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
+	    builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)//TODO:set this property as a multi values properties
 	      .defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
 	      .name("File suffixes")
+	      .multiValues(true)
 	      .description("Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.")
 	      .subCategory("General")
 	      .onQualifiers(Qualifiers.PROJECT)
