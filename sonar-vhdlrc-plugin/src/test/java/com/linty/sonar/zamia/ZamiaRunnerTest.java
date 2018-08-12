@@ -8,7 +8,7 @@ public class ZamiaRunnerTest {
 
   @Test
   public void test() {
-
+   
   }
 
 }

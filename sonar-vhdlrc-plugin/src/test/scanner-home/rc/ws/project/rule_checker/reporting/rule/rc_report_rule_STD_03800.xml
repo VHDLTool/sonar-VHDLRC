@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>5.0.1.201712191528</rc:RuleCheckerVersion>
+  <rc:RuleName>STD_03800</rc:RuleName>
+  <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./I2C/file3.vhd</rc:File>
+    <rc:Line>1</rc:Line>
+    <rc:Entity>I2C_SLAVE</rc:Entity>
+    <rc:Architecture>BEHAVIORAL</rc:Architecture>
+    <rc:STD_03800>
+      <rc:Register>DIR_SDA</rc:Register>
+      <rc:Clock>I_CLK</rc:Clock>
+      <rc:Process>DIR_SDA</rc:Process>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>Synchronous DIR_SDA signal not asynchronously reset</rc:SonarError>
+        <rc:SonarRemediationMsg>Initialize DIR_SDA signal with a reset</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03800>
+  </rc:RuleFailure>
+</rc:ReportRule>

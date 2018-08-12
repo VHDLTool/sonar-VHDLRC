@@ -23,6 +23,7 @@ import org.sonar.api.utils.log.Loggers;
 import com.linty.sonar.plugins.vhdlrc.issues.ExternalReportProvider;
 import com.linty.sonar.plugins.vhdlrc.issues.Issue;
 import com.linty.sonar.plugins.vhdlrc.issues.ReportXmlParser;
+import com.linty.sonar.zamia.ZamiaRunner;
 
 public class VhdlRcSensor implements Sensor{
   public static final String SCANNER_HOME_KEY ="sonar.vhdlrc.scanner.home";
@@ -40,6 +41,7 @@ public class VhdlRcSensor implements Sensor{
 
 	@Override
 	public void execute(SensorContext context) {
+	  ZamiaRunner.run(context);
 		Path reportsDir = Paths
 		  .get(context.config()
 		    .get(SCANNER_HOME_KEY)
