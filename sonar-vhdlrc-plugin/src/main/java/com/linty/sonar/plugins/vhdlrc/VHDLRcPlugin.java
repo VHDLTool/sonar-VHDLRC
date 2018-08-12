@@ -13,12 +13,13 @@ import org.sonar.api.utils.Version;
 
 import com.google.common.collect.ImmutableList;
 import com.linty.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
+import com.linty.sonar.zamia.BuildPathMaker;
 
 
 public class VHDLRcPlugin implements Plugin {
 
  public static final Version SQ_6_7 = Version.create(6, 7);
- private static final String VHDL_RULECHEKER_CATEGORY = "VHDL RuleChecker";
+ private static final String VHDL_RULECHEKER_SUBCATEGORY = "VHDL RuleChecker";
 	
  @Override 
  public void define(Context context) {
@@ -42,17 +43,27 @@ public class VHDLRcPlugin implements Plugin {
 	      .build());
 	    builder.add(PropertyDefinition.builder(VhdlRulesDefinition.HANDBOOK_PATH_KEY)
 	      .category(Vhdl.NAME)
-	      .subCategory(VHDL_RULECHEKER_CATEGORY)
+	      .subCategory(VHDL_RULECHEKER_SUBCATEGORY)
 	      .name("Handbook Path")
 	      .description(VhdlRulesDefinition.HANDBOOK_PATH_DESC)
 	      .build());
 	    builder.add(PropertyDefinition.builder(VhdlRcSensor.SCANNER_HOME_KEY)
 	      .category(Vhdl.NAME)
-	      .subCategory(VHDL_RULECHEKER_CATEGORY)
+	      .subCategory(VHDL_RULECHEKER_SUBCATEGORY)
 	      .name("RuleChecker Path")
 	      .hidden()
-	      .build()
-	      );
+	      .build());
+	    builder.add(PropertyDefinition.builder(BuildPathMaker.TOP_ENTITY_KEY)
+	      .category(Vhdl.NAME)
+        .subCategory("General")
+        .name("Top Entities")
+        .description("Toplevel Entities (each toplevel will be elaborated automatically)\r\n" + 
+          "format: [ <LIBRARY> '.' ] <ENTITY [ '(' <ARCHITECTURE> ')' ]\r\n" + 
+          "Example: WORK.MY_ENTITY(RTL)")
+        .multiValues(true)
+        .defaultValue(BuildPathMaker.DEFAULT_ENTITY)
+        .onQualifiers(Qualifiers.MODULE)
+        .build());
 //    context.addExtensions(VHDLToolConfiguration.getPropertyDefinitions());
 //    context.addExtensions(Arrays.asList(
 //            VHDLToolProfile.class,
