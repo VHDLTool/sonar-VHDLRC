@@ -65,6 +65,4 @@
 # specify one or more toplevel(s) (each toplevel will be elaborated automatically)
 # format: [ <LIBRARY> '.' ] <ENTITY [ '(' <ARCHITECTURE> ')' ]
 # toplevel WORK.LEON3MP(RTL)
-# toplevel WORK.TOP
-
-
+# toplevel WORK.TOP 
