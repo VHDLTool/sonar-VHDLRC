@@ -1,7 +1,6 @@
 package com.linty.sonar.zamia;
 
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,7 +18,6 @@ public class BuildPathMaker {
   public static final String DEFAULT_ENTITY = "WORK.TOP";
   private static final String BUID_PATH_NAME = ZamiaRunner.BUILD_PATH_TXT;
   private final Configuration config;
-  private boolean result = false;
   
   private static final Logger LOG = Loggers.get(BuildPathMaker.class);
   
@@ -35,13 +33,10 @@ public class BuildPathMaker {
       Path source = ZamiaRunner.get("/virgin_conf/" + BUID_PATH_NAME );
       Path targetDir = ZamiaRunner.get("/computed_conf/"); 
       Path target = Files.copy(source, targetDir.resolve(source.getFileName()),StandardCopyOption.REPLACE_EXISTING);
-      System.out.println("1"+target);//TODO
       appendTopEntities(target);     
   }
 
   private void appendTopEntities(Path target) throws IOException { 
-    
-    System.out.println("2"+target);//TODO
     StringBuilder builder = new StringBuilder();
     for(String entity : VhdlRcSensor.getTopEntities(this.config)) {
       builder
@@ -49,20 +44,10 @@ public class BuildPathMaker {
       .append(entity.toUpperCase())
       .append("\r\n");
     }
-    System.out.println(builder.toString());
     Files.write(target, builder.toString().getBytes(UTF_8), StandardOpenOption.APPEND);
   }
   
-  public static void printFile(Path target) throws IOException {
-    try(BufferedReader reader = Files.newBufferedReader(target,UTF_8)){
-      String line;
-      int lineNumber = 1;
-      while((line = reader.readLine()) != null) {        
-        System.out.println(lineNumber + ":" + line);
-        lineNumber++;
-      }
-    }
-  }
+  
  
 
 }

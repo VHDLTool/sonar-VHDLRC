@@ -24,8 +24,6 @@ public class BuildPathMakerTest {
     settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "work.my_entity(rtl)");
     BuildPathMaker.build(settings.asConfig());
     Path ComputedBuidPath = Paths.get(BuildPathMakerTest.class.getResource("/computed_conf/BuildPath.txt").toURI());    
-    System.out.println("looking in " + ComputedBuidPath);
-    BuildPathMaker.printFile(ComputedBuidPath);
     assertThat(Files.exists(ComputedBuidPath)).isTrue();
     assertThat(Files.isWritable(ComputedBuidPath)).isTrue();
     assertThat(getLineOf(ComputedBuidPath,69)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
@@ -37,8 +35,6 @@ public class BuildPathMakerTest {
       settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "top, top1(rtl), work.my_entity(rtl)");
       BuildPathMaker.build(settings.asConfig());
       Path ComputedBuidPath = Paths.get(BuildPathMakerTest.class.getResource("/computed_conf/BuildPath.txt").toURI());    
-      System.out.println("looking in " + ComputedBuidPath);
-      BuildPathMaker.printFile(ComputedBuidPath);
       assertThat(Files.exists(ComputedBuidPath)).isTrue();
       assertThat(Files.isWritable(ComputedBuidPath)).isTrue();
       assertThat(getLineOf(ComputedBuidPath,69)).isEqualTo("toplevel TOP");

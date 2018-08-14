@@ -97,22 +97,13 @@ public class ZamiaRunner {
     // TODO Auto-generated method stub 
     LOG.info("--Running analysis (done)");
   }
-
- public void testing() {
-    LOG.info("\n---------------ZamiaRunner getRessource(/virgin_cong/buildPath)----------------------------\n" 
-      + ZamiaRunner.class.getResource("/virgin_conf/BuildPath.txt").getPath()
-      + "\n lenght of File :" 
-      + ZamiaRunner.class.getResource("/virgin_conf/BuildPath.txt").getFile().length()
-      + "\n----------------------------------------------------------------------\n");
-  }
  
  public static Path get(String resource) {
    try {
      return Paths.get(ZamiaRunner.class.getResource(resource).toURI());
    } catch (URISyntaxException e) {
-     new IllegalStateException("Erro when accessing" + resource, e);
+     throw new IllegalStateException("Erro when accessing" + resource, e);
    }
-   return null;
  } 
 
 }
