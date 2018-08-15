@@ -57,8 +57,8 @@ public class VHDLRcPlugin implements Plugin {
 	      .category(Vhdl.NAME)
         .subCategory("General")
         .name("Top Entities")
-        .description("Toplevel Entities (each toplevel will be elaborated automatically)\r\n" + 
-          "format:  LIBRARY.ENTITY(ARCHITECTURE) \r\n" +
+        .description("Toplevel Entities (each toplevel will be elaborated automatically) " + 
+          "\r\nFormat:  LIBRARY.ENTITY(ARCHITECTURE) \r\n" +
           "Example: WORK.MY_ENTITY(RTL)")
         .multiValues(true)
         .defaultValue(BuildPathMaker.DEFAULT_ENTITY)
