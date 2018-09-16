@@ -6,12 +6,16 @@ package com.linty.sonar.plugins.vhdlrc.rules;
 
 import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
 import org.apache.commons.lang.StringUtils;
+import org.fest.util.Strings;
 
 public class Rule {
 	
 	String ruleKey;
 	String name;
-	  
+	
+	  String parentUid;
+	  String technology;
+	  String applicationFields;
     String category;
     String subCategoty; 
     String rationale;
@@ -37,7 +41,10 @@ public class Rule {
     private static final String EMPTY_STRING="";
      
     public Rule(){
-    	this.name=             EMPTY_STRING;  	  
+    	  this.name=             EMPTY_STRING;
+    	  this.parentUid=        EMPTY_STRING;
+    	  this.technology=       EMPTY_STRING;
+    	  this.applicationFields=EMPTY_STRING;
         this.category=         EMPTY_STRING;
         this.remediationEffort=EMPTY_STRING;
         this.sonarSeverity=    EMPTY_STRING;
@@ -74,11 +81,15 @@ public class Rule {
     	StringBuilder text = new StringBuilder();    	
     	text
     	.append("<div>")
-    	.append("<b>Category : </b>")
-    	.append(this.category)
-    	.append("&nbsp; &nbsp; ")
-    	.append("<b>SubCategory : </b>")
-    	.append(this.subCategoty)
+    	
+    	.append("<b>Category : </b>").append(this.category).append("&nbsp; &nbsp; ")
+    	.append("<b>SubCategory : </b>").append(this.subCategoty).append("&nbsp; &nbsp; ")
+    	.append("<b>Application Fields : </b>").append(this.applicationFields).append("&nbsp; &nbsp; ")
+      .append("<b>Technology : </b>").append(this.technology).append("&nbsp; &nbsp; ");
+    	if(!StringUtils.isEmpty(this.parentUid)) {
+    	  text.append("<b>Parent Rule : </b>").append(this.parentUid).append("&nbsp; &nbsp; ");
+    	}
+    	text
     	.append("</div>")
     	.append("<br>\n");
     	return String.valueOf(text);
@@ -88,12 +99,14 @@ public class Rule {
     	 StringBuilder desc = new StringBuilder();    	 
     	 desc
     	 .append("<div>")
-    	 .append("<h1><b>Descritpion</b></h1>")
+    	 .append("<h1><b>Short Description</b></h1>")
     	 .append("<p>")
     	 .append(formatToHtml(this.shortDescription));
     	 
     	 if(! "No additional information.".equals(this.longDescription)){
-    		 desc.append("<br>").append(formatToHtml(this.longDescription));
+    		 desc
+    		 .append("<h1><b>Description</b></h1>")
+    		 .append("<br>").append(formatToHtml(this.longDescription));
     	 }
     	 desc.append("</p></div>\n");
     	 return String.valueOf(desc);
@@ -108,7 +121,7 @@ public class Rule {
     	.append(formatToHtml(this.rationale))
     	.append("</p>")
     	.append("</div>\n");
-    	return String.valueOf(rationale);
+    	return String.valueOf(rt);
     }
     
     private String theExamplesSection() {
@@ -142,14 +155,24 @@ public class Rule {
     		this.figure.loadOriginialDim();
     		s
     		.append("<div>")
+    		
+    		.append("\n<div>")
+        .append("<p><font size=1 color=\"grey\">")  
+        .append(this.figureDesc)
+        .append("</font></p>")
+        .append("</div>\n")
+        
     		.append(buildSvgHeader(figure.width,figure.height,figure.originalWidth(),figure.originalHeight()))
     		.append("\n"+this.figure.figureCode)
     		.append("</svg>")
+    		
     		.append("\n<div>")
     		.append("<p><font size=1 color=\"grey\">") 	
-    		.append(this.figureDesc)
+    		.append("Extracted from ")
+    		.append(this.figure.figureRef)
     		.append("</font></p>")
     		.append("</div>\n")
+    		
     		.append("</div>\n");
     	}
     	return String.valueOf(s);

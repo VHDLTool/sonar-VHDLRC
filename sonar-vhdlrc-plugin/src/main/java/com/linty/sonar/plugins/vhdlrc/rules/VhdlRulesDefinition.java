@@ -114,7 +114,8 @@ public class VhdlRulesDefinition implements RulesDefinition {
 		.setDebtRemediationFunction(nr.debtRemediationFunctions().constantPerIssue(DEBT_MAP.getOrDefault(r.remediationEffort,DEBT_MAP.get("easy"))))
 		;
 		addTags(nr,r.tag);
-		addTags(nr,r.category);				
+		addTags(nr,r.category);
+		addTags(nr,r.subCategoty);
 	}
 
 	private void addTags(NewRule nr, String tag) {

@@ -12,10 +12,12 @@ public class RuleTest {
 	@Test
 	public void test_rule_values() {
 		Rule r = new Rule();
-		r.name=             "A rule name";       
+		    r.name=             "A rule name";       
         r.remediationEffort="Easy";
         r.sonarSeverity=    "Major";
         r.type=             "Code_Smell";
+        r.applicationFields="General";
+        r.parentUid=        "STD_00800";
         r.category=         "Traceability";
         r.subCategoty=      "Naming";    
         r.rationale=        "Labels improve readability of simulations, VHDL source code and synthesis logs.";
@@ -27,9 +29,27 @@ public class RuleTest {
         r.badExDesc=        "Extracted from STD_00400_bad.vhd";
         r.badExampleRef=    "STD_00400_bad";       
         
-        assertThat(r.figureDesc).isNotNull();
-        
+        assertThat(r.figureDesc).isNotNull();       
         String htmlDesc = r.buildHtmlDescritpion();
+        assertThat(htmlDesc).contains("Category :");
+        assertThat(htmlDesc).contains("SubCategory :");
+        assertThat(htmlDesc).contains("Technology :");
+        assertThat(htmlDesc).contains("Application Fields :");
+        assertThat(htmlDesc).contains("Parent Rule :");
+        assertThat(htmlDesc).contains("Short Description");
+        assertThat(htmlDesc).contains("Description");
+        assertThat(htmlDesc).contains("Rational");
+        
+        System.out.println(htmlDesc);
+	}
+	
+	@Test
+	public void test_no_parent_rule_should_not_be_displayed() {
+	  Rule r = new Rule();
+	  r.name= "rule with no parent rule";
+	  String htmlDesc = r.buildHtmlDescritpion();
+	  assertThat(htmlDesc).doesNotContain("Parend Rule :");
+	  //System.out.println(htmlDesc);
 	}
 	
 	@Test
@@ -66,8 +86,9 @@ public class RuleTest {
         r.goodExampleCode=  "";
         r.badExDesc=        "Extracted from STD_00400_bad.vhd";
         r.badExampleRef=    "STD_00400_bad";  
-        r.badExampleCode=   "code code code";
+        r.badExampleCode=   "code code code";     
         r.figure = new FigureSvg();
+        r.figure.figureRef="STD_04200.svg";
         r.figure.figureCode="< image>";
         r.figureDesc="this is a figure";
         
@@ -75,6 +96,7 @@ public class RuleTest {
         assertThat(r.figure.height).isEqualTo("300");
         assertThat(r.figure.figureCode).isNotNull();
         String htmlDesc = r.buildHtmlDescritpion();
+        //System.out.print(htmlDesc);
 	}
 	
 	

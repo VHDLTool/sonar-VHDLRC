@@ -94,9 +94,8 @@ public class VhdlRcSensor implements Sensor {
 	
 	
 	 public static String[] getTopEntities(Configuration config ) {
-	    String[] topEntities = Arrays.stream(config.getStringArray(BuildPathMaker.TOP_ENTITY_KEY))
+	    return Arrays.stream(config.getStringArray(BuildPathMaker.TOP_ENTITY_KEY))
 	      .filter(s -> s != null && !s.trim().isEmpty()).toArray(String[]::new);   
-	    return topEntities;
 	  }
 
 }

@@ -39,7 +39,6 @@ public class HandbookXmlParser {
 			"IsSon",
 			"Severity",
 			"Technology",
-			"ApplicationFields",
 			"ParentUID"
 			);
 	private SMFilter filter = new IgnoreSomeRuleElements();
