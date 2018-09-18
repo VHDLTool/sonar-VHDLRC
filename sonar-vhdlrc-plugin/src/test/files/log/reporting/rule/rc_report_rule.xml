@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
 <rc:ruleReporting xmlns:rc="RULECHECKER">
   <rc:ruleCheckerVersion>5.0.1.201712191528</rc:ruleCheckerVersion>
   <rc:executionDate>Wed Jul 25 14:59:03 CEST 2018</rc:executionDate>

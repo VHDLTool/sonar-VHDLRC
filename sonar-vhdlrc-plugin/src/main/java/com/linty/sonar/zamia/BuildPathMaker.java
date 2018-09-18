@@ -1,5 +1,6 @@
 package com.linty.sonar.zamia;
 
+
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import java.io.IOException;
 import java.nio.file.Files;

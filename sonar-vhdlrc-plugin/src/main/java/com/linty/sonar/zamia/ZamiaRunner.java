@@ -1,5 +1,6 @@
 package com.linty.sonar.zamia;
 
+
 import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -9,33 +10,6 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-/*VLSI project structure that must be respected in ZamiaCad. 
- * {SCANNER_HOME}
- *  :
- *  |__rc
- *     |__ws 
- *        |__project
- *           |   .project
- *           |   BuildPath.txt
- *           |
- *           |__[BP External Source]...
- *           |  
- *           |__rule_checker
- *           |  |   rc_config.txt                (Fixed)
- *           |  |   rc_config.xml                (Fixed)
- *           |  |   rc_config_selected_rules.xml 
- *           |  |   rc_config_selected_tools.xml (fixed)
- *           |  |   rc_handbook_parameters.xml
- *           |  |
- *           |  |__hb_vhdlrc
- *           |  |   handbook_STD.xml
- *           |  |
- *           |  |__reporting...
- *           |
- *           |__vhdl
- *              |   xxx.vhd
- *              :   ...
- * */
 
 public class ZamiaRunner {
   

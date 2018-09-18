@@ -1,8 +1,6 @@
-/**
- * CopyRight(c) this is a temporary header
- * Must be updated
- */
+
 package com.linty.sonar.plugins.vhdlrc.rules;
+
 
 import org.apache.commons.lang.StringUtils;
 import org.sonar.api.utils.log.Logger;

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
 <rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <rc:RuleCheckerVersion>5.0.1.201712191528</rc:RuleCheckerVersion>
   <rc:RuleName>STD_05000</rc:RuleName>

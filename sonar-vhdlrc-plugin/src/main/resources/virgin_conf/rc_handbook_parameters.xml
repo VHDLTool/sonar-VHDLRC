@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 
+
 <hb:handbook_parameters xmlns:hb="HANDBOOK">
 	<hb:description>Handbook rules may rely on existing generic rules. A
 		generic rule is composed of an algorithm and some generic parameters.

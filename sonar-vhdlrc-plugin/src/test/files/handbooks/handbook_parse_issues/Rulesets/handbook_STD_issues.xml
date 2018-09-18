@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <hb:RuleSet xmlns:hb="HANDBOOK"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="HANDBOOK ../XSD/handbook.xsd ">
@@ -214,7 +215,7 @@ The extension ".vhdl" is not permitted.</hb:LongDesc>
 			<hb:SonarType>Code_Smell</hb:SonarType>
 			<hb:SonarSeverity>Blocker</hb:SonarSeverity>
 			<hb:RemediationEffort>Easy</hb:RemediationEffort>
-			<hb:SonarTag>_trÃ¨sMauvaisTagÃ©2e</hb:SonarTag>
+			<hb:SonarTag>_trèsMauvaisTagé2e</hb:SonarTag>
 		</hb:Sonarqube>
 		<hb:RuleDesc>
 			<hb:GoodExDesc>Extracted from STD_00200_good.vhd</hb:GoodExDesc>
@@ -324,7 +325,7 @@ If several reset signals are used, each reset is identified with a different nam
 			<hb:ParentUID>STD_00100</hb:ParentUID>
 			<hb:Technology>VLSI</hb:Technology>
 			<hb:ApplicationFields>General</hb:ApplicationFields>
-			<hb:Category>badÃ©-"_oÃ¨fyu</hb:Category>
+			<hb:Category>badé-"_oèfyu</hb:Category>
 			<hb:SubCategory>Naming</hb:SubCategory>
 			<hb:Severity>Minor</hb:Severity>
 			<hb:Rationale>Labels improve readability of simulations, VHDL source code and synthesis logs.</hb:Rationale>

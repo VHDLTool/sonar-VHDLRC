@@ -13,6 +13,9 @@
   <version>1.4-SNAPSHOT</version>
   <packaging>sonar-plugin</packaging>
   <name>SonarQube VHDL Rulechecker Plugin</name>
+   <organization>
+    <name>na</name>
+  </organization>
   <url>http://maven.apache.org</url>
 
  <dependencies>
@@ -70,32 +73,30 @@
     <plugins>
 	    <!-- License information -->
     <plugin>
-     <groupId>com.mycila.maven-license-plugin</groupId>
-     <artifactId>maven-license-plugin</artifactId>
-     <version>1.10.b1</version>
-     <configuration>
-      <header>license_header.txt</header>
-      <includes>
-       <include>src/main/java/**</include>
-       <include>src/test/java/**</include>
-      </includes>
-     </configuration>
-     <executions>
-      <execution>
-       <goals>
-        <goal>format</goal>
-       </goals>
-       <phase>process-sources</phase>
-      </execution>
-     </executions>
-     <dependencies>
-      <dependency>
-       <groupId>com.mycila</groupId>
-       <artifactId>licenses</artifactId>
-       <version>1</version>
-      </dependency>
-     </dependencies>
-    </plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>license-maven-plugin</artifactId>
+    <version>1.16</version>
+    <configuration>
+        <licenseName>license</licenseName>
+        <licenseResolver>${project.baseUri}</licenseResolver>
+    </configuration>
+    <executions>
+        <execution>
+            <id>first</id>
+            <goals>
+                <goal>update-file-header</goal>
+            </goals>
+            <phase>process-sources</phase>
+			 <configuration>
+              <licenseName>lgpl_v3</licenseName>
+              <includes>
+                <include>src/main/java/*</include>
+                <include>src/test/java/*</include>
+              </includes>
+            </configuration>
+        </execution>
+    </executions>
+     </plugin>
       <plugin>     
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>

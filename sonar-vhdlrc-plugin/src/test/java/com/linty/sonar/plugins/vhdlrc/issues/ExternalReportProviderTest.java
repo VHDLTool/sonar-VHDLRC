@@ -1,7 +1,4 @@
-/**
- * CopyRight(c) this is a temporary header
- * Must be updated
- */
+
 package com.linty.sonar.plugins.vhdlrc.issues;
 
 import static org.assertj.core.api.Assertions.assertThat;

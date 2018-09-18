@@ -1,8 +1,6 @@
-/**
- * CopyRight(c) this is a temporary header
- * Must be updated
- */
+
 package com.linty.sonar.plugins.vhdlrc.utils;
+
 
 import java.io.File;
 import org.sonar.api.platform.ServerFileSystem;

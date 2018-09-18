@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
 <coverage version="1">
   <file path="./I2C/aiguillage.vhd">
     <lineToCover covered="false" lineNumber="42" rule="STD_01800"/>

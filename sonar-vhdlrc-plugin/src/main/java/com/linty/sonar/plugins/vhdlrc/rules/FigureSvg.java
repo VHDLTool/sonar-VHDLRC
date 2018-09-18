@@ -1,8 +1,6 @@
-/**
- * CopyRight(c) this is a temporary header
- * Must be updated
- */
+
 package com.linty.sonar.plugins.vhdlrc.rules;
+
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

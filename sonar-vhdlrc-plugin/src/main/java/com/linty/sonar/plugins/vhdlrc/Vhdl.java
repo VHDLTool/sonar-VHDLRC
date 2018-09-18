@@ -1,8 +1,6 @@
-/**
- * CopyRight(c) this is a temporary header
- * Must be updated
- */
+
 package com.linty.sonar.plugins.vhdlrc;
+
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;

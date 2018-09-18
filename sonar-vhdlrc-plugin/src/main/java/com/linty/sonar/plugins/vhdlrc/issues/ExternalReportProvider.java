@@ -1,8 +1,6 @@
-/**
- * CopyRight(c) this is a temporary header
- * Must be updated
- */
+
 package com.linty.sonar.plugins.vhdlrc.issues;
+
 
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;

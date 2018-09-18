@@ -1,8 +1,6 @@
-/**
- * CopyRight(c) this is a temporary header
- * Must be updated
- */
+
 package com.linty.sonar.plugins.vhdlrc;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;

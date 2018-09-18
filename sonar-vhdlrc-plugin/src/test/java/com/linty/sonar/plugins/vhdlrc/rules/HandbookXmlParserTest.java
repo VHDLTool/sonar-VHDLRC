@@ -1,8 +1,6 @@
-/**
- * CopyRight(c) this is a temporary header
- * Must be updated
- */
+
 package com.linty.sonar.plugins.vhdlrc.rules;
+
 
 import java.io.File;
 import com.linty.sonar.plugins.vhdlrc.rules.HandbookXmlParser;
