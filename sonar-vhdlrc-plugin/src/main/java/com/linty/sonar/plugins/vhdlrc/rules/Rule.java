@@ -6,7 +6,6 @@ package com.linty.sonar.plugins.vhdlrc.rules;
 
 import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
 import org.apache.commons.lang.StringUtils;
-import org.fest.util.Strings;
 
 public class Rule {
 	
@@ -78,16 +77,17 @@ public class Rule {
       
     
     private String theCategorySection() {
-    	StringBuilder text = new StringBuilder();    	
+    	StringBuilder text = new StringBuilder(); 
+    	final String SPACE = "&nbsp; &nbsp; ";
     	text
     	.append("<div>")
     	
-    	.append("<b>Category : </b>").append(this.category).append("&nbsp; &nbsp; ")
-    	.append("<b>SubCategory : </b>").append(this.subCategoty).append("&nbsp; &nbsp; ")
-    	.append("<b>Application Fields : </b>").append(this.applicationFields).append("&nbsp; &nbsp; ")
-      .append("<b>Technology : </b>").append(this.technology).append("&nbsp; &nbsp; ");
+    	.append("<b>Category : </b>").append(this.category).append(SPACE)
+    	.append("<b>SubCategory : </b>").append(this.subCategoty).append(SPACE)
+    	.append("<b>Application Fields : </b>").append(this.applicationFields).append(SPACE)
+      .append("<b>Technology : </b>").append(this.technology).append(SPACE);
     	if(!StringUtils.isEmpty(this.parentUid)) {
-    	  text.append("<b>Parent Rule : </b>").append(this.parentUid).append("&nbsp; &nbsp; ");
+    	  text.append("<b>Parent Rule : </b>").append(this.parentUid).append(SPACE);
     	}
     	text
     	.append("</div>")

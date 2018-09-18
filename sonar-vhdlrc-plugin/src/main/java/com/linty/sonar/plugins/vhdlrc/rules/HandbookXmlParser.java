@@ -37,9 +37,7 @@ public class HandbookXmlParser {
 			"RuleHist",
 			"IsParent",
 			"IsSon",
-			"Severity",
-			"Technology",
-			"ParentUID"
+			"Severity"
 			);
 	private SMFilter filter = new IgnoreSomeRuleElements();
 	
@@ -125,6 +123,15 @@ public class HandbookXmlParser {
 			case "Name":
 				r.name = cursor.getElemStringValue();
 				break;
+			case "ParentUID":
+			  r.parentUid = cursor.getElemStringValue();
+			  break;
+			case "Technology":
+        r.technology = cursor.getElemStringValue();
+        break;
+			case "ApplicationFields":
+        r.applicationFields = cursor.getElemStringValue();
+        break;
 			case "Category":
 				r.category = cursor.getElemStringValue();
 				break;
