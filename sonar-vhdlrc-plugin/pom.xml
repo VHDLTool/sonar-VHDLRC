@@ -71,32 +71,6 @@
 
    <build>
     <plugins>
-	    <!-- License information -->
-    <plugin>
-    <groupId>org.codehaus.mojo</groupId>
-    <artifactId>license-maven-plugin</artifactId>
-    <version>1.16</version>
-    <configuration>
-        <licenseName>license</licenseName>
-        <licenseResolver>${project.baseUri}</licenseResolver>
-    </configuration>
-    <executions>
-        <execution>
-            <id>first</id>
-            <goals>
-                <goal>update-file-header</goal>
-            </goals>
-            <phase>process-sources</phase>
-			 <configuration>
-              <licenseName>lgpl_v3</licenseName>
-              <includes>
-                <include>src/main/java/*</include>
-                <include>src/test/java/*</include>
-              </includes>
-            </configuration>
-        </execution>
-    </executions>
-     </plugin>
       <plugin>     
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
