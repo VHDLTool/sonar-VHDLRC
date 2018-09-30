@@ -77,7 +77,7 @@ public class VHDLRcPlugin implements Plugin {
           "Example: WORK.MY_ENTITY(RTL)")
         .multiValues(true)
         .defaultValue(BuildPathMaker.DEFAULT_ENTITY)
-        .onQualifiers(Qualifiers.MODULE)//TODO: set it to project level instead of module level
+        .onQualifiers(Qualifiers.PROJECT)
         .build());
 //    context.addExtensions(VHDLToolConfiguration.getPropertyDefinitions());
 //    context.addExtensions(Arrays.asList(
