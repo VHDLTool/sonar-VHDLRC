@@ -22,6 +22,7 @@ import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -48,8 +49,8 @@ public class BuildPathMaker {
   }
 
   private void build() throws IOException { 
-      Path source = ZamiaRunner.get("/virgin_conf/" + BUID_PATH_NAME );
-      Path targetDir = ZamiaRunner.get("/computed_conf/"); 
+      Path source = ZamiaRunner.get(Paths.get(ZamiaRunner.VIRGIN_CONF, BUID_PATH_NAME).toString());
+      Path targetDir = ZamiaRunner.get(ZamiaRunner.COMPUTED_CONF); 
       Path target = Files.copy(source, targetDir.resolve(source.getFileName()),StandardCopyOption.REPLACE_EXISTING);
       appendTopEntities(target);     
   }

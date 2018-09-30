@@ -19,10 +19,13 @@ package com.linty.sonar.zamia;
 
 
 import com.google.common.annotations.VisibleForTesting;
+import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -30,24 +33,32 @@ import org.sonar.api.utils.log.Loggers;
 
 public class ZamiaRunner {
   
-  private static final String                  PROJECT_DIR = "rc/ws/project";
+  public static final String                  PROJECT_DIR = "rc/ws/project";
   
-  public static final String               BUILD_PATH_TXT = "BuildPath.txt";
-  private static final String                  SOURCES_DIR = "vhdl";
-  private static final String                  CONFIG_DIR  = "rule_checker";
+  public static final String                BUILD_PATH_TXT = "BuildPath.txt";
+  public static final String                  SOURCES_DIR = "vhdl";
+  public static final String                  CONFIG_DIR  = "rule_checker";
   
-  private static final String             HANDBOOK_STD_XML = "hb_vhdlrc/handbook_STD.xml";
-  private static final String RC_CONFIG_SELECTED_RULES_XML = "rc_config_selected_rules.xml";
-  private static final String       RC_HANDBOOK_PARAMETERS = "rc_handbook_parameters.xml";
+  public static final String             HANDBOOK_STD_XML = "hb_vhdlrc/handbook_STD.xml";
+  public static final String RC_CONFIG_SELECTED_RULES_XML = "rc_config_selected_rules.xml";
+  public static final String       RC_HANDBOOK_PARAMETERS = "rc_handbook_parameters.xml";
+  
+  public static final String                COMPUTED_CONF = "computed_conf";
+  public static final String                  VIRGIN_CONF = "virgin_conf";
   
   private static final String WIN_RC_CMD = "eclipsec.exe -nosplash -application org.zamia.plugin.Check";
   private static final String UNIX_RC_CMD = "eclipse -nosplash -application org.zamia.plugin.Check";
   
+  
   private final SensorContext context;
+  private final String scannerHome;
   private static final Logger LOG = Loggers.get(ZamiaRunner.class);
   
   public ZamiaRunner(SensorContext context) {
     this.context = context;
+    this.scannerHome = this.context.config()
+      .get(VhdlRcSensor.SCANNER_HOME_KEY)
+      .orElseThrow(() -> new IllegalStateException("vhdlRcSensor should not execute without " + VhdlRcSensor.SCANNER_HOME_KEY));
   }
   
   public static void run(SensorContext context) {
@@ -73,7 +84,18 @@ public class ZamiaRunner {
   @VisibleForTesting
   protected void uploadConfigToZamia() {
     LOG.info("--Load configuration");
-    // TODO Auto-generated method stub  
+    //Resolving source configuration file paths 
+    Path buildPath = ZamiaRunner.get(Paths.get(COMPUTED_CONF, BUILD_PATH_TXT).toString());
+    
+    //Resolving destination paths
+    Path buildPathTarget = Paths.get(this.scannerHome, PROJECT_DIR, BUILD_PATH_TXT);  
+    
+    //Copying config files to scanner zamia project
+    try {
+      Files.copy(buildPath, buildPathTarget, StandardCopyOption.REPLACE_EXISTING);
+    } catch (IOException e) {
+      LOG.error("unable to upload configuration files to scanner",e);
+    }
     LOG.info("--Load configuration (done)");
   }
   
@@ -91,9 +113,9 @@ public class ZamiaRunner {
  
  public static Path get(String resource) {
    try {
-     return Paths.get(ZamiaRunner.class.getResource(resource).toURI());
-   } catch (URISyntaxException e) {
-     throw new IllegalStateException("Erro when accessing" + resource, e);
+     return Paths.get(ZamiaRunner.class.getResource("/" + resource).toURI());
+   } catch (URISyntaxException | NullPointerException e) {
+     throw new IllegalStateException("Error trying to access " + resource, e);
    }
  } 
 
