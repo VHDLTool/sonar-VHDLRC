@@ -5,7 +5,7 @@
   <rc:RuleName>STD_03800</rc:RuleName>
   <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
   <rc:RuleFailure>
-    <rc:File>./I2C/file3.vhd</rc:File>
+    <rc:File>./vhdl/I2C/file3.vhd</rc:File>
     <rc:Line>1</rc:Line>
     <rc:Entity>I2C_SLAVE</rc:Entity>
     <rc:Architecture>BEHAVIORAL</rc:Architecture>

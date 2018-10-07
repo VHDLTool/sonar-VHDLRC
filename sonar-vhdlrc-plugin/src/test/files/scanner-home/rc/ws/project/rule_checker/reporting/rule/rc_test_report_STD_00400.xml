@@ -5,7 +5,7 @@
   <rc:RuleName>STD_00400</rc:RuleName>
   <rc:ExecutionDate>2018-07-25T14:59:03</rc:ExecutionDate>
   <rc:RuleFailure>
-    <rc:File>./I2C/file1.vhd</rc:File>
+    <rc:File>./vhdl/I2C/file1.vhd</rc:File>
     <rc:Line>1</rc:Line>
     <rc:Entity>READ_AGENT</rc:Entity>
     <rc:Architecture>BEHAVIORAL</rc:Architecture>
@@ -17,7 +17,7 @@
     </rc:STD_00400>
   </rc:RuleFailure>
   <rc:RuleFailure>
-    <rc:File>./I2C/file3.vhd</rc:File>
+    <rc:File>./vhdl/I2C/file3.vhd</rc:File>
     <rc:Line>2</rc:Line>
     <rc:Entity>TOP</rc:Entity>
     <rc:Architecture>BEHAVIORAL</rc:Architecture>
@@ -29,7 +29,7 @@
     </rc:STD_00400>
   </rc:RuleFailure>
   <rc:RuleFailure>
-    <rc:File>./I2C/Mux/no_file.vhd</rc:File>
+    <rc:File>./vhdl/I2C/Mux/no_file.vhd</rc:File>
     <rc:Line>3</rc:Line>
     <rc:Entity>TOP</rc:Entity>
     <rc:Architecture>BEHAVIORAL</rc:Architecture>

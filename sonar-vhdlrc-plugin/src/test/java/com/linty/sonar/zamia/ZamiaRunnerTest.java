@@ -23,9 +23,13 @@ import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -59,16 +63,18 @@ public class ZamiaRunnerTest {
 
   @Test
   public void test() {
-    SensorContextTester context = createContext();   
+    SensorContextTester context = createContext();
+    ZamiaRunner zamiaRunner = new ZamiaRunner(context);
+    zamiaRunner.run();
   }
   
   @Test
-  public void test_uploading_config() throws IOException, URISyntaxException {
+  public void test_uploading_config() {
     SensorContextTester context = createContext();   
     ZamiaRunner zamiaRunner = new ZamiaRunner(context);
-    zamiaRunner.uploadConfigToZamia();  
+    Path tempBuildPath =  createConfigTempFile("temp");
+    zamiaRunner.uploadConfigToZamia(tempBuildPath);  
     assertThat(new File(project,"BuildPath.txt").exists()).isTrue();
-    
   }
 
 
@@ -78,6 +84,18 @@ public class ZamiaRunnerTest {
         .setProperty(VhdlRcSensor.SCANNER_HOME_KEY, testFolder.getRoot().toString())
         .setProperty(BuildPathMaker.TOP_ENTITY_KEY, "TOP"))
       .setRuntime(SonarRuntimeImpl.forSonarQube(VHDLRcPlugin.SQ_6_7, SonarQubeSide.SCANNER));
+  }
+  
+  
+  public static Path createConfigTempFile(String name) {
+    try {
+      Path tempFile = Files.createTempFile(name, ".tmp");
+      List<String> lines = Arrays.asList("Line1", "Line2");
+      Files.write(tempFile, lines, Charset.defaultCharset(), StandardOpenOption.WRITE);
+      return tempFile;
+    } catch (IOException e) {
+      throw new IllegalStateException("Error in junit trying to generate temp file " + name, e);
+    }
   }
   
 }

@@ -21,7 +21,9 @@ package com.linty.sonar.zamia;
 import com.google.common.annotations.VisibleForTesting;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -68,13 +70,9 @@ public class ZamiaRunner {
   @VisibleForTesting
   protected void run() {
     LOG.info("----------Vhdlrc Analysis---------");
-    try {
-      BuildPathMaker.build(this.context.config());
-      uploadConfigToZamia();
-    } catch (IOException e) {
-      LOG.error("Error when setting Top Entities",e);
-    }
-    
+
+    Path tempBuildPath = BuildPathMaker.make(this.context.config());
+    uploadConfigToZamia(tempBuildPath);    
     //uploadInputFilesToZamia();  
     //runZamia();
   }
@@ -82,17 +80,14 @@ public class ZamiaRunner {
  
 
   @VisibleForTesting
-  protected void uploadConfigToZamia() {
-    LOG.info("--Load configuration");
-    //Resolving source configuration file paths 
-    Path buildPath = ZamiaRunner.get(Paths.get(COMPUTED_CONF, BUILD_PATH_TXT).toString());
-    
-    //Resolving destination paths
-    Path buildPathTarget = Paths.get(this.scannerHome, PROJECT_DIR, BUILD_PATH_TXT);  
-    
-    //Copying config files to scanner zamia project
+  protected void uploadConfigToZamia(Path tempBuildPath) {
+    LOG.info("--Load configuration");  
+    Path buildPathTarget = Paths.get(this.scannerHome, PROJECT_DIR, BUILD_PATH_TXT);
+    if(LOG.isDebugEnabled()) {
+      LOG.info("Load configuration to" + buildPathTarget);
+    }
     try {
-      Files.copy(buildPath, buildPathTarget, StandardCopyOption.REPLACE_EXISTING);
+      Files.copy(tempBuildPath, buildPathTarget, StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
       LOG.error("unable to upload configuration files to scanner",e);
     }
@@ -111,12 +106,9 @@ public class ZamiaRunner {
     LOG.info("--Running analysis (done)");
   }
  
- public static Path get(String resource) {
-   try {
-     return Paths.get(ZamiaRunner.class.getResource("/" + resource).toURI());
-   } catch (URISyntaxException | NullPointerException e) {
-     throw new IllegalStateException("Error trying to access " + resource, e);
+ public static InputStream get(Path resource) {
+     return ZamiaRunner.class.getResourceAsStream(resource.toString());     
+    // throw new IllegalStateException("Error trying to access " + resource, e);
    }
- } 
 
 }

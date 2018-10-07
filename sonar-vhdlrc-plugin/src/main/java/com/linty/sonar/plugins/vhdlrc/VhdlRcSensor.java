@@ -59,13 +59,16 @@ public class VhdlRcSensor implements Sensor {
 
 	@Override
 	public void execute(SensorContext context) {
-// TODO 
-//	  if(getTopEntities(context.config()).length == 0) {
-//	    LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See BuildPathMaker.TOP_ENTITY_KEY");
-//	    LOG.warn("Zamia Issues will still be imported");
-//	  } else {
-//	    ZamiaRunner.run(context); 
-//	  }
+	  
+	  //TODO : Make ZamiaRunner a Sensor------------------------------------
+	  if(getTopEntities(context.config()).length == 0) {
+	    LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See BuildPathMaker.TOP_ENTITY_KEY");
+	    LOG.warn("Zamia Issues will still be imported");
+	  } else {
+	    ZamiaRunner.run(context); 
+	  }
+	  //-------------------------------------------------------------------
+	  
 		Path reportsDir = Paths
 		  .get(context.config()
 		    .get(SCANNER_HOME_KEY)
@@ -90,9 +93,12 @@ public class VhdlRcSensor implements Sensor {
 	private void importIssue(SensorContext context, Issue i) {
 	  InputFile inputFile;
 	  NewIssueLocation issueLocation;
-	  String filePath = i.file().toString();
+	  Path p = i.file();
+	  Path root = Paths.get("./");//TODO : Check that it's working with sonar.sources != "./"
+	  Path filePath = root.resolve(p.subpath(2, p.getNameCount()));//Zamia adds "./vhdl" to original inputFile path
+	  System.out.println(filePath);//TODO
 	  FilePredicates predicates = context.fileSystem().predicates();
-	  inputFile = context.fileSystem().inputFile(predicates.hasPath(filePath));
+	  inputFile = context.fileSystem().inputFile(predicates.hasPath(filePath.toString()));
 	  if (inputFile == null) {
 	    LOG.warn("Input file not found : {}. No rc issues will be imported on this file.", filePath);
 	  } else {

@@ -20,9 +20,12 @@ package com.linty.sonar.zamia;
 
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.commons.io.FilenameUtils;
+import org.fest.util.VisibleForTesting;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -35,7 +38,7 @@ public class BuildPathMaker {
   
   public static final String TOP_ENTITY_KEY = "sonar.vhdl.topEntities";
   public static final String DEFAULT_ENTITY = "WORK.TOP";
-  private static final String BUID_PATH_NAME = ZamiaRunner.BUILD_PATH_TXT;
+  private static final String VIRGIN_FILE_PATH = "/virgin_conf/BuildPath.txt";
   private final Configuration config;
   
   private static final Logger LOG = Loggers.get(BuildPathMaker.class);
@@ -44,18 +47,27 @@ public class BuildPathMaker {
     this.config = config;
   } 
 
-  public static void build(Configuration config) throws IOException {
-     new BuildPathMaker(config).build();
+  public static Path make(Configuration config){
+     try {
+      return new BuildPathMaker(config).make();
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to generate BuildPath.txt", e);
+    }
   }
 
-  private void build() throws IOException { 
-      Path source = ZamiaRunner.get(Paths.get(ZamiaRunner.VIRGIN_CONF, BUID_PATH_NAME).toString());
-      Path targetDir = ZamiaRunner.get(ZamiaRunner.COMPUTED_CONF); 
-      Path target = Files.copy(source, targetDir.resolve(source.getFileName()),StandardCopyOption.REPLACE_EXISTING);
-      appendTopEntities(target);     
+  protected Path make() throws IOException { 
+      Path target = Files.createTempFile("BuildPath", ".txt");//Random name will be generated, ex:"BuildPath3100633746685270227.txt"
+      target.toFile().deleteOnExit();
+      if(LOG.isDebugEnabled()) {
+        LOG.debug("TempFile created by buildPathMaker : " + target);
+      }
+      InputStream source = BuildPathMaker.class.getResourceAsStream(VIRGIN_FILE_PATH);
+      Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+      return appendTopEntities(target.toAbsolutePath());     
   }
 
-  private void appendTopEntities(Path target) throws IOException { 
+  @VisibleForTesting
+  protected Path appendTopEntities(Path target) throws IOException { 
     StringBuilder builder = new StringBuilder();
     for(String entity : VhdlRcSensor.getTopEntities(this.config)) {
       builder
@@ -63,7 +75,7 @@ public class BuildPathMaker {
       .append(entity.toUpperCase())
       .append("\r\n");
     }
-    Files.write(target, builder.toString().getBytes(UTF_8), StandardOpenOption.APPEND);
+    return Files.write(target, builder.toString().getBytes(UTF_8), StandardOpenOption.APPEND);
   }
   
   

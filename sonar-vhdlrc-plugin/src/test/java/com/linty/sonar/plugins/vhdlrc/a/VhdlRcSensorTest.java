@@ -122,8 +122,8 @@ public class VhdlRcSensorTest  {
     assertThat(issue3.primaryLocation().message()).isEqualTo("Signal I_VZ_CMD should not be in the sensitivity list of the process");
     
     //assertThat(logTester.logs(LoggerLevel.INFO).get(1)).contains("Importing rc_report_rule_STD_03800.xml");   
-    assertThat(logTester.logs(LoggerLevel.WARN).get(0)).contains("Can't import an issue from rc_report_rule_STD_05000.xml : 65 is not a valid line for pointer. File I2C/file3.vhd has 3 line(s)");
-    assertThat(logTester.logs(LoggerLevel.WARN).get(1)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");  
+    assertThat(logTester.logs(LoggerLevel.WARN).get(2)).contains("Can't import an issue from rc_report_rule_STD_05000.xml : 65 is not a valid line for pointer. File I2C/file3.vhd has 3 line(s)");
+    assertThat(logTester.logs(LoggerLevel.WARN).get(3)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");  
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).isNotEmpty();
     //assertThat(logTester.logs(LoggerLevel.WARN).size()).isEqualTo(2);
 	}
@@ -137,7 +137,9 @@ public class VhdlRcSensorTest  {
 	
 	public static SensorContextTester createContext(String projectHomePath, String scannerHomePath) {
     return SensorContextTester.create(Paths.get(projectHomePath))
-      .setSettings(new MapSettings().setProperty(VhdlRcSensor.SCANNER_HOME_KEY, scannerHomePath))
+      .setSettings(new MapSettings()
+        .setProperty(VhdlRcSensor.SCANNER_HOME_KEY, scannerHomePath)
+        )
       .setRuntime(SQ67);
 	}
 	

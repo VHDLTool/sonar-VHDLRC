@@ -22,41 +22,52 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
+
+import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.config.internal.MapSettings;
+import org.sonar.api.utils.log.LogTester;
+import org.sonar.api.utils.log.LoggerLevel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class BuildPathMakerTest {
   
+  @Rule
+  public LogTester logTester = new LogTester();
+  
   @Test
   public void test() throws IOException, URISyntaxException {
+    logTester.setLevel(LoggerLevel.DEBUG);
     MapSettings settings = new MapSettings();
     settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "work.my_entity(rtl)");
-    BuildPathMaker.build(settings.asConfig());
-    Path ComputedBuidPath = Paths.get(BuildPathMakerTest.class.getResource("/computed_conf/BuildPath.txt").toURI());    
-    assertThat(Files.exists(ComputedBuidPath)).isTrue();
-    assertThat(Files.isWritable(ComputedBuidPath)).isTrue();
-    assertThat(getLineOf(ComputedBuidPath,69)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
+    Path ComputedBuildPath = BuildPathMaker.make(settings.asConfig());  
+    System.out.println(ComputedBuildPath);
+    assertThat(Files.exists(ComputedBuildPath)).isTrue();
+    assertThat(Files.isWritable(ComputedBuildPath)).isTrue();
+    assertThat(getLineOf(ComputedBuildPath,69)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
+    assertThat(logTester.logs(LoggerLevel.DEBUG).get(0)).isNotEmpty();
   }
   
   @Test
   public void test_multiple_entities() throws IOException, URISyntaxException {
       MapSettings settings = new MapSettings();
       settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "top, top1(rtl), work.my_entity(rtl)");
-      BuildPathMaker.build(settings.asConfig());
-      Path ComputedBuidPath = Paths.get(BuildPathMakerTest.class.getResource("/computed_conf/BuildPath.txt").toURI());    
-      assertThat(Files.exists(ComputedBuidPath)).isTrue();
-      assertThat(Files.isWritable(ComputedBuidPath)).isTrue();
-      assertThat(getLineOf(ComputedBuidPath,69)).isEqualTo("toplevel TOP");
-      assertThat(getLineOf(ComputedBuidPath,70)).isEqualTo("toplevel TOP1(RTL)");
-      assertThat(getLineOf(ComputedBuidPath,71)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
+      Path ComputedBuildPath = BuildPathMaker.make(settings.asConfig());   
+      assertThat(Files.exists(ComputedBuildPath)).isTrue();
+      assertThat(Files.isWritable(ComputedBuildPath)).isTrue();
+      assertThat(getLineOf(ComputedBuildPath,69)).isEqualTo("toplevel TOP");
+      assertThat(getLineOf(ComputedBuildPath,70)).isEqualTo("toplevel TOP1(RTL)");
+      assertThat(getLineOf(ComputedBuildPath,71)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
   }
-
+  
+//  @Test(expected=IllegalStateException.class)
+//  public void test_IOException() {
+//    
+//  }
+  
 
   public static String getLineOf(Path p, int index) throws IOException {
     try(BufferedReader reader = Files.newBufferedReader(p,UTF_8)){
