@@ -95,7 +95,7 @@ public class VhdlRcSensor implements Sensor {
 	  NewIssueLocation issueLocation;
 	  Path p = i.file();
 	  Path root = Paths.get("./");//TODO : Check that it's working with sonar.sources != "./"
-	  Path filePath = root.resolve(p.subpath(2, p.getNameCount()));//Zamia adds "./vhdl" to original inputFile path
+	  Path filePath = root.resolve(p.subpath(2, p.getNameCount()));//Zamia adds "./vhdl" to inputFile path in reports
 	  System.out.println(filePath);//TODO
 	  FilePredicates predicates = context.fileSystem().predicates();
 	  inputFile = context.fileSystem().inputFile(predicates.hasPath(filePath.toString()));

@@ -20,6 +20,7 @@ package com.linty.sonar.zamia;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -28,9 +29,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import org.sonar.api.batch.fs.FilePredicates;
+import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+import org.apache.commons.io.FileUtils;
 
 
 public class ZamiaRunner {
@@ -70,10 +74,9 @@ public class ZamiaRunner {
   @VisibleForTesting
   protected void run() {
     LOG.info("----------Vhdlrc Analysis---------");
-
     Path tempBuildPath = BuildPathMaker.make(this.context.config());
     uploadConfigToZamia(tempBuildPath);    
-    //uploadInputFilesToZamia();  
+    uploadInputFilesToZamia();  
     //runZamia();
   }
 
@@ -94,12 +97,30 @@ public class ZamiaRunner {
     LOG.info("--Load configuration (done)");
   }
   
+  @VisibleForTesting
   protected void uploadInputFilesToZamia() {
     LOG.info("--Load Vhdl files"); 
-    // TODO Auto-generated method stub   
+    //LOG.info("BASE DIR : " + context.fileSystem().baseDir().getPath());
+    FilePredicates p = context.fileSystem().predicates();
+    Iterable<InputFile> files = context.fileSystem().inputFiles(p.hasLanguage("vhdl"));
+    files.forEach(file -> {
+      try {
+        //TODO: clean folder before and after
+        uploadInputFile(file);
+      } catch (IOException e) {
+        LOG.error("Problem occured when copying vhdl sources",e);
+      }
+    });
     LOG.info("--Load Vhdl files (done)"); 
   }
-  
+   
+  private void uploadInputFile(InputFile file) throws IOException {
+    LOG.info("File name : " + file.filename());
+    Path target = Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR, file.toString());
+    System.out.println("source file : " + file.uri() + "\ntarget : " + target);//TODO
+    FileUtils.copyFile(new File(file.uri()), target.toFile()); 
+  }
+
   private void runZamia() {
     LOG.info("--Running analysis");
     // TODO Auto-generated method stub 
