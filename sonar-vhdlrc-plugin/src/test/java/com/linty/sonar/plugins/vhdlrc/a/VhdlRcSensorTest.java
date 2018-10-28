@@ -22,12 +22,10 @@ package com.linty.sonar.plugins.vhdlrc.a;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.stream.XMLStreamException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.utils.log.LogTester;
-import org.sonar.api.utils.log.LoggerLevel;
 import com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import org.sonar.api.SonarQubeSide;
@@ -122,9 +120,9 @@ public class VhdlRcSensorTest  {
     assertThat(issue3.primaryLocation().message()).isEqualTo("Signal I_VZ_CMD should not be in the sensitivity list of the process");
     
     //assertThat(logTester.logs(LoggerLevel.INFO).get(1)).contains("Importing rc_report_rule_STD_03800.xml");   
-    assertThat(logTester.logs(LoggerLevel.WARN).get(2)).contains("Can't import an issue from rc_report_rule_STD_05000.xml : 65 is not a valid line for pointer. File I2C/file3.vhd has 3 line(s)");
-    assertThat(logTester.logs(LoggerLevel.WARN).get(3)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");  
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).isNotEmpty();
+//    assertThat(logTester.logs(LoggerLevel.WARN).get(2)).contains("Can't import an issue from rc_report_rule_STD_05000.xml : 65 is not a valid line for pointer. File I2C/file3.vhd has 3 line(s)");
+//    assertThat(logTester.logs(LoggerLevel.WARN).get(3)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");  
+//    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).isNotEmpty();
     //assertThat(logTester.logs(LoggerLevel.WARN).size()).isEqualTo(2);
 	}
 	

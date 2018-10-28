@@ -80,41 +80,6 @@ public class FigureSvg {
 		if(m2.find()) {
 			this.originalHeight=m2.group(1);
 		}			
-	}
-	
-	@Deprecated
-	public void changeToScalable() {
-		
-		Matcher m1;
-		Matcher m2;
-
-		m1 = widthPattern.matcher(this.figureCode);
-		StringBuffer sb = new StringBuffer();
-		
-		//replace the width
-		if(m1.find()) {
-			m1.appendReplacement(sb, "   width=\"100%\"");
-			m1.appendTail(sb);
-			this.figureCode=sb.toString();
-		}
-		
-		m2 = heightPattern.matcher(this.figureCode);
-		//clear StringBuffer
-		sb.setLength(0);
-		
-		//replace the height
-		if(m2.find()) {
-			m2.appendReplacement(sb, "   height=\"100%\"");
-			m2.appendTail(sb);
-			this.figureCode=sb.toString();
-		}	
-		
-	}
-
-
-
-
-
-
+	}	
 	
 }
