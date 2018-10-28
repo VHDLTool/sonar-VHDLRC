@@ -33,7 +33,7 @@ public class Vhdl extends AbstractLanguage {
   
   public static final String VHDL_CATEGORY = "VHDL";
 
-  public static final String FILE_SUFFIXES_KEY = "sonar.vhdl.file.suffixes";
+  public static final String FILE_SUFFIXES_KEY = "sonar.vhdlrc.file.suffixes";
 
   public static final String DEFAULT_FILE_SUFFIXES = ".vhdl,.vhd";
 

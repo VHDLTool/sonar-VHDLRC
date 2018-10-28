@@ -41,7 +41,7 @@ public class VhdlTest {
 	@Test
 	public void test_unset_suffixs_should_return_default_suffixes() {
 		MapSettings settings = new MapSettings();
-		settings.setProperty("sonar.vhdl.file.suffixes", "");
+		settings.setProperty("sonar.vhdlrc.file.suffixes", "");
 		Vhdl v = new Vhdl(settings.asConfig());
 		assertThat(v.getFileSuffixes()).containsExactly(".vhdl",".vhd");
 	}
@@ -49,7 +49,7 @@ public class VhdlTest {
 	@Test
 	public void test_empty_suffixs_should_return_default_suffixes() {
 		MapSettings settings = new MapSettings();
-		settings.setProperty("sonar.vhdl.file.suffixes", ",");
+		settings.setProperty("sonar.vhdlrc.file.suffixes", ",");
 		Vhdl v = new Vhdl(settings.asConfig());
 		assertThat(v.getFileSuffixes()).containsExactly(".vhdl",".vhd");
 	}
@@ -57,7 +57,7 @@ public class VhdlTest {
 	@Test
 	public void test_custom_suffixs_should_return_custom() {
 		MapSettings settings = new MapSettings();
-		settings.setProperty("sonar.vhdl.file.suffixes", ".vhd,.txt,.jpeg");
+		settings.setProperty("sonar.vhdlrc.file.suffixes", ".vhd,.txt,.jpeg");
 		Vhdl v = new Vhdl(settings.asConfig());
 		assertThat(v.getFileSuffixes()).hasSize(3);
 		assertThat(v.getFileSuffixes()).containsExactly(".vhd",".txt",".jpeg");
