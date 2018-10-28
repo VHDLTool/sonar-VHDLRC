@@ -19,12 +19,10 @@ package com.linty.sonar.zamia;
 
 
 import com.google.common.annotations.VisibleForTesting;
+import com.linty.sonar.plugins.vhdlrc.Vhdl;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,19 +73,21 @@ public class ZamiaRunner {
   protected void run() {
     LOG.info("----------Vhdlrc Analysis---------");
     Path tempBuildPath = BuildPathMaker.make(this.context.config());
-    uploadConfigToZamia(tempBuildPath);    
-    uploadInputFilesToZamia();  
+    uploadConfigToZamia(tempBuildPath);
+    clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
+    uploadInputFilesToZamia();
+    clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     //runZamia();
+    LOG.info("----------Vhdlrc Analysis---------(done)");
   }
 
- 
 
   @VisibleForTesting
   protected void uploadConfigToZamia(Path tempBuildPath) {
     LOG.info("--Load configuration");  
     Path buildPathTarget = Paths.get(this.scannerHome, PROJECT_DIR, BUILD_PATH_TXT);
     if(LOG.isDebugEnabled()) {
-      LOG.info("Load configuration to" + buildPathTarget);
+      LOG.debug("Load configuration to" + buildPathTarget);
     }
     try {
       Files.copy(tempBuildPath, buildPathTarget, StandardCopyOption.REPLACE_EXISTING);
@@ -100,25 +100,32 @@ public class ZamiaRunner {
   @VisibleForTesting
   protected void uploadInputFilesToZamia() {
     LOG.info("--Load Vhdl files"); 
-    //LOG.info("BASE DIR : " + context.fileSystem().baseDir().getPath());
     FilePredicates p = context.fileSystem().predicates();
-    Iterable<InputFile> files = context.fileSystem().inputFiles(p.hasLanguage("vhdl"));
+    Iterable<InputFile> files = context.fileSystem().inputFiles(p.hasLanguage(Vhdl.KEY));
     files.forEach(file -> {
       try {
-        //TODO: clean folder before and after
         uploadInputFile(file);
       } catch (IOException e) {
-        LOG.error("Problem occured when copying vhdl sources",e);
+        LOG.error("Unable to upload vhdl sources to scanner",e);
       }
     });
     LOG.info("--Load Vhdl files (done)"); 
   }
    
   private void uploadInputFile(InputFile file) throws IOException {
-    LOG.info("File name : " + file.filename());
+    if(LOG.isDebugEnabled()) {
+      LOG.info("File name : " + file.filename());
+    }
     Path target = Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR, file.toString());
-    System.out.println("source file : " + file.uri() + "\ntarget : " + target);//TODO
     FileUtils.copyFile(new File(file.uri()), target.toFile()); 
+  }
+  
+  private void clean(Path path) {
+    try {
+      FileUtils.cleanDirectory(path.toFile());
+    } catch (IOException e) {
+      LOG.error("Unable to reset folder in scanner, check deletion rights for : {}", path, e );
+    }
   }
 
   private void runZamia() {
@@ -127,9 +134,4 @@ public class ZamiaRunner {
     LOG.info("--Running analysis (done)");
   }
  
- public static InputStream get(Path resource) {
-     return ZamiaRunner.class.getResourceAsStream(resource.toString());     
-    // throw new IllegalStateException("Error trying to access " + resource, e);
-   }
-
 }

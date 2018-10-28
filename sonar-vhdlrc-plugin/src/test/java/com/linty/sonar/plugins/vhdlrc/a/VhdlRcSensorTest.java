@@ -65,7 +65,7 @@ public class VhdlRcSensorTest  {
 	@Rule
 	public LogTester logTester = new LogTester();
 	
-//Unset path for scanner means no rule checker analysis should be performed
+//Undefined path for scanner means no rule checker analysis should be performed
 	@Test
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
