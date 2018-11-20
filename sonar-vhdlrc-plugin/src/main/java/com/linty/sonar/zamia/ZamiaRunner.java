@@ -23,6 +23,7 @@ import com.linty.sonar.plugins.vhdlrc.Vhdl;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,19 +40,19 @@ public class ZamiaRunner {
   
   public static final String                  PROJECT_DIR = "rc/ws/project";
   
-  public static final String                BUILD_PATH_TXT = "BuildPath.txt";
+  public static final String               BUILD_PATH_TXT = "BuildPath.txt";
   public static final String                  SOURCES_DIR = "vhdl";
   public static final String                  CONFIG_DIR  = "rule_checker";
   
-  public static final String             HANDBOOK_STD_XML = "hb_vhdlrc/handbook_STD.xml";
-  public static final String RC_CONFIG_SELECTED_RULES_XML = "rc_config_selected_rules.xml";
+  public static final String                 HANDBOOK_XML = "hb_vhdlrc/handbook.xml";
+  public static final String     RC_CONFIG_SELECTED_RULES = "rc_config_selected_rules.xml";
   public static final String       RC_HANDBOOK_PARAMETERS = "rc_handbook_parameters.xml";
   
-  public static final String                COMPUTED_CONF = "computed_conf";
+  public static final String                CONFIGURATION = "configuration";
   public static final String                  VIRGIN_CONF = "virgin_conf";
   
-  private static final String WIN_RC_CMD = "eclipsec.exe -nosplash -application org.zamia.plugin.Check";
-  private static final String UNIX_RC_CMD = "eclipse -nosplash -application org.zamia.plugin.Check";
+  private static final String WIN_CMD = "eclipsec.exe -nosplash -application org.zamia.plugin.Check";
+  private static final String UNIX_CMD = "eclipse -nosplash -application org.zamia.plugin.Check";
   
   
   private final SensorContext context;
@@ -76,7 +77,7 @@ public class ZamiaRunner {
     uploadConfigToZamia(tempBuildPath);
     clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     uploadInputFilesToZamia();
-    clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
+    //clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     //runZamia();
     LOG.info("----------Vhdlrc Analysis---------(done)");
   }
@@ -84,13 +85,26 @@ public class ZamiaRunner {
 
   @VisibleForTesting
   protected void uploadConfigToZamia(Path tempBuildPath) {
-    LOG.info("--Load configuration");  
-    Path buildPathTarget = Paths.get(this.scannerHome, PROJECT_DIR, BUILD_PATH_TXT);
+    LOG.info("--Load configuration");
+    //Embedded resources configuration files 
+    String configuration = "/" + CONFIGURATION + "/";
+    InputStream conf1 = ZamiaRunner.class.getResourceAsStream(configuration + RC_CONFIG_SELECTED_RULES);
+    InputStream conf2 = ZamiaRunner.class.getResourceAsStream(configuration + RC_HANDBOOK_PARAMETERS);
+    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + HANDBOOK_XML);
+    //Configuration files destinations in scanner
+    Path projectDir = Paths.get(this.scannerHome, PROJECT_DIR);
+    Path targetConf1     = projectDir.resolve(CONFIG_DIR).resolve(RC_CONFIG_SELECTED_RULES);
+    Path targetConf2     = projectDir.resolve(CONFIG_DIR).resolve(RC_HANDBOOK_PARAMETERS);
+    Path hbTarget        = projectDir.resolve(CONFIG_DIR).resolve(HANDBOOK_XML);
+    Path buildPathTarget = projectDir.resolve(BUILD_PATH_TXT);
     if(LOG.isDebugEnabled()) {
       LOG.debug("Load configuration to" + buildPathTarget);
     }
     try {
       Files.copy(tempBuildPath, buildPathTarget, StandardCopyOption.REPLACE_EXISTING);
+      Files.copy(conf1, targetConf1, StandardCopyOption.REPLACE_EXISTING);
+      Files.copy(conf2, targetConf2, StandardCopyOption.REPLACE_EXISTING);
+      Files.copy(hb, hbTarget, StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
       LOG.error("unable to upload configuration files to scanner",e);
     }

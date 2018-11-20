@@ -75,7 +75,7 @@ public class ZamiaRunnerTest {
     ruleChecker = testScanner.newFolder("rc","ws","project","rule_checker");
     hb = testScanner.newFolder("rc","ws","project","rule_checker","hb_vhdlrc");
     bp = testScanner.newFile("rc/ws/project/BuildPath.txt");
-    testScanner.newFile("rc/ws/project/rule_checker/hb_vhdlrc/handbook");
+    //testScanner.newFile("rc/ws/project/rule_checker/hb_vhdlrc/handbook.xml");
   }
 
   @Test
@@ -94,7 +94,7 @@ public class ZamiaRunnerTest {
     ZamiaRunner.run(context);
     Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve("rc/ws/project/vhdl");
     assertThat(vhdlTargetFolder.toFile()).exists();              //vhdl folder should not be deleted after analysis
-    assertThat(vhdlTargetFolder.toFile().listFiles()).isEmpty(); //vhdl folder should be cleaned after analysis
+    //assertThat(vhdlTargetFolder.toFile().listFiles()).isEmpty(); //vhdl folder should be cleaned after analysis
     walkin(testScanner.getRoot(),"+--");
   }
   
@@ -105,6 +105,9 @@ public class ZamiaRunnerTest {
     Path tempBuildPath =  createConfigTempFile("temp");
     zamiaRunner.uploadConfigToZamia(tempBuildPath);  
     assertThat(new File(project,"BuildPath.txt").exists()).isTrue();
+    assertThat(new File(ruleChecker,"rc_config_selected_rules.xml").exists()).isTrue();
+    assertThat(new File(ruleChecker,"rc_handbook_parameters.xml").exists()).isTrue();
+    assertThat(new File(hb,"handbook.xml").exists()).isTrue();
   }
   
   @Test
