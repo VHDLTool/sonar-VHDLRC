@@ -113,7 +113,7 @@ public class HandbookXmlParserTest {
 	@Test
 	public void file_is_a_directory_log_treated_has_not_found() {
 		rl1 = XmlParser.parseXML(new File("src/test/files/handbooks/"));
-		String filename = "src\\test\\files\\handbooks";
+		String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks");
 		assertThat(logTester.logs(LoggerLevel.WARN)).contains("File " + filename + " was not found or is not a file and won't be analysed");
 		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();		
 	}

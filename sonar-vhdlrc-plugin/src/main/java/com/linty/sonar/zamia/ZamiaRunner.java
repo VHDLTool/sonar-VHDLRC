@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Scanner;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -78,7 +79,7 @@ public class ZamiaRunner {
     clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     uploadInputFilesToZamia();
     //clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
-    //runZamia();
+    runZamia();
     LOG.info("----------Vhdlrc Analysis---------(done)");
   }
 
@@ -144,7 +145,9 @@ public class ZamiaRunner {
 
   private void runZamia() {
     LOG.info("--Running analysis");
-    // TODO Auto-generated method stub 
+    LOG.info("Launch zamia Check manualy and press \"ENTER\" to continue...");
+    Scanner scanner = new Scanner(System.in);
+    scanner.nextLine(); 
     LOG.info("--Running analysis (done)");
   }
  
