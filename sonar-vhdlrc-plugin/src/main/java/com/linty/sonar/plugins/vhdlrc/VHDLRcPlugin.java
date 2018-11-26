@@ -56,12 +56,6 @@ public class VHDLRcPlugin implements Plugin {
 	      .subCategory("General")
 	      .onQualifiers(Qualifiers.PROJECT)
 	      .build());
-	    builder.add(PropertyDefinition.builder(VhdlRulesDefinition.HANDBOOK_PATH_KEY)
-	      .category(Vhdl.NAME)
-	      .subCategory(VHDL_RULECHEKER_SUBCATEGORY)
-	      .name("Handbook Path")
-	      .description(VhdlRulesDefinition.HANDBOOK_PATH_DESC)
-	      .build());
 	    builder.add(PropertyDefinition.builder(VhdlRcSensor.SCANNER_HOME_KEY)
 	      .category(Vhdl.NAME)
 	      .subCategory(VHDL_RULECHEKER_SUBCATEGORY)
@@ -79,13 +73,6 @@ public class VHDLRcPlugin implements Plugin {
         .defaultValue(BuildPathMaker.DEFAULT_ENTITY)
         .onQualifiers(Qualifiers.PROJECT)
         .build());
-//    context.addExtensions(VHDLToolConfiguration.getPropertyDefinitions());
-//    context.addExtensions(Arrays.asList(
-//            VHDLToolProfile.class,
-//            VHDLToolSensor.class,
-//            VHDLToolConfiguration.class,
-//            Vhdl.class,
-//            STDRulesDefinition.class));
 	  context.addExtensions(builder.build());
   }
 }

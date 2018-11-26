@@ -21,7 +21,10 @@ package com.linty.sonar.plugins.vhdlrc.rules;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -43,19 +46,29 @@ import org.sonar.api.utils.log.Loggers;
 
 @ServerSide
 public class VhdlRulesDefinition implements RulesDefinition {
+  
+    public static class HbRessourceContext {
+//      public final String HANDBOOK_DIR;
+//      public final String RULESET_PATH;
+//      public HbRessourceContext(String handbookDir, String RuleSetPath) {
+//        this.HANDBOOK_DIR = handbookDir;
+//        this.RULESET_PATH = HANDBOOK_DIR + RuleSetPath;
+//      }  
+      
+      protected InputStream getRuleset() throws FileNotFoundException {
+        //File[] is used in case multiple handbooks must be handle
+        return VhdlRulesDefinition.class.getResourceAsStream(RULESET_PATH);
+//            if( hbStream!= null) {
+//              return hbStream;
+//            }
+//            else throw new FileNotFoundException("No handbook.xml found in : " + this.RULESET_PATH);
+      }
+    }
 
-	
-	public static final String HANDBOOK_PATH_KEY = "sonar.vhdlrc.handbook.path";
-    private static final String DEFAULT_HANDBOOK_PATH = "rulechecker/default/VHDL_Handbook_STD-master" ;
-    		/*TODO : set an internal default handbook "com/linty/sonar/plugins/vhdlrc/rules/conf/Default_handbook"
-    		 Make a build in Quality Profile with the embbedded Handbook, in addition of the one created here. Internal HANDBOOk is always loaded.
-    		 */
-    public static final String HANDBOOK_PATH_DESC = "Path to the handbook directory. The path may be absolute or relative to the SonarQube server base directory.";
-	
-    private static final String RULE_SETS_PATH = "Rulesets";
+    public static final String  HANDBOOK_DIR = "/configuration/HANDBOOK";
+    public static final String  RULESET_PATH = HANDBOOK_DIR + "/Rulesets/handbook.xml";
+    public static final String  HANDBOOK_PATH_DESC = "Path to the handbook directory. The path may be absolute or relative to the SonarQube server base directory.";
 
-    
-    private final ServerFileSystem serverFileSystem;
     private final Configuration configuration;
     
 	private static final Logger LOG = Loggers.get(VhdlRulesDefinition.class);
@@ -83,34 +96,35 @@ public class VhdlRulesDefinition implements RulesDefinition {
 			}
 			
 	
-	public VhdlRulesDefinition (Configuration configuration, ServerFileSystem serverFileSystem) {
+	public VhdlRulesDefinition (Configuration configuration) {
 		this.configuration = configuration;
-		this.serverFileSystem = serverFileSystem;
 	}
 	
 	@Override
 	public void define(Context context) {
+	  defineFromRessources(context, new HbRessourceContext());
+	}
 
-		NewRepository repository = context
-				.createRepository("vhdlrc-repository", Vhdl.KEY)
-				.setName("VhdlRuleChecker");
-		try {
-			File hbDir = getHandbookDir();
-			List<com.linty.sonar.plugins.vhdlrc.rules.Rule> rules = new HandbookXmlParser().parseXML(handbookXml(hbDir));
-			if(rules == null) {
-				LOG.warn("No VHDL RuleCheker rules loaded!");
-			} else {
-				new ExampleAndFigureLoader(hbDir.toPath()).load(rules);
-				for(com.linty.sonar.plugins.vhdlrc.rules.Rule r : rules) {
-					newRule(r,repository);
-				}
-				repository.done();	
-			}
-		}
-		catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-			LOG.error(e.getMessage());
-		}
+	@VisibleForTesting
+	public void defineFromRessources(Context context, HbRessourceContext ressourceContext){
+	  NewRepository repository = context
+	    .createRepository("vhdlrc-repository", Vhdl.KEY)
+	    .setName("VhdlRuleChecker");
+	  try {
+	    List<com.linty.sonar.plugins.vhdlrc.rules.Rule> rules = new HandbookXmlParser().parseXML(ressourceContext.getRuleset());
+	    if(rules == null) {
+	      LOG.warn("No VHDL RuleCheker rules loaded!");
+	    } else {
+	      //new ExampleAndFigureLoader(HANDBOOK_DIR).load(rules);TODO: uncomment this
+	      for(com.linty.sonar.plugins.vhdlrc.rules.Rule r : rules) {
+	        newRule(r,repository);
+	      }
+	      repository.done();	
+	    }
+	  }
+	  catch (FileNotFoundException e) {
+	    LOG.error(e.getMessage());
+	  }
 	}
 
 	@VisibleForTesting
@@ -126,7 +140,7 @@ public class VhdlRulesDefinition implements RulesDefinition {
 		.setName(r.name)
 		.setSeverity(SEVERITY_MAP.getOrDefault(r.sonarSeverity, Severity.MINOR).toString())
 		.setType(TYPE_MAP.getOrDefault(r.type, RuleType.CODE_SMELL))
-		.setDebtRemediationFunction(nr.debtRemediationFunctions().constantPerIssue(DEBT_MAP.getOrDefault(r.remediationEffort,DEBT_MAP.get("easy"))))
+		.setDebtRemediationFunction(nr.debtRemediationFunctions().constantPerIssue(DEBT_MAP.getOrDefault(r.remediationEffort, DEBT_MAP.get("easy"))))
 		;
 		addTags(nr,r.tag);
 		addTags(nr,r.category);
@@ -139,26 +153,7 @@ public class VhdlRulesDefinition implements RulesDefinition {
 		}
 	}
 
-	private File getHandbookDir() throws FileNotFoundException {
-		File handbookDir;	
-		handbookDir = new File(FilenameUtils.separatorsToUnix(configuration.get(HANDBOOK_PATH_KEY).orElse(DEFAULT_HANDBOOK_PATH)));	
-		if(!handbookDir.isAbsolute()) {
-			handbookDir = new File(serverFileSystem.getHomeDir(),handbookDir.getPath());
-		}		
-		if(handbookDir.exists() && handbookDir.isDirectory()){
-			return handbookDir;
-		}
-		else throw new FileNotFoundException("Handbook directory not found : " + handbookDir.getPath() +" ; Check parameter " + VhdlRulesDefinition.HANDBOOK_PATH_KEY);
-	}
 
-	private File handbookXml(File dir) throws FileNotFoundException {
-		//File[] is used in case multiple handbooks must be handle
-		File[] fileList = (new File(dir,RULE_SETS_PATH)).listFiles((directory,name) -> !name.contains("header") && name.matches(".*handbook.*\\.xml"));
-        if(fileList != null && fileList.length != 0) {
-        	return fileList[0];
-        }
-        else throw new FileNotFoundException("No handbook.xml found in : " + dir.getPath() + File.separator + RULE_SETS_PATH);
-	}
 
 	
 }

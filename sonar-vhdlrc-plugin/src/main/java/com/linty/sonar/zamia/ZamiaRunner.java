@@ -39,8 +39,7 @@ import org.apache.commons.io.FileUtils;
 
 public class ZamiaRunner {
   
-  public static final String                  PROJECT_DIR = "rc/ws/project";
-  
+  public static final String                  PROJECT_DIR = VhdlRcSensor.PROJECT_DIR;
   public static final String               BUILD_PATH_TXT = "BuildPath.txt";
   public static final String                  SOURCES_DIR = "vhdl";
   public static final String                  CONFIG_DIR  = "rule_checker";
@@ -51,6 +50,7 @@ public class ZamiaRunner {
   
   public static final String                CONFIGURATION = "configuration";
   public static final String                  VIRGIN_CONF = "virgin_conf";
+  public static final String                 RULESET_PATH = "HANDBOOK/Rulesets/handbook.xml";
   
   private static final String WIN_CMD = "eclipsec.exe -nosplash -application org.zamia.plugin.Check";
   private static final String UNIX_CMD = "eclipse -nosplash -application org.zamia.plugin.Check";
@@ -91,7 +91,7 @@ public class ZamiaRunner {
     String configuration = "/" + CONFIGURATION + "/";
     InputStream conf1 = ZamiaRunner.class.getResourceAsStream(configuration + RC_CONFIG_SELECTED_RULES);
     InputStream conf2 = ZamiaRunner.class.getResourceAsStream(configuration + RC_HANDBOOK_PARAMETERS);
-    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + HANDBOOK_XML);
+    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + RULESET_PATH);
     //Configuration files destinations in scanner
     Path projectDir = Paths.get(this.scannerHome, PROJECT_DIR);
     Path targetConf1     = projectDir.resolve(CONFIG_DIR).resolve(RC_CONFIG_SELECTED_RULES);
@@ -146,8 +146,8 @@ public class ZamiaRunner {
   private void runZamia() {
     LOG.info("--Running analysis");
     LOG.info("Launch zamia Check manualy and press \"ENTER\" to continue...");
-    Scanner scanner = new Scanner(System.in);
-    scanner.nextLine(); 
+//    Scanner scanner = new Scanner(System.in);
+//    scanner.nextLine(); 
     LOG.info("--Running analysis (done)");
   }
  
