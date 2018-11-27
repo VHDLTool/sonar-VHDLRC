@@ -22,24 +22,18 @@ package com.linty.sonar.plugins.vhdlrc.rules;
 import org.apache.commons.lang.StringUtils;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-
 import com.google.common.collect.ImmutableList;
 import com.linty.sonar.plugins.vhdlrc.rules.Rule;
-
 import org.codehaus.staxmate.SMInputFactory;
 import org.codehaus.staxmate.in.SMEvent;
 import org.codehaus.staxmate.in.SMFilter;
 import org.codehaus.staxmate.in.SMInputCursor;
-
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class HandbookXmlParser {

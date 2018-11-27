@@ -26,14 +26,12 @@ import java.io.InputStream;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.config.internal.MapSettings;
-import org.sonar.api.internal.apachecommons.io.FilenameUtils;
 import org.sonar.api.server.rule.RuleTagFormat;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
 import com.linty.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition.HbRessourceContext;
-import com.linty.sonar.plugins.vhdlrc.utils.ServerFileSystemTester;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class VhdlRulesDefinitionTest {
@@ -52,8 +50,13 @@ public class VhdlRulesDefinitionTest {
 	      this.RULESET_PATH = HANDBOOK_DIR + RuleSetPath;
 	    }
 	    @Override
-	    protected InputStream getRuleset() throws FileNotFoundException {
-	      return new FileInputStream(new File(RULESET_PATH));
+	    protected InputStream getRuleset() {
+	      try {
+          return new FileInputStream(new File(RULESET_PATH));
+        } catch (FileNotFoundException e) {
+          InputStream nullInputStream = null;
+          return nullInputStream;
+        }
 	    }
 	  }
 	
@@ -68,10 +71,12 @@ public class VhdlRulesDefinitionTest {
 		definition.newRule(r,repository);
 	}
 	
-	/*This test is meant to verify the given configuration at build time :
+	/*
+	 * This test is meant to verify the given configuration at build time :
 	 * - Checks that the handbook content contains a Ruleset name handbook.xml
 	 * - Checks that rc_config_selected_rules.xml is present
-	 * - checks that rc_handbook_parameters.xml is present*/
+	 * - checks that rc_handbook_parameters.xml is present
+	 */
 	@Test
 	public void verify_embedded_hanbdook_for_build() {
 	  MapSettings settings = new MapSettings();
@@ -107,55 +112,37 @@ public class VhdlRulesDefinitionTest {
 	    }
 	  }
 	}
+		
+	@Test 
+	public void unfound_hb_should_be_reported() {
+		MapSettings settings = new MapSettings();
+    VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig());
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    HbRessourceContextTester hbContext = new HbRessourceContextTester("src/test/files/handbooks/does_not_exists","/Rulesets/handbook_STD.xml");
+    definition.defineFromRessources(context,hbContext);        
+		assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
+		assertThat(logTester.logs(LoggerLevel.ERROR)).contains("handboo not found in jar ressources, re-build with " + VhdlRulesDefinition.RULESET_PATH);
+	}
 	
-//	@Test
-//	public void wrong_handbook_path_should_log_error() {
-//		MapSettings settings = new MapSettings();
-//		settings.setProperty(VhdlRulesDefinition.HANDBOOK_PATH_KEY, "None_existing_hb");
-//		String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/None_existing_hb");
-//		VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
-//	    RulesDefinition.Context context = new RulesDefinition.Context();
-//	    definition.define(context);	    
-//	    
-//		assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
-//		assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Handbook directory not found : " + filename +" ; Check parameter " + VhdlRulesDefinition.HANDBOOK_PATH_KEY );
-//	}
-//	
-//	@Test 
-//	public void no_matching_hb_should_log_error() {
-//		MapSettings settings = new MapSettings();
-//		settings.setProperty(VhdlRulesDefinition.HANDBOOK_PATH_KEY, "bad_handbook");
-//		String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/bad_handbook/Rulesets");
-//		VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
-//	    RulesDefinition.Context context = new RulesDefinition.Context();
-//	    definition.define(context);	    
-//	    
-//		assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
-//		assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("No handbook.xml found in : " + filename);
-//	}
-//	
-//	@Test
-//	public void Empty_handbook_should_log_warn() {
-//		MapSettings settings = new MapSettings();
-//		settings.setProperty(VhdlRulesDefinition.HANDBOOK_PATH_KEY, "empty_handbook");
-//		String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/empty_handbook/Rulesets/handbook_Empty.xml");
-//		VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
-//	    RulesDefinition.Context context = new RulesDefinition.Context();
-//	    definition.define(context);	    
-//	    
-//		assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-//		assertThat(logTester.logs(LoggerLevel.WARN)).contains("File is empty and won't be analyzed : " + filename);
-//		assertThat(logTester.logs(LoggerLevel.WARN)).contains("No VHDL RuleCheker rules loaded!");
-//	}
-//	
-//	@Test
-//	public void bad_tag_should_be_handled() {
-//	  MapSettings settings = new MapSettings();
-//	  settings.setProperty(VhdlRulesDefinition.HANDBOOK_PATH_KEY, "handbook_parse_issues");
-//	  String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/handbook_parse_issues/Rulesets/handbook_STD_issues.xml");
-//	  VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig(),new ServerFileSystemTester(ServerHome));
-//	  RulesDefinition.Context context = new RulesDefinition.Context();
-//	  definition.define(context);    
-//	}
+	 @Test 
+	  public void no_rules_to_load_should_be_reported() {
+	    MapSettings settings = new MapSettings();
+	    VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig());
+	    RulesDefinition.Context context = new RulesDefinition.Context();
+	    HbRessourceContextTester hbContext = new HbRessourceContextTester("src/test/files/handbooks/empty_handbook","/Rulesets/handbook_Empty.xml");
+	    definition.defineFromRessources(context,hbContext);        
+	    assertThat(logTester.logs(LoggerLevel.WARN)).contains("No VHDL RuleCheker rules loaded!");
+	    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+	  }
+	
+	
+	@Test
+	public void bad_tag_should_be_handled() {
+    MapSettings settings = new MapSettings();
+    VhdlRulesDefinition definition = new VhdlRulesDefinition(settings.asConfig());
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    HbRessourceContextTester hbContext = new HbRessourceContextTester("src/test/files/handbooks/handbook_parse_issues","/Rulesets/handbook_STD_issues.xml");
+    definition.defineFromRessources(context,hbContext);   
+	}
   
 }

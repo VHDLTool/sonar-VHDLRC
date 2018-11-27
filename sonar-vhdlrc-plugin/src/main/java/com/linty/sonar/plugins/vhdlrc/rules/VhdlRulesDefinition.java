@@ -19,23 +19,16 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 
-import java.io.File;
-import java.io.FileNotFoundException;
+
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.linty.sonar.plugins.vhdlrc.Vhdl;
-
-import org.apache.commons.io.FilenameUtils;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.config.Configuration;
-import org.sonar.api.platform.ServerFileSystem;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.ServerSide;
 import org.sonar.api.server.rule.RuleTagFormat;
@@ -48,20 +41,8 @@ import org.sonar.api.utils.log.Loggers;
 public class VhdlRulesDefinition implements RulesDefinition {
   
     public static class HbRessourceContext {
-//      public final String HANDBOOK_DIR;
-//      public final String RULESET_PATH;
-//      public HbRessourceContext(String handbookDir, String RuleSetPath) {
-//        this.HANDBOOK_DIR = handbookDir;
-//        this.RULESET_PATH = HANDBOOK_DIR + RuleSetPath;
-//      }  
-      
-      protected InputStream getRuleset() throws FileNotFoundException {
-        //File[] is used in case multiple handbooks must be handle
+      protected InputStream getRuleset() {
         return VhdlRulesDefinition.class.getResourceAsStream(RULESET_PATH);
-//            if( hbStream!= null) {
-//              return hbStream;
-//            }
-//            else throw new FileNotFoundException("No handbook.xml found in : " + this.RULESET_PATH);
       }
     }
 
@@ -110,21 +91,17 @@ public class VhdlRulesDefinition implements RulesDefinition {
 	  NewRepository repository = context
 	    .createRepository("vhdlrc-repository", Vhdl.KEY)
 	    .setName("VhdlRuleChecker");
-	  try {
-	    List<com.linty.sonar.plugins.vhdlrc.rules.Rule> rules = new HandbookXmlParser().parseXML(ressourceContext.getRuleset());
-	    if(rules == null) {
-	      LOG.warn("No VHDL RuleCheker rules loaded!");
-	    } else {
-	      //new ExampleAndFigureLoader(HANDBOOK_DIR).load(rules);TODO: uncomment this
+	  InputStream rulesetXML = ressourceContext.getRuleset();
+	  if(rulesetXML != null) {
+	    List<com.linty.sonar.plugins.vhdlrc.rules.Rule> rules = new HandbookXmlParser().parseXML(rulesetXML); 
+	    if(rules != null) {
+	      new ExampleAndFigureLoader(HANDBOOK_DIR).load(rules);
 	      for(com.linty.sonar.plugins.vhdlrc.rules.Rule r : rules) {
 	        newRule(r,repository);
 	      }
-	      repository.done();	
-	    }
-	  }
-	  catch (FileNotFoundException e) {
-	    LOG.error(e.getMessage());
-	  }
+	      repository.done();
+	    } else { LOG.warn("No VHDL RuleCheker rules loaded!");}
+	  } else {LOG.error("handboo not found in jar ressources, re-build with {}", RULESET_PATH);}	  
 	}
 
 	@VisibleForTesting

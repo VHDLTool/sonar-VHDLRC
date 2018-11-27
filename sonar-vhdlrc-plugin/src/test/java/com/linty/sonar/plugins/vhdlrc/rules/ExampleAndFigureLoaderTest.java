@@ -20,9 +20,10 @@ package com.linty.sonar.plugins.vhdlrc.rules;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,18 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExampleAndFigureLoaderTest {
+  
+  public class ExampleAndFigureLoaderTester extends ExampleAndFigureLoader{
+
+    ExampleAndFigureLoaderTester(String dir) {
+      super(dir);
+    }
+    @Override
+    public InputStreamReader getRessource(String ressourcePath) throws IOException{
+      InputStream is = new FileInputStream(new File(ressourcePath));
+      return new InputStreamReader(is);
+    }
+  }
 	
 	String goodPath = "src/test/files/handbooks/VHDL_Handbook_STD-master";
 	List<com.linty.sonar.plugins.vhdlrc.rules.Rule> rules = new ArrayList<>();
@@ -73,7 +86,7 @@ public class ExampleAndFigureLoaderTest {
 		rules.add(r3);
 		rules.add(r4);
 		rules.add(r5);
-		new ExampleAndFigureLoader(Paths.get(goodPath)).load(rules);
+		new ExampleAndFigureLoaderTester(goodPath).load(rules);
 	}
 	@Test //r1
 	public void loading_with_no_trouble() {	
@@ -130,28 +143,28 @@ public class ExampleAndFigureLoaderTest {
 	
 	@Test
 	public void empty_file_should_not_log_anything() {	
-		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("src/test/files/handbooks"));
+		ExampleAndFigureLoader loader = new ExampleAndFigureLoaderTester("src/test/files/handbooks");
 		String s = loader.collectExample("empty_file");
 		assertThat(s).isNullOrEmpty();
 	}
 	
 	@Test
 	public void not_foud_balise_should_not_log_anything() {
-		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("src/test/files/handbooks"));
+		ExampleAndFigureLoader loader = new ExampleAndFigureLoaderTester("src/test/files/handbooks");
 		String s = loader.collectExample("no_balises");
 		assertThat(s).isNullOrEmpty();
 	}
 	
 	@Test
 	public void empty_image_should_not_log_anything() {
-		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("src/test/files/handbooks"));
+		ExampleAndFigureLoader loader = new ExampleAndFigureLoaderTester("src/test/files/handbooks");
 		String s = loader.collectImage("empty_image.svg");
 		assertThat(s).isNullOrEmpty();
 	}
 	
 	@Test
 	public void not_existing_path_should_right_error_msg() {
-		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("does/not/exists"));
+		ExampleAndFigureLoader loader = new ExampleAndFigureLoaderTester("does/not/exists");
 		String im = loader.collectImage("STD_05500.svg");
 		String ex = loader.collectExample("STD_05500_good");
 		assertThat(im).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_IAMGE_MSG + "STD_05500.svg");
@@ -160,11 +173,19 @@ public class ExampleAndFigureLoaderTest {
 	
 	@Test
 	public void special_caractere_in_File_names_should_right_error_msg() {
-		ExampleAndFigureLoader loader = new ExampleAndFigureLoader(Paths.get("src/test/files/handbooks"));
+		ExampleAndFigureLoader loader = new ExampleAndFigureLoaderTester("src/test/files/handbooks");
 		String im = loader.collectImage("P@?!$%\"%7B%:|7Dog_r()a%20m[1].cs");
 		String ex = loader.collectExample("\".%7B%7Dog_r()a%20m[1].cs\"");
 		assertThat(im).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_IAMGE_MSG + "P@?!$%\"%7B%:|7Dog_r()a%20m[1].cs");
 		assertThat(ex).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_EXAMPLE_MSG + "\".%7B%7Dog_r()a%20m[1].cs\".vhd");
+	}
+	
+	//Test with real resource
+	@Test
+	public void test_real_ressource(){
+	  ExampleAndFigureLoader loader = new ExampleAndFigureLoader("does/not/exists");
+    String im = loader.collectImage("STD_05500.svg");
+    assertThat(im).isEqualTo(ExampleAndFigureLoader.NOT_FOUND_IAMGE_MSG + "STD_05500.svg");
 	}
 	
 }
