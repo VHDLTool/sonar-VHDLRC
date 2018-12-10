@@ -21,14 +21,19 @@ package com.linty.sonar.zamia;
 import com.google.common.annotations.VisibleForTesting;
 import com.linty.sonar.plugins.vhdlrc.Vhdl;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -38,6 +43,35 @@ import org.apache.commons.io.FileUtils;
 
 
 public class ZamiaRunner {
+  
+  public static class RunnerContext{
+    private final String ECLIPSE_DIR = "rc/eclipse";
+    private final String WIN_EXE = "eclipsec.exe";
+    //private final String ECLIPSE_DIR = "rc/notepad++";//TODO:for testing only
+    //private final String WIN_EXE = "notepad++.exe";//TODO:for testing only
+    private final String UNIX_EXE = "eclipse";
+    private final String ARGS = "-clean -nosplash -application org.zamia.plugin.Check";
+    private final String DOUBLE_QUOTE = "\"";
+
+    protected ArrayList<String> buildCmd(String scannerHome) {
+      ArrayList<String> cmd = new ArrayList<>();
+      boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
+      Path programDir = Paths.get(scannerHome, this.ECLIPSE_DIR).normalize();
+      Path target = Paths.get(scannerHome, PROJECT_DIR).normalize();
+      if (isWindows) {
+        cmd.add(doubleQuote(programDir.resolve(this.WIN_EXE).normalize()));
+      } else {
+        cmd.add(doubleQuote(programDir.resolve(this.UNIX_EXE).normalize()));
+      }
+      cmd.addAll(Arrays.asList(ARGS.split(" ")));
+      cmd.add(doubleQuote(target));  
+      return cmd;
+    }
+
+    private String doubleQuote(Path p) {
+      return DOUBLE_QUOTE + p.toString() + DOUBLE_QUOTE;
+    }
+  }
   
   public static final String                  PROJECT_DIR = VhdlRcSensor.PROJECT_DIR;
   public static final String               BUILD_PATH_TXT = "BuildPath.txt";
@@ -52,23 +86,22 @@ public class ZamiaRunner {
   public static final String                  VIRGIN_CONF = "virgin_conf";
   public static final String                 RULESET_PATH = "HANDBOOK/Rulesets/handbook.xml";
   
-  private static final String WIN_CMD = "eclipsec.exe -nosplash -application org.zamia.plugin.Check";
-  private static final String UNIX_CMD = "eclipse -nosplash -application org.zamia.plugin.Check";
-  
-  
   private final SensorContext context;
+  private final RunnerContext runnerContext;
   private final String scannerHome;
-  private static final Logger LOG = Loggers.get(ZamiaRunner.class);
   
-  public ZamiaRunner(SensorContext context) {
-    this.context = context;
+  private static final Logger LOG = Loggers.get(ZamiaRunner.class);
+
+  public ZamiaRunner(SensorContext sensorContext, RunnerContext runnerContext) {
+    this.context = sensorContext;
     this.scannerHome = this.context.config()
       .get(VhdlRcSensor.SCANNER_HOME_KEY)
       .orElseThrow(() -> new IllegalStateException("vhdlRcSensor should not execute without " + VhdlRcSensor.SCANNER_HOME_KEY));
+    this.runnerContext = runnerContext;
   }
   
-  public static void run(SensorContext context) {
-    new ZamiaRunner(context).run();
+  public static void run(SensorContext sensorContext) {
+    new ZamiaRunner(sensorContext, new RunnerContext()).run();
   }
 
   @VisibleForTesting
@@ -78,8 +111,8 @@ public class ZamiaRunner {
     uploadConfigToZamia(tempBuildPath);
     clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     uploadInputFilesToZamia();
-    //clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     runZamia();
+    clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     LOG.info("----------Vhdlrc Analysis---------(done)");
   }
 
@@ -138,17 +171,40 @@ public class ZamiaRunner {
   private void clean(Path path) {
     try {
       FileUtils.cleanDirectory(path.toFile());
-    } catch (IOException e) {
-      LOG.error("Unable to reset folder in scanner, check deletion rights for : {}", path, e );
+    } catch (IOException | IllegalArgumentException e) {
+      LOG.error("Unable to reset folder in scanner : {}", e.getMessage() , e );
     }
   }
 
-  private void runZamia() {
+  @VisibleForTesting
+  protected void runZamia() {
     LOG.info("--Running analysis");
-    LOG.info("Launch zamia Check manualy and press \"ENTER\" to continue...");
-//    Scanner scanner = new Scanner(System.in);
-//    scanner.nextLine(); 
+    Process process;
+    ProcessBuilder builder = new ProcessBuilder();
+    builder.command(runnerContext.buildCmd(scannerHome));
+    System.out.println(builder.command());//TODO
+    builder.redirectErrorStream(true);
+  try {
+    process = builder.start();
+    consume(process.getInputStream());
+    process.waitFor(120, TimeUnit.SECONDS);
+    process.destroy();       
+    } catch (IOException | InterruptedException e) {
+      LOG.error("Analysis has failed : {}", e.getMessage());
+    }
     LOG.info("--Running analysis (done)");
+  }
+
+  private void consume(InputStream is) throws IOException {
+    String line;
+    int i = 0;
+    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+    line = br.readLine();
+    while (line != null && i++ < 1) { 
+      br.readLine();
+      System.out.println("output : " + line);//TODO
+    }
+
   }
  
 }

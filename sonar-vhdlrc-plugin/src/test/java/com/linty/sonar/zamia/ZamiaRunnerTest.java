@@ -20,6 +20,7 @@ package com.linty.sonar.zamia;
 
 import com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
+import com.linty.sonar.zamia.ZamiaRunner.RunnerContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -27,11 +28,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.PosixFilePermission;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,6 +49,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class ZamiaRunnerTest {
+  
+  public static class RunnerContextTester extends RunnerContext{
+    
+    //private final String WIN_EXE = "src/test/files/eclipse_test.bat";
+    //private final String UNIX_EXE = "src/test/files/eclipse_test_linux.bash";
+    //private final String ARGS = "-version";
+    
+    @Override
+    protected ArrayList<String> buildCmd(String scannerHome) {
+      ArrayList<String> cmd = new ArrayList<>();
+//      cmd.add("P:\\Tools\\notepad++\\notepad++.exe");  
+//      cmd.add("-alwaysOnTop"); 
+//      cmd.add("P:\\dev\\eclipse_test.bat"); 
+      cmd.add("");
+      return cmd;
+    }
+  }
   
   public MapSettings settings = new MapSettings();
   public File project;
@@ -94,14 +110,14 @@ public class ZamiaRunnerTest {
     ZamiaRunner.run(context);
     Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve("rc/ws/project/vhdl");
     assertThat(vhdlTargetFolder.toFile()).exists();              //vhdl folder should not be deleted after analysis
-    //assertThat(vhdlTargetFolder.toFile().listFiles()).isEmpty(); //vhdl folder should be cleaned after analysis
+    assertThat(vhdlTargetFolder.toFile().listFiles()).isEmpty(); //vhdl folder should be cleaned after analysis
     //walkin(testScanner.getRoot(),"+--");
   }
   
   @Test
   public void test_uploading_config() {
     SensorContextTester context = createContext();   
-    ZamiaRunner zamiaRunner = new ZamiaRunner(context);
+    ZamiaRunner zamiaRunner = new ZamiaRunner(context, new RunnerContext());
     Path tempBuildPath =  createConfigTempFile("temp");
     zamiaRunner.uploadConfigToZamia(tempBuildPath);  
     assertThat(new File(project,"BuildPath.txt").exists()).isTrue();
@@ -120,7 +136,7 @@ public class ZamiaRunnerTest {
     addTestFile2(context, testProject, "home/project1/src/MUX/a.vhd");
     addTestFile2(context, testProject, "home/project1/src/MUX/b.vhd");
     addTestFile2(context, testProject, "home/project1/src/c.txt");
-    new ZamiaRunner(context).uploadInputFilesToZamia();
+    new ZamiaRunner(context, new RunnerContext()).uploadInputFilesToZamia();
     Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve("rc/ws/project/vhdl");
     assertThat(vhdlTargetFolder.resolve("home/project1/src/Top.vhd").toFile().exists()).isTrue();
     assertThat(vhdlTargetFolder.resolve("home/project1/src/a.vhd").toFile().exists()).isTrue();
@@ -130,13 +146,39 @@ public class ZamiaRunnerTest {
   }
   
   @Test
+  public void read_only_vhdl_dir_should_log_errors() throws IOException {
+    SensorContextTester context = createContext();
+    System.out.println(testScanner.newFile("rc/ws/project/vhdl/Top.vhd").setReadOnly());
+    addTestFile2(context, testProject, "Top.vhd");
+    System.out.println();
+    new ZamiaRunner(context, new RunnerContextTester()).uploadInputFilesToZamia();
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Unable to upload vhdl sources to scanner");
+  }
+  
+  @Test
+  public void clean_should_log_error_when_IOException() throws IOException {
+    SensorContextTester context = createContext();
+    System.out.println(vhdl.delete());
+    new ZamiaRunner(context, new RunnerContextTester()).run();
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("Unable to reset folder in scanner ");
+  }
+  
+  @Test
   public void read_only_scanner_should_log_errors() throws IOException {
     logTester.setLevel(LoggerLevel.DEBUG);
     SensorContextTester context = createContext();
+    RunnerContextTester runnerContext = new RunnerContextTester();
     System.out.println(bp.setReadOnly());
     //Source files to copy to scanner vhdl folder
     addTestFile2(context, testProject,"Top.vhd");
-    ZamiaRunner.run(context);    
+    new ZamiaRunner(context, runnerContext).run();    
+  }
+  
+  @Test
+  public void test_cmd() {
+    SensorContextTester context = createContext();
+    RunnerContextTester runnerContext = new RunnerContextTester();
+    new ZamiaRunner(context, runnerContext).runZamia();    
   }
   
   
