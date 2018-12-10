@@ -46,7 +46,7 @@ import com.linty.sonar.zamia.ZamiaRunner;
 
 public class VhdlRcSensor implements Sensor {
   public static final String SCANNER_HOME_KEY ="sonar.vhdlrc.scanner.home";
-  public static final String      PROJECT_DIR = "rc/ws/project";
+  public static final String      PROJECT_DIR = "rc/Data/workspace/project";
 	public static final String   REPORTING_PATH = PROJECT_DIR + "/rule_checker/reporting/rule";
 	private static final Logger LOG = Loggers.get(VhdlRcSensor.class);
 	private static List<String> unfoundFiles = new ArrayList<>();

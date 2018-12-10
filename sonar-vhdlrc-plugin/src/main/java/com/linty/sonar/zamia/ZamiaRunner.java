@@ -45,8 +45,8 @@ import org.apache.commons.io.FileUtils;
 public class ZamiaRunner {
   
   public static class RunnerContext{
-    private final String ECLIPSE_DIR = "rc/eclipse";
-    private final String WIN_EXE = "eclipsec.exe";
+    private final String ECLIPSE_DIR = "rc/App/eclipse";
+    private final String WIN_EXE = "eclipsec.bat";
     //private final String ECLIPSE_DIR = "rc/notepad++";//TODO:for testing only
     //private final String WIN_EXE = "notepad++.exe";//TODO:for testing only
     private final String UNIX_EXE = "eclipse";
@@ -64,7 +64,7 @@ public class ZamiaRunner {
         cmd.add(doubleQuote(programDir.resolve(this.UNIX_EXE).normalize()));
       }
       cmd.addAll(Arrays.asList(ARGS.split(" ")));
-      cmd.add(doubleQuote(target));  
+      cmd.add(doubleQuote(target));
       return cmd;
     }
 
@@ -200,7 +200,7 @@ public class ZamiaRunner {
     int i = 0;
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
     line = br.readLine();
-    while (line != null && i++ < 1) { 
+    while (line != null && i++ < 10) { 
       br.readLine();
       System.out.println("output : " + line);//TODO
     }

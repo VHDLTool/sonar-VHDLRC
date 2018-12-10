@@ -62,17 +62,21 @@ public class ZamiaRunnerTest {
 //      cmd.add("P:\\Tools\\notepad++\\notepad++.exe");  
 //      cmd.add("-alwaysOnTop"); 
 //      cmd.add("P:\\dev\\eclipse_test.bat"); 
-      cmd.add("");
+      cmd.add("no");
       return cmd;
     }
   }
   
+  public static final String PROJECT_DIRECTORY = VhdlRcSensor.PROJECT_DIR;
   public MapSettings settings = new MapSettings();
+  public ArrayList<String> projectPathList = new ArrayList<>(Arrays.asList(PROJECT_DIRECTORY.split("/")));
   public File project;
   public File vhdl;
   public File ruleChecker;
   public File hb;
   public File bp;
+  public ArrayList<String> v = new ArrayList<>(projectPathList);
+  public ArrayList<String> r = new ArrayList<>(projectPathList);
   public static Path projectRoot;
   
   @Rule
@@ -86,11 +90,18 @@ public class ZamiaRunnerTest {
   public void initialize() throws IOException {
     projectRoot = Paths.get(testProject.getRoot().toURI());//temporary project for testing
     //Temporary Scanner home structure
-    project = testScanner.newFolder("rc","ws","project");
-    vhdl = testScanner.newFolder("rc","ws","project","vhdl");
-    ruleChecker = testScanner.newFolder("rc","ws","project","rule_checker");
-    hb = testScanner.newFolder("rc","ws","project","rule_checker","hb_vhdlrc");
-    bp = testScanner.newFile("rc/ws/project/BuildPath.txt");
+    project = testScanner.newFolder(projectPathList.toArray(new String[projectPathList.size()]));
+    
+    v.add("vhdl");   
+    r.add("rule_checker");
+    
+    vhdl = testScanner.newFolder(v.toArray(new String[v.size()]));
+    ruleChecker = testScanner.newFolder(r.toArray(new String[r.size()]));
+    
+    r.add("hb_vhdlrc");
+    
+    hb = testScanner.newFolder(r.toArray(new String[r.size()]));
+    bp = testScanner.newFile(PROJECT_DIRECTORY + "/BuildPath.txt");
     //testScanner.newFile("rc/ws/project/rule_checker/hb_vhdlrc/handbook.xml");
   }
 
@@ -99,8 +110,11 @@ public class ZamiaRunnerTest {
     logTester.setLevel(LoggerLevel.DEBUG);
     SensorContextTester context = createContext();
     //vhdl folder should be cleaned before analysis
-    testScanner.newFolder("rc","ws","project","vhdl","mustBeDeleted");
-    testScanner.newFile("rc/ws/project/vhdl/2Delete.vhd");
+    ArrayList<String> v2 = new ArrayList<>(v);
+    v2.add("mustBeDeleted");
+    testScanner.newFolder(v2.toArray(new String[v2.size()]));
+    testScanner.newFile(PROJECT_DIRECTORY + "/vhdl/2Delete.vhd");
+    walkin(testScanner.getRoot(),"+--");
     //Source files to copy to scanner vhdl folder
     testProject.newFolder("home","project1","src");
     testProject.newFolder("home","project1","src","MUX");
@@ -108,7 +122,7 @@ public class ZamiaRunnerTest {
     addTestFile2(context, testProject, "home/project1/src/a.vhd");
     addTestFile2(context, testProject, "home/project1/src/MUX/a.vhd");   
     ZamiaRunner.run(context);
-    Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve("rc/ws/project/vhdl");
+    Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve(PROJECT_DIRECTORY).resolve("vhdl");
     assertThat(vhdlTargetFolder.toFile()).exists();              //vhdl folder should not be deleted after analysis
     assertThat(vhdlTargetFolder.toFile().listFiles()).isEmpty(); //vhdl folder should be cleaned after analysis
     //walkin(testScanner.getRoot(),"+--");
@@ -137,7 +151,7 @@ public class ZamiaRunnerTest {
     addTestFile2(context, testProject, "home/project1/src/MUX/b.vhd");
     addTestFile2(context, testProject, "home/project1/src/c.txt");
     new ZamiaRunner(context, new RunnerContext()).uploadInputFilesToZamia();
-    Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve("rc/ws/project/vhdl");
+    Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve(PROJECT_DIRECTORY).resolve("vhdl");
     assertThat(vhdlTargetFolder.resolve("home/project1/src/Top.vhd").toFile().exists()).isTrue();
     assertThat(vhdlTargetFolder.resolve("home/project1/src/a.vhd").toFile().exists()).isTrue();
     assertThat(vhdlTargetFolder.resolve("home/project1/src/MUX/a.vhd").toFile().exists()).isTrue();
@@ -148,7 +162,7 @@ public class ZamiaRunnerTest {
   @Test
   public void read_only_vhdl_dir_should_log_errors() throws IOException {
     SensorContextTester context = createContext();
-    System.out.println(testScanner.newFile("rc/ws/project/vhdl/Top.vhd").setReadOnly());
+    System.out.println(testScanner.newFile(PROJECT_DIRECTORY+"/vhdl/Top.vhd").setReadOnly());
     addTestFile2(context, testProject, "Top.vhd");
     System.out.println();
     new ZamiaRunner(context, new RunnerContextTester()).uploadInputFilesToZamia();
