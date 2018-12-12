@@ -21,6 +21,7 @@ package com.linty.sonar.zamia;
 import com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import com.linty.sonar.zamia.ZamiaRunner.RunnerContext;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -193,6 +194,67 @@ public class ZamiaRunnerTest {
     SensorContextTester context = createContext();
     RunnerContextTester runnerContext = new RunnerContextTester();
     new ZamiaRunner(context, runnerContext).runZamia();    
+  }
+  
+  @Test
+  public void should_log_all_zamiacad_output_when_debbug_on() throws IOException {
+    logTester.setLevel(LoggerLevel.DEBUG);
+    SensorContextTester context = createContext();
+    RunnerContextTester runnerContext = new RunnerContextTester();
+    String msg ="line one\r\n" + 
+      "line2\r\n" + 
+      "line3\r\n" + 
+      "line4\r\n" + 
+      "line5\r\n" + 
+      "line6\r\n" + 
+      "line7\r\n" + 
+      "line8\r\n" + 
+      "l9\r\n" + 
+      "l10\r\n" + 
+      "l11\r\n" + 
+      "l12\r\n" + 
+      "l13\r\n" + 
+      "l14";
+    new ZamiaRunner(context, runnerContext).consume(new ByteArrayInputStream(msg.getBytes()));
+    assertThat(logTester.logs(LoggerLevel.INFO).size()).isEqualTo(14);
+    System.out.println("_");
+    logTester.clear();
+    msg ="line one\r\n" + 
+      "line2\r\n" + 
+      "line3\r\n" + 
+      "line4\r\n";
+    new ZamiaRunner(context, runnerContext).consume(new ByteArrayInputStream(msg.getBytes()));
+    assertThat(logTester.logs(LoggerLevel.INFO).size()).isEqualTo(4);
+  }
+  
+  @Test
+  public void should_log_x_last_lines_of_zamiacad_output_when_debbug_off() throws IOException {
+    SensorContextTester context = createContext();
+    RunnerContextTester runnerContext = new RunnerContextTester();
+    String msg ="line one\r\n" + 
+      "line2\r\n" + 
+      "line3\r\n" + 
+      "line4\r\n" + 
+      "line5\r\n" + 
+      "line6\r\n" + 
+      "line7\r\n" + 
+      "line8\r\n" + 
+      "l9\r\n" + 
+      "l10\r\n" + 
+      "l11\r\n" + 
+      "l12\r\n" + 
+      "l13\r\n" + 
+      "l14";
+    new ZamiaRunner(context, runnerContext).consume(new ByteArrayInputStream(msg.getBytes()));
+    assertThat(logTester.logs(LoggerLevel.INFO).size()).isEqualTo(0);
+    System.out.println("_");
+    logTester.clear();
+    msg ="line one\r\n" + 
+      "line2\r\n" + 
+      "line3\r\n" + 
+      "line4\r\n";
+    new ZamiaRunner(context, runnerContext).consume(new ByteArrayInputStream(msg.getBytes()));
+    assertThat(logTester.logs(LoggerLevel.INFO).size()).isEqualTo(0);
   }
   
   

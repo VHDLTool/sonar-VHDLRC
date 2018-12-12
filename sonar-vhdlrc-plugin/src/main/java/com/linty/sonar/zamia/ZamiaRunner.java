@@ -31,8 +31,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
@@ -46,9 +44,7 @@ public class ZamiaRunner {
   
   public static class RunnerContext{
     private final String ECLIPSE_DIR = "rc/App/eclipse";
-    private final String WIN_EXE = "eclipsec.bat";
-    //private final String ECLIPSE_DIR = "rc/notepad++";//TODO:for testing only
-    //private final String WIN_EXE = "notepad++.exe";//TODO:for testing only
+    private final String WIN_EXE = "eclipsec.bat"; 
     private final String UNIX_EXE = "eclipse";
     private final String ARGS = "-clean -nosplash -application org.zamia.plugin.Check";
     private final String DOUBLE_QUOTE = "\"";
@@ -63,7 +59,7 @@ public class ZamiaRunner {
       } else {
         cmd.add(doubleQuote(programDir.resolve(this.UNIX_EXE).normalize()));
       }
-      cmd.addAll(Arrays.asList(ARGS.split(" ")));
+//      cmd.addAll(Arrays.asList(ARGS.split(" "))); //Arguments are passed through eclipsec.bat file in rc-scanner
       cmd.add(doubleQuote(target));
       return cmd;
     }
@@ -89,6 +85,8 @@ public class ZamiaRunner {
   private final SensorContext context;
   private final RunnerContext runnerContext;
   private final String scannerHome;
+  
+  public static final int ZAMIACAD_LOG_SIZE = 10;
   
   private static final Logger LOG = Loggers.get(ZamiaRunner.class);
 
@@ -172,7 +170,7 @@ public class ZamiaRunner {
     try {
       FileUtils.cleanDirectory(path.toFile());
     } catch (IOException | IllegalArgumentException e) {
-      LOG.error("Unable to reset folder in scanner : {}", e.getMessage() , e );
+      LOG.error("Unable to reset folder in scanner : {}", e.getMessage());
     }
   }
 
@@ -182,12 +180,11 @@ public class ZamiaRunner {
     Process process;
     ProcessBuilder builder = new ProcessBuilder();
     builder.command(runnerContext.buildCmd(scannerHome));
-    System.out.println(builder.command());//TODO
     builder.redirectErrorStream(true);
   try {
     process = builder.start();
     consume(process.getInputStream());
-    process.waitFor(120, TimeUnit.SECONDS);
+    process.waitFor(100, TimeUnit.SECONDS);
     process.destroy();       
     } catch (IOException | InterruptedException e) {
       LOG.error("Analysis has failed : {}", e.getMessage());
@@ -195,16 +192,26 @@ public class ZamiaRunner {
     LOG.info("--Running analysis (done)");
   }
 
-  private void consume(InputStream is) throws IOException {
+  @VisibleForTesting
+  protected void consume(InputStream is) throws IOException {
     String line;
     int i = 0;
+    ArrayList<String> lines = new ArrayList<>();
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
-    line = br.readLine();
-    while (line != null && i++ < 10) { 
-      br.readLine();
-      System.out.println("output : " + line);//TODO
+    if(LOG.isDebugEnabled()) {
+      while((line = br.readLine()) != null && i++ < 1500) { 
+        LOG.info("Zamia : " + line);
+      }
     }
-
-  }
- 
+//    else {
+//      while ((line = br.readLine()) != null && i++ < 600) { 
+//        lines.add(line);
+//      }
+//      if(lines.size() > ZAMIACAD_LOG_SIZE) {
+//        lines = new ArrayList<>(lines.subList(lines.size()-ZAMIACAD_LOG_SIZE, lines.size()));    
+//      }
+//      lines.forEach(l -> LOG.info("zamia : " + l));
+//    }
+//
+    } 
 }

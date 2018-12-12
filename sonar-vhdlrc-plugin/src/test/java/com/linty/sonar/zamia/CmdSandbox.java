@@ -11,10 +11,10 @@ import org.junit.Test;
 
 public class CmdSandbox {
   
-  public String home = "P:\\";
-  public String notePadDir = "Tools/notepad++";
-  public String notePad = "notepad++.exe";
-  public String arguments = "-alwaysOnTop -notabbar";
+  public String home = "src/test/files/";
+  public String notePadDir = "";
+  public String notePad = ".";
+  public String arguments = "";
   public String fileDir = "dev/eclipse_test.bat";
   
   public void execute(String program, String args, String target) throws IOException, InterruptedException {
@@ -25,7 +25,7 @@ public class CmdSandbox {
     ArrayList<String> fullCmd = new ArrayList<>();
     fullCmd.add(program);
     fullCmd.addAll(Arrays.asList(args.split(" ")));
-    fullCmd.add(target);
+    //fullCmd.add(target);
     
     System.out.println(fullCmd);
     System.out.println(target);
@@ -33,6 +33,7 @@ public class CmdSandbox {
     if (isWindows) {
       //builder.directory(directory.toFile());
       builder.command(fullCmd);
+      
       System.out.println("TRY : " + builder.command());
       process = builder.start();
       process.waitFor();
