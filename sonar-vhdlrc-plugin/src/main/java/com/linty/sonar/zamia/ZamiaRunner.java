@@ -43,11 +43,11 @@ import org.apache.commons.io.FileUtils;
 public class ZamiaRunner {
   
   public static class RunnerContext{
-    private final String ECLIPSE_DIR = "rc/App/eclipse";
-    private final String WIN_EXE = "eclipsec.bat"; 
-    private final String UNIX_EXE = "eclipse";
-    private final String ARGS = "-clean -nosplash -application org.zamia.plugin.Check";
-    private final String DOUBLE_QUOTE = "\"";
+    private static final String ECLIPSE_DIR = "rc/App/eclipse";
+    private static final String WIN_EXE = "eclipsec.bat"; 
+    private static final String UNIX_EXE = "eclipse";
+    private static final String ARGS = "-clean -nosplash -application org.zamia.plugin.Check";
+    private static final String DOUBLE_QUOTE = "\"";
 
     protected ArrayList<String> buildCmd(String scannerHome) {
       ArrayList<String> cmd = new ArrayList<>();
@@ -186,7 +186,10 @@ public class ZamiaRunner {
     consume(process.getInputStream());
     process.waitFor(100, TimeUnit.SECONDS);
     process.destroy();       
-    } catch (IOException | InterruptedException e) {
+    } catch (IOException e) {
+      LOG.error("Analysis has failed : {}", e.getMessage());
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
       LOG.error("Analysis has failed : {}", e.getMessage());
     }
     LOG.info("--Running analysis (done)");
@@ -196,7 +199,6 @@ public class ZamiaRunner {
   protected void consume(InputStream is) throws IOException {
     String line;
     int i = 0;
-    ArrayList<String> lines = new ArrayList<>();
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
     if(LOG.isDebugEnabled()) {
       while((line = br.readLine()) != null && i++ < 1500) { 
