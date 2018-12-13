@@ -45,7 +45,7 @@ public class ZamiaRunner {
   public static class RunnerContext{
     private static final String ECLIPSE_DIR = "rc/App/eclipse";
     private static final String WIN_EXE = "eclipsec.bat"; 
-    private static final String UNIX_EXE = "eclipse";
+    private static final String UNIX_EXE = "eclipse_rc";
     private static final String ARGS = "-clean -nosplash -application org.zamia.plugin.Check";
     private static final String DOUBLE_QUOTE = "\"";
 
@@ -56,11 +56,12 @@ public class ZamiaRunner {
       Path target = Paths.get(scannerHome, PROJECT_DIR).normalize();
       if (isWindows) {
         cmd.add(doubleQuote(programDir.resolve(this.WIN_EXE).normalize()));
+        cmd.add(doubleQuote(target));
       } else {
-        cmd.add(doubleQuote(programDir.resolve(this.UNIX_EXE).normalize()));
+        cmd.add(programDir.resolve(this.UNIX_EXE).normalize().toString());
+        cmd.add(target.toString());
       }
 //      cmd.addAll(Arrays.asList(ARGS.split(" "))); //Arguments are passed through eclipsec.bat file in rc-scanner
-      cmd.add(doubleQuote(target));
       return cmd;
     }
 
