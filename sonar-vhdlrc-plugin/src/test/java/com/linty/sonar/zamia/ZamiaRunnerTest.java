@@ -125,7 +125,7 @@ public class ZamiaRunnerTest {
     ZamiaRunner.run(context);
     Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve(PROJECT_DIRECTORY).resolve("vhdl");
     assertThat(vhdlTargetFolder.toFile()).exists();              //vhdl folder should not be deleted after analysis
-    assertThat(vhdlTargetFolder.toFile().listFiles()).isEmpty(); //vhdl folder should be cleaned after analysis
+    assertThat(vhdlTargetFolder.toFile().listFiles()).isNotEmpty(); //vhdl folder should not be cleaned after analysis when debug is enable
     //walkin(testScanner.getRoot(),"+--");
   }
   

@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
@@ -52,13 +53,13 @@ public class ZamiaRunner {
     protected ArrayList<String> buildCmd(String scannerHome) {
       ArrayList<String> cmd = new ArrayList<>();
       boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-      Path programDir = Paths.get(scannerHome, this.ECLIPSE_DIR).normalize();
+      Path programDir = Paths.get(scannerHome, ECLIPSE_DIR).normalize();
       Path target = Paths.get(scannerHome, PROJECT_DIR).normalize();
       if (isWindows) {
-        cmd.add(doubleQuote(programDir.resolve(this.WIN_EXE).normalize()));
+        cmd.add(doubleQuote(programDir.resolve(WIN_EXE).normalize()));
         cmd.add(doubleQuote(target));
       } else {
-        cmd.add(programDir.resolve(this.UNIX_EXE).normalize().toString());
+        cmd.add(programDir.resolve(UNIX_EXE).normalize().toString());
         cmd.add(target.toString());
       }
 //      cmd.addAll(Arrays.asList(ARGS.split(" "))); //Arguments are passed through eclipsec.bat file in rc-scanner
@@ -111,7 +112,9 @@ public class ZamiaRunner {
     clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     uploadInputFilesToZamia();
     runZamia();
-    clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
+    if(!LOG.isDebugEnabled()) {
+      clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
+    }
     LOG.info("----------Vhdlrc Analysis---------(done)");
   }
 
@@ -182,6 +185,9 @@ public class ZamiaRunner {
     ProcessBuilder builder = new ProcessBuilder();
     builder.command(runnerContext.buildCmd(scannerHome));
     builder.redirectErrorStream(true);
+    if(LOG.isDebugEnabled()) {
+      LOG.info("Running " + Arrays.toString(builder.command().toArray()));
+    }
   try {
     process = builder.start();
     consume(process.getInputStream());
@@ -202,7 +208,7 @@ public class ZamiaRunner {
     int i = 0;
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
     if(LOG.isDebugEnabled()) {
-      while((line = br.readLine()) != null && i++ < 1500) { 
+      while((line = br.readLine()) != null && i++ < 3000) { 
         LOG.info("Zamia : " + line);
       }
     }
