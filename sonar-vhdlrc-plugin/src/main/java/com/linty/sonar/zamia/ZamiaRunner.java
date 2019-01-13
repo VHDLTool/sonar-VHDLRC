@@ -193,7 +193,7 @@ public class ZamiaRunner {
   try {
     process = builder.start();
     consume(process.getInputStream());
-    process.waitFor(100, TimeUnit.SECONDS);
+    process.waitFor(300, TimeUnit.SECONDS);
     process.destroy();       
     } catch (IOException e) {
       LOG.error("Analysis has failed : {}", e.getMessage());
@@ -213,16 +213,8 @@ public class ZamiaRunner {
       while((line = br.readLine()) != null && i++ < 15000) { 
         LOG.info("Zamia : " + line);
       }
+    } else {
+      while((line = br.readLine()) != null && i++ < 15000) {} //just consume the output to prevent the process from hanging
     }
-//    else {
-//      while ((line = br.readLine()) != null && i++ < 600) { 
-//        lines.add(line);
-//      }
-//      if(lines.size() > ZAMIACAD_LOG_SIZE) {
-//        lines = new ArrayList<>(lines.subList(lines.size()-ZAMIACAD_LOG_SIZE, lines.size()));    
-//      }
-//      lines.forEach(l -> LOG.info("zamia : " + l));
-//    }
-//
-    } 
+  } 
 }

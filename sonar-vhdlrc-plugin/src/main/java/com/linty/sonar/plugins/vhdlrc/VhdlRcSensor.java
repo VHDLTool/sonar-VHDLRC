@@ -91,7 +91,7 @@ public class VhdlRcSensor implements Sensor {
 	      try {
 	        importIssue(context, issue);
 	      } catch (RuntimeException e) {
-	        LOG.warn("Can't import an issue from report : {}", reportFile.getFileName(), e.getMessage());
+	        LOG.warn("Can't import an issue from report {} : {}", reportFile.getFileName(), e.getMessage());
 	      }  
 	    }
 	  } catch (XMLStreamException e) {			
