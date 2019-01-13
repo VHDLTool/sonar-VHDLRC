@@ -53,10 +53,6 @@ public class ZamiaRunnerTest {
   
   public static class RunnerContextTester extends RunnerContext{
     
-    //private final String WIN_EXE = "src/test/files/eclipse_test.bat";
-    //private final String UNIX_EXE = "src/test/files/eclipse_test_linux.bash";
-    //private final String ARGS = "-version";
-    
     @Override
     protected ArrayList<String> buildCmd(String scannerHome) {
       ArrayList<String> cmd = new ArrayList<>();
@@ -71,11 +67,13 @@ public class ZamiaRunnerTest {
   public static final String PROJECT_DIRECTORY = VhdlRcSensor.PROJECT_DIR;
   public MapSettings settings = new MapSettings();
   public ArrayList<String> projectPathList = new ArrayList<>(Arrays.asList(PROJECT_DIRECTORY.split("/")));
-  public File project;
-  public File vhdl;
-  public File ruleChecker;
-  public File hb;
-  public File bp;
+  public File project;    //
+  public File vhdl;         //
+  public File ruleChecker;  //
+  public File reporting;      //
+  public File rule;             //
+  public File hb;             //
+  public File bp;           //
   public ArrayList<String> v = new ArrayList<>(projectPathList);
   public ArrayList<String> r = new ArrayList<>(projectPathList);
   public static Path projectRoot;
@@ -91,31 +89,27 @@ public class ZamiaRunnerTest {
   public void initialize() throws IOException {
     projectRoot = Paths.get(testProject.getRoot().toURI());//temporary project for testing
     //Temporary Scanner home structure
-    project = testScanner.newFolder(projectPathList.toArray(new String[projectPathList.size()]));
-    
-    v.add("vhdl");   
-    r.add("rule_checker");
-    
-    vhdl = testScanner.newFolder(v.toArray(new String[v.size()]));
-    ruleChecker = testScanner.newFolder(r.toArray(new String[r.size()]));
-    
-    r.add("hb_vhdlrc");
-    
-    hb = testScanner.newFolder(r.toArray(new String[r.size()]));
+    project = testScanner.newFolder(projectPathList.toArray(new String[projectPathList.size()]));    
+    vhdl = newFolderInScannerProject("vhdl");      
+    ruleChecker = newFolderInScannerProject("rule_checker");   
+    hb =        newFolderInScannerProject("rule_checker", "hb_vhdlrc");
+    reporting = newFolderInScannerProject("rule_checker", "reporting");
+    rule =      newFolderInScannerProject("rule_checker", "reporting","rule");
     bp = testScanner.newFile(PROJECT_DIRECTORY + "/BuildPath.txt");
     //testScanner.newFile("rc/ws/project/rule_checker/hb_vhdlrc/handbook.xml");
+    //walkin(project, "+--");
   }
 
   @Test
   public void test() throws IOException {
-    logTester.setLevel(LoggerLevel.DEBUG);
     SensorContextTester context = createContext();
     //vhdl folder should be cleaned before analysis
-    ArrayList<String> v2 = new ArrayList<>(v);
-    v2.add("mustBeDeleted");
-    testScanner.newFolder(v2.toArray(new String[v2.size()]));
-    testScanner.newFile(PROJECT_DIRECTORY + "/vhdl/2Delete.vhd");
-    walkin(testScanner.getRoot(),"+--");
+    newFolderInScannerProject("vhdl","folder2eleted");//create a folder
+    testScanner.newFile(PROJECT_DIRECTORY + "/vhdl/file2delete.vhd");//create file in folder
+    //reports should be cleaned before analysis
+    newFolderInScannerProject("rule_checker", "reporting","rule","rc_report_to_delete");
+    testScanner.newFile(PROJECT_DIRECTORY + "/rule_checker/reporting/rule/rc_report_to_delete/report.xml");//create file in folder
+    //walkin(testScanner.getRoot(),"+--");
     //Source files to copy to scanner vhdl folder
     testProject.newFolder("home","project1","src");
     testProject.newFolder("home","project1","src","MUX");
@@ -125,7 +119,9 @@ public class ZamiaRunnerTest {
     ZamiaRunner.run(context);
     Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve(PROJECT_DIRECTORY).resolve("vhdl");
     assertThat(vhdlTargetFolder.toFile()).exists();              //vhdl folder should not be deleted after analysis
-    assertThat(vhdlTargetFolder.toFile().listFiles()).isNotEmpty(); //vhdl folder should not be cleaned after analysis when debug is enable
+    assertThat(vhdlTargetFolder.toFile().listFiles()).isEmpty(); //vhdl folder should be cleaned after analysis when debug is off
+    assertThat(rule).exists();    
+    assertThat(rule.listFiles()).isEmpty();  //reports should be cleaned before analysis, since no reports are genrated it should be empty at the end here
     //walkin(testScanner.getRoot(),"+--");
   }
   
@@ -288,6 +284,14 @@ public class ZamiaRunnerTest {
       .build();
     System.out.println("input file created : " + f.absolutePath());
     context.fileSystem().add(f);
+  }
+  
+  public File newFolderInScannerProject(String... folderNames) throws IOException {
+    ArrayList<String> p = new ArrayList<>(projectPathList);
+    for(String f : folderNames) {
+      p.add(f);
+    }
+    return testScanner.newFolder(p.toArray(new String[p.size()]));
   }
   
   public static void walkin(File dir, String space) {

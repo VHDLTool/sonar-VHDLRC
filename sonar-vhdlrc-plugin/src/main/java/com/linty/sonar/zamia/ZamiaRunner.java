@@ -75,6 +75,7 @@ public class ZamiaRunner {
   public static final String               BUILD_PATH_TXT = "BuildPath.txt";
   public static final String                  SOURCES_DIR = "vhdl";
   public static final String                  CONFIG_DIR  = "rule_checker";
+  public static final String               REPORTING_RULE = CONFIG_DIR + "/reporting/rule";
   
   public static final String                 HANDBOOK_XML = "hb_vhdlrc/handbook.xml";
   public static final String     RC_CONFIG_SELECTED_RULES = "rc_config_selected_rules.xml";
@@ -110,6 +111,7 @@ public class ZamiaRunner {
     Path tempBuildPath = BuildPathMaker.make(this.context.config());
     uploadConfigToZamia(tempBuildPath);
     clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
+    clean(Paths.get(this.scannerHome, PROJECT_DIR, REPORTING_RULE));
     uploadInputFilesToZamia();
     runZamia();
     if(!LOG.isDebugEnabled()) {
