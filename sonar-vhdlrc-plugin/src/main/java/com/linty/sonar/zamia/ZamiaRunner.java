@@ -208,7 +208,7 @@ public class ZamiaRunner {
     int i = 0;
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
     if(LOG.isDebugEnabled()) {
-      while((line = br.readLine()) != null && i++ < 3000) { 
+      while((line = br.readLine()) != null && i++ < 15000) { 
         LOG.info("Zamia : " + line);
       }
     }

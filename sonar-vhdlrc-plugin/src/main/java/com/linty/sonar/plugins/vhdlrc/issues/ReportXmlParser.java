@@ -99,7 +99,7 @@ public class ReportXmlParser {
 				i.file = Paths.get(cursor.getElemStringValue());
 			} else if ("Line".equals(localName)) {
 				i.line = Integer.parseInt(cursor.getElemStringValue());
-			} else if (ruleKey.equals(localName)) {
+			} else if (localName.startsWith(ruleKey)) {
 				i.errorMsg = collectSonarMsg(cursor.childElementCursor().advance());
 			}
 			cursor.advance();
