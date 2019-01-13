@@ -62,15 +62,15 @@ public class VhdlRcSensor implements Sensor {
 
 	@Override
 	public void execute(SensorContext context) {
-	  
-	  //TODO : Make ZamiaRunner a Sensor------------------------------------
+	 
+	  //ZamiaRunner-------------------------------------------------------
 	  if(getTopEntities(context.config()).length == 0) {
 	    LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See BuildPathMaker.TOP_ENTITY_KEY");
 	    LOG.warn("Zamia Issues will still be imported");
 	  } else {
 	    ZamiaRunner.run(context); 
 	  }
-	  //-------------------------------------------------------------------
+	  //------------------------------------------------------------------
 	  
 		Path reportsDir = Paths
 		  .get(context.config()
@@ -85,8 +85,7 @@ public class VhdlRcSensor implements Sensor {
 	@VisibleForTesting
 	protected void importReport(Path reportFile, SensorContext context) {
 	  try {
-	    LOG.info("Importing {}", reportFile.getFileName());
-	    //ReportXmlParser.getIssues(reportFile).forEach(issue -> importIssue(context, issue));  
+	    LOG.info("Importing {}", reportFile.getFileName()); 
 	    for(Issue issue : ReportXmlParser.getIssues(reportFile)){
 	      try {
 	        importIssue(context, issue);
