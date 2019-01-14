@@ -1,6 +1,6 @@
 /*
  * Vhdl RuleChecker (Vhdl-rc) plugin for Sonarqube & Zamiacad
- * Copyright (C) 2018 Maxime Facquet
+ * Copyright (C) 2019 Maxime Facquet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,22 +22,18 @@ package com.linty.sonar.plugins.vhdlrc.rules;
 import org.apache.commons.lang.StringUtils;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-
 import com.google.common.collect.ImmutableList;
 import com.linty.sonar.plugins.vhdlrc.rules.Rule;
-
 import org.codehaus.staxmate.SMInputFactory;
 import org.codehaus.staxmate.in.SMEvent;
 import org.codehaus.staxmate.in.SMFilter;
 import org.codehaus.staxmate.in.SMInputCursor;
-
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class HandbookXmlParser {
@@ -60,45 +56,30 @@ public class HandbookXmlParser {
 	private static final String NAMESPACE_HANDBOOX = "HANDBOOK";
 	private static final List<Rule> NULL = null;
 	
-	private static boolean fileExists(@Nullable File file) {
-		return file != null && file.exists() && file.isFile();
-	}
-	
-	public List<Rule> parseXML(File file) {
-		try {
-			if (fileExists(file)) {
-				if (file.length() == 0) {
-					LOG.warn("File is empty and won't be analyzed : {}", file.getPath());
-					return NULL;
-				}
-				else {
-					List<Rule> rules = new ArrayList<>();
-					collectRules(file,rules);					
-					LOG.info("Parsing {}", file.getPath());
-					return rules;
-				}
-			}
-			else if(file==null)
-				throw new IllegalArgumentException("Null argument in HandbookXmlParser");			
-			else 
-			{
-				LOG.warn("File {} was not found or is not a file and won't be analysed", file.getPath());
-				return NULL;
-			}
-			
-		} catch (XMLStreamException e) {
-		  
-			LOG.error("Error when parsing xml file: {} at line: {}\n{}",file.getPath(),e.getLocation().getLineNumber(),e.getMessage());
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("XML file parsing failed because of :{}",Arrays.toString(e.getStackTrace()));
-			}
-			throw new IllegalStateException(e);
-		}
+
+	public List<Rule> parseXML(InputStream hbStream) {
+	  try {
+	    if(hbStream.available() == 0) {
+	      LOG.warn("Handbook.xml is empty, no rules will be loaded");
+	      return NULL;
+	    }
+	    List<Rule> rules = new ArrayList<>();
+	    collectRules(hbStream, rules);					
+	    return rules;
+	    
+	  } catch (XMLStreamException e) {
+	    if (LOG.isDebugEnabled()) {
+	      LOG.debug("Error when parsing handbook.xml file at line: {}\n{}",e.getLocation().getLineNumber(),e.getMessage());
+	    }
+	    throw new IllegalStateException(e);
+	  } catch (IOException e) {
+	    throw new IllegalStateException("Unable to read handbook.xml in jar ressources",e);
+    }
 	}
 
-	private void collectRules(File file, List<Rule> rules) throws XMLStreamException {		
+	private void collectRules(InputStream hbStream, List<Rule> rules) throws XMLStreamException {		
 		SMInputFactory xmlFactory = new SMInputFactory(XMLInputFactory.newInstance());
-		SMInputCursor cursor = xmlFactory.rootElementCursor(file).advance();
+		SMInputCursor cursor = xmlFactory.rootElementCursor(hbStream).advance();
 		SMInputCursor ruleCursor = cursor.childElementCursor(new QName(NAMESPACE_HANDBOOX, "Rule")).advance();
 		
 		while (ruleCursor.asEvent() != null) {

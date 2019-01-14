@@ -1,6 +1,6 @@
 /*
  * Vhdl RuleChecker (Vhdl-rc) plugin for Sonarqube & Zamiacad
- * Copyright (C) 2018 Maxime Facquet
+ * Copyright (C) 2019 Maxime Facquet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -41,7 +41,7 @@ public class VHDLRcPluginTest {
 		SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_6_7, SonarQubeSide.SERVER);
 		Plugin.Context context = new Plugin.Context(runtime);
 		vhdlRcPlugin.define(context);		
-		assertThat(context.getExtensions()).hasSize(8);
+		assertThat(context.getExtensions()).hasSize(7);
 		runtime.getApiVersion().isGreaterThanOrEqual(Version.create(6, 5));
 	}
 	

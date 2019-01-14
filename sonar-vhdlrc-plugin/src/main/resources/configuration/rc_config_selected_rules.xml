@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<config_selected_rules xmlns:rc="RULECHECKER">
+  <rc:ruleCheckerVersion>5.0.1.201712191528</rc:ruleCheckerVersion>
+  <rc:executionDate>Tue Nov 20 16:31:36 ICT 2018</rc:executionDate>
+  <hb:Rule ParameterSource="RULE_CHECKER" UID="STD_00200"/>
+  <hb:Rule ParameterSource="RULE_CHECKER" UID="STD_00300"/>
+  <hb:Rule UID="STD_00400"/>
+  <hb:Rule UID="STD_01800"/>
+  <hb:Rule UID="STD_03600"/>
+  <hb:Rule UID="STD_03700"/>
+  <hb:Rule UID="STD_03800"/>
+  <hb:Rule UID="STD_04800"/>
+  <hb:Rule ParameterSource="RULE_CHECKER" UID="STD_04600"/>
+  <hb:Rule ParameterSource="RULE_CHECKER" UID="STD_04700"/>
+  <hb:Rule UID="STD_05000"/>
+  <hb:Rule UID="STD_05300"/>
+  <hb:Rule UID="STD_04500"/>
+</config_selected_rules>

@@ -1,6 +1,6 @@
 /*
  * Vhdl RuleChecker (Vhdl-rc) plugin for Sonarqube & Zamiacad
- * Copyright (C) 2018 Maxime Facquet
+ * Copyright (C) 2019 Maxime Facquet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -99,7 +99,7 @@ public class ReportXmlParser {
 				i.file = Paths.get(cursor.getElemStringValue());
 			} else if ("Line".equals(localName)) {
 				i.line = Integer.parseInt(cursor.getElemStringValue());
-			} else if (ruleKey.equals(localName)) {
+			} else if (localName.startsWith(ruleKey)) {
 				i.errorMsg = collectSonarMsg(cursor.childElementCursor().advance());
 			}
 			cursor.advance();

@@ -1,6 +1,6 @@
 /*
  * Vhdl RuleChecker (Vhdl-rc) plugin for Sonarqube & Zamiacad
- * Copyright (C) 2018 Maxime Facquet
+ * Copyright (C) 2019 Maxime Facquet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -97,7 +97,7 @@ public class VhdlRcSensorTest  {
 	  List<Issue> issues = new ArrayList(context1.allIssues());
 	  
 	  assertThat(issues).hasSize(4);
-	  assertNoIssueOnFile(context1,"file_no_issues.vhd");
+	  assertNoIssueOnFile(context1,"file_no_issues.vhd");	 
 	  
 	  Issue issue1 = issues.get(2);
 	  assertThat(issue1.ruleKey().rule()).isEqualTo("STD_00400");
@@ -109,7 +109,7 @@ public class VhdlRcSensorTest  {
 	  assertThat(issue2.ruleKey().rule()).isEqualTo("STD_00400");
     assertThat(issue2.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file3.vhd");
     assertThat(issue2.primaryLocation().textRange().start().line()).isEqualTo(2);
-    assertThat(issue2.primaryLocation().message()).isEqualTo("Label is missing");
+    assertThat(issue2.primaryLocation().message()).isEqualTo("Label is missing 2");
     
     String no_file = FilenameUtils.separatorsToSystem("./I2C/Mux/no_file.vhd");
      

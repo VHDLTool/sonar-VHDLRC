@@ -1,6 +1,6 @@
 /*
  * Vhdl RuleChecker (Vhdl-rc) plugin for Sonarqube & Zamiacad
- * Copyright (C) 2018 Maxime Facquet
+ * Copyright (C) 2019 Maxime Facquet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -46,7 +46,8 @@ import com.linty.sonar.zamia.ZamiaRunner;
 
 public class VhdlRcSensor implements Sensor {
   public static final String SCANNER_HOME_KEY ="sonar.vhdlrc.scanner.home";
-	public static final String REPORTING_PATH = "rc/ws/project/rule_checker/reporting/rule";
+  public static final String      PROJECT_DIR = "rc/Data/workspace/project";
+	public static final String   REPORTING_PATH = PROJECT_DIR + "/rule_checker/reporting/rule";
 	private static final Logger LOG = Loggers.get(VhdlRcSensor.class);
 	private static List<String> unfoundFiles = new ArrayList<>();
 	
@@ -61,15 +62,15 @@ public class VhdlRcSensor implements Sensor {
 
 	@Override
 	public void execute(SensorContext context) {
-	  
-	  //TODO : Make ZamiaRunner a Sensor------------------------------------
+	 
+	  //ZamiaRunner-------------------------------------------------------
 	  if(getTopEntities(context.config()).length == 0) {
 	    LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See BuildPathMaker.TOP_ENTITY_KEY");
 	    LOG.warn("Zamia Issues will still be imported");
 	  } else {
 	    ZamiaRunner.run(context); 
 	  }
-	  //-------------------------------------------------------------------
+	  //------------------------------------------------------------------
 	  
 		Path reportsDir = Paths
 		  .get(context.config()
@@ -84,13 +85,12 @@ public class VhdlRcSensor implements Sensor {
 	@VisibleForTesting
 	protected void importReport(Path reportFile, SensorContext context) {
 	  try {
-	    LOG.info("Importing {}", reportFile.getFileName());
-	    //ReportXmlParser.getIssues(reportFile).forEach(issue -> importIssue(context, issue));  
+	    LOG.info("Importing {}", reportFile.getFileName()); 
 	    for(Issue issue : ReportXmlParser.getIssues(reportFile)){
 	      try {
 	        importIssue(context, issue);
 	      } catch (RuntimeException e) {
-	        LOG.warn("Can't import an issue from {} : {}", reportFile.getFileName(), e.getMessage());
+	        LOG.warn("Can't import an issue from report {} : {}", reportFile.getFileName(), e.getMessage());
 	      }  
 	    }
 	  } catch (XMLStreamException e) {			

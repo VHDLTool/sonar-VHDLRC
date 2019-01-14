@@ -21,12 +21,12 @@
     <rc:Line>374</rc:Line>
     <rc:Entity>TOP</rc:Entity>
     <rc:Architecture>BEHAVIORAL</rc:Architecture>
-    <rc:STD_00400>
+    <rc:STD_00400_R1>
       <rc:SonarQubeMsg>
         <rc:SonarError>Label is missing</rc:SonarError>
         <rc:SonarRemediationMsg>Add label to the process</rc:SonarRemediationMsg>
       </rc:SonarQubeMsg>
-    </rc:STD_00400>
+    </rc:STD_00400_R1>
   </rc:RuleFailure>
   <rc:RuleFailure>
     <rc:File>./I2C/top.vhd</rc:File>
