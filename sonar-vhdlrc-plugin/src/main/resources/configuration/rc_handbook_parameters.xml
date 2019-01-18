@@ -12,35 +12,34 @@
 
 	<hb:Rule UID="CNE_01200">
 		<hb:RuleUID>CNE_01200</hb:RuleUID>
-		<hb:RuleGEN>GEN_01200</hb:RuleGEN>
-		
-	   <hb:RuleParams>
+		<hb:RuleGEN>GEN_01200</hb:RuleGEN>	
+	   	<hb:RuleParams>
 			<hb:StringParam>
 			   <hb:ParamID>P1</hb:ParamID>
 			   <hb:Position>Prefix</hb:Position>
 			   <hb:Value>p_</hb:Value>
 		   </hb:StringParam>
 	   </hb:RuleParams>
-
 	</hb:Rule>
+	
 	<hb:Rule UID="CNE_02300">
 		<hb:RuleUID>CNE_02300</hb:RuleUID>
 		<hb:RuleGEN>GEN_02300</hb:RuleGEN>
 	</hb:Rule>
+	
 	<hb:Rule UID="CNE_02400">
 		<hb:RuleUID>CNE_02400</hb:RuleUID>
 		<hb:RuleGEN>GEN_02400</hb:RuleGEN>
 	</hb:Rule>
+	
 	<hb:Rule UID="CNE_04900">
 		<hb:RuleUID>CNE_04900</hb:RuleUID>
 		<hb:RuleGEN>GEN_04900</hb:RuleGEN>
 	</hb:Rule>
 	
-	
 	<hb:Rule UID="STD_00200">
 		<hb:RuleUID>STD_00200</hb:RuleUID>
-		<hb:RuleGEN>STD_00200</hb:RuleGEN>
-				
+		<hb:RuleGEN>STD_00200</hb:RuleGEN>		
 		<hb:RuleParams>
 		   <hb:StringParam>
 			   <hb:ParamID>P1</hb:ParamID>
@@ -52,13 +51,12 @@
 			   <hb:Position>Contain</hb:Position>
 			   <hb:Value>clock</hb:Value>
 		   </hb:StringParam>
-        </hb:RuleParams>
-		
+        	</hb:RuleParams>
 	</hb:Rule>
+	
 	<hb:Rule UID="STD_00300">
 		<hb:RuleUID>STD_00300</hb:RuleUID>
-		<hb:RuleGEN>STD_00300</hb:RuleGEN>
-				
+		<hb:RuleGEN>STD_00300</hb:RuleGEN>	
 		<hb:RuleParams>
 		   <hb:StringParam>
 			   <hb:ParamID>P1</hb:ParamID>
@@ -75,37 +73,42 @@
 			   <hb:Position>Contain</hb:Position>
 			   <hb:Value>clr</hb:Value>
 		   </hb:StringParam>
-        </hb:RuleParams>
+        	</hb:RuleParams>
 	</hb:Rule>
 		
 	<hb:Rule UID="STD_00400">
 		<hb:RuleUID>STD_00400</hb:RuleUID>
 		<hb:RuleGEN>STD_00400</hb:RuleGEN>
 	</hb:Rule>
+	
 	<hb:Rule UID="STD_01800">
 		<hb:RuleUID>STD_01800</hb:RuleUID>
 		<hb:RuleGEN>STD_01800</hb:RuleGEN>
 	</hb:Rule>
+	
 	<hb:Rule UID="STD_03600">
 		<hb:RuleUID>STD_03600</hb:RuleUID>
 		<hb:RuleGEN>STD_03600</hb:RuleGEN>
 	</hb:Rule>
+	
 	<hb:Rule UID="STD_03700">
 		<hb:RuleUID>STD_03700</hb:RuleUID>
 		<hb:RuleGEN>STD_03700</hb:RuleGEN>
 	</hb:Rule>
+	
 	<hb:Rule UID="STD_03800">
 		<hb:RuleUID>STD_03800</hb:RuleUID>
 		<hb:RuleGEN>STD_03800</hb:RuleGEN>
 	</hb:Rule>
+	
 	<hb:Rule UID="STD_04500">
 		<hb:RuleUID>STD_04500</hb:RuleUID>
 		<hb:RuleGEN>STD_04500</hb:RuleGEN>
 	</hb:Rule>
+	
 	<hb:Rule UID="STD_04600">
 		<hb:RuleUID>STD_04600</hb:RuleUID>
 		<hb:RuleGEN>STD_04600</hb:RuleGEN>
-		
 		<hb:RuleParams>
 		   <hb:IntParam>
 			   <hb:ParamID>P1</hb:ParamID>
@@ -117,8 +120,7 @@
 	</hb:Rule>
 	<hb:Rule UID="STD_04700">
 		<hb:RuleUID>STD_04700</hb:RuleUID>
-		<hb:RuleGEN>STD_04700</hb:RuleGEN>
-				
+		<hb:RuleGEN>STD_04700</hb:RuleGEN>		
 		<hb:RuleParams>
 			<hb:IntParam>
 			   <hb:ParamID>P1</hb:ParamID>
@@ -126,29 +128,32 @@
 			   <hb:Value>2</hb:Value>
 		   </hb:IntParam>
 		</hb:RuleParams>
-
 	</hb:Rule>
+	
 	<hb:Rule UID="STD_04800">
 		<hb:RuleUID>STD_04800</hb:RuleUID>
 		<hb:RuleGEN>STD_04800</hb:RuleGEN>
 	</hb:Rule>
+	
 	<hb:Rule UID="STD_05000">
 		<hb:RuleUID>STD_05000</hb:RuleUID>
 		<hb:RuleGEN>STD_05000</hb:RuleGEN>
 	</hb:Rule>
+	
 	<hb:Rule UID="STD_05300">
 		<hb:RuleUID>STD_05300</hb:RuleUID>
 		<hb:RuleGEN>STD_05300</hb:RuleGEN>
 	</hb:Rule>
-
-
-
-
+	
+	</hb:Rule>
+	<hb:Rule UID="STD_06800">
+		<hb:RuleUID>STD_06800</hb:RuleUID>
+		<hb:RuleGEN>STD_06800</hb:RuleGEN>
+	</hb:Rule>
 
 	<hb:Rule UID="REQ_FEAT_AR3">
 		<hb:RuleUID>REQ_FEAT_AR3</hb:RuleUID>
-		<hb:RuleGEN>REQ_FEAT_AR3</hb:RuleGEN>
-				
+		<hb:RuleGEN>REQ_FEAT_AR3</hb:RuleGEN>	
 		<hb:RuleParams>
 		   <hb:IntParam>
 			   <hb:ParamID>P1</hb:ParamID>
