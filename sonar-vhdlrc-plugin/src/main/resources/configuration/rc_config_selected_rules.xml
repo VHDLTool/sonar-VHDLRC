@@ -15,6 +15,7 @@
   <hb:Rule UID="STD_05000"/>
   <hb:Rule UID="STD_05300"/>
   <hb:Rule UID="STD_04500"/>
+  <hb:Rule UID="STD_06800"/>
   <hb:Rule ParameterSource="RULE_CHECKER" UID="CNE_01200"/>
   <hb:Rule UID="CNE_04900"/>
   <hb:Rule UID="CNE_02300"/>
