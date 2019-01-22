@@ -145,29 +145,9 @@
 		<hb:RuleGEN>STD_05300</hb:RuleGEN>
 	</hb:Rule>
 	
-	</hb:Rule>
 	<hb:Rule UID="STD_06800">
 		<hb:RuleUID>STD_06800</hb:RuleUID>
 		<hb:RuleGEN>STD_06800</hb:RuleGEN>
 	</hb:Rule>
-
-	<hb:Rule UID="REQ_FEAT_AR3">
-		<hb:RuleUID>REQ_FEAT_AR3</hb:RuleUID>
-		<hb:RuleGEN>REQ_FEAT_AR3</hb:RuleGEN>	
-		<hb:RuleParams>
-		   <hb:IntParam>
-			   <hb:ParamID>P1</hb:ParamID>
-			   <hb:Relation>E</hb:Relation>
-			   <hb:Value>5</hb:Value>
-		   </hb:IntParam>
-		   <hb:StringParam>
-			   <hb:ParamID>P2</hb:ParamID>
-			   <hb:Position>Prefix</hb:Position>
-			   <hb:Value>INPUT_COMB_1</hb:Value>
-		   </hb:StringParam>
-        </hb:RuleParams>
-
-		
-	</hb:Rule>
-
+	
 </hb:handbook_parameters>
