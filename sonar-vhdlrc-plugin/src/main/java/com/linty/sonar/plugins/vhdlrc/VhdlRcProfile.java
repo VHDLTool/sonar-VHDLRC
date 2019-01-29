@@ -28,7 +28,7 @@ public class VhdlRcProfile implements BuiltInQualityProfilesDefinition{
 	@Override
 	public void define(Context context) {
 		NewBuiltInQualityProfile vhdlRcQP = context.createBuiltInQualityProfile(BUILT_IN_PROFILE_NAME, Vhdl.KEY);
-		vhdlRcQP.activateRule("vhdlrc-repository", "STD_00600");
+		//vhdlRcQP.activateRule("vhdlrc-repository", "STD_00600");
 		vhdlRcQP.setDefault(true)
 		.done();
 	}
