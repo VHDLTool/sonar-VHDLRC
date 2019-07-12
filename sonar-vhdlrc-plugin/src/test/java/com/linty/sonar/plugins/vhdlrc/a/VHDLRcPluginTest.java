@@ -22,6 +22,7 @@ package com.linty.sonar.plugins.vhdlrc.a;
 
 import com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin;
 import org.sonar.api.Plugin;
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.internal.SonarRuntimeImpl;
@@ -38,7 +39,7 @@ public class VHDLRcPluginTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void test_plugin_extensions_compatible_with_6_7() {
-		SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_6_7, SonarQubeSide.SERVER);
+		SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_6_7, SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
 		Plugin.Context context = new Plugin.Context(runtime);
 		vhdlRcPlugin.define(context);		
 		assertThat(context.getExtensions()).hasSize(7);
@@ -47,7 +48,7 @@ public class VHDLRcPluginTest {
 	
 	@Test (expected = IllegalStateException.class)
 	public void test_sonar_not_compatible_with_sonar_version() {
-		SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 5), SonarQubeSide.SERVER);
+		SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 5), SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
 		Plugin.Context context = new Plugin.Context(runtime);
 		vhdlRcPlugin.define(context);
 	}

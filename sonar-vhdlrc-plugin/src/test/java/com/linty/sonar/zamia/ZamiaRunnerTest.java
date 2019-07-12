@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
@@ -259,7 +260,7 @@ public class ZamiaRunnerTest {
       .setSettings(settings
         .setProperty(VhdlRcSensor.SCANNER_HOME_KEY, testScanner.getRoot().toString())
         .setProperty(BuildPathMaker.TOP_ENTITY_KEY, "TOP"))
-      .setRuntime(SonarRuntimeImpl.forSonarQube(VHDLRcPlugin.SQ_6_7, SonarQubeSide.SCANNER));
+      .setRuntime(SonarRuntimeImpl.forSonarQube(VHDLRcPlugin.SQ_6_7, SonarQubeSide.SCANNER, SonarEdition.COMMUNITY));
   }
   
   

@@ -28,10 +28,13 @@ import org.junit.Test;
 import org.sonar.api.utils.log.LogTester;
 import com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
+
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
+import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
@@ -45,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class VhdlRcSensorTest  {
 	
-	private static final SonarRuntime SQ67 = SonarRuntimeImpl.forSonarQube(VHDLRcPlugin.SQ_6_7, SonarQubeSide.SERVER);
+	private static final SonarRuntime SQ67 = SonarRuntimeImpl.forSonarQube(VHDLRcPlugin.SQ_6_7, SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
 	private static final String PROJECT_ID = "vhdlrc-test";
 	private VhdlRcSensor sensor = new VhdlRcSensor();
 	
@@ -144,7 +147,12 @@ public class VhdlRcSensorTest  {
 	public static void addRules(SensorContextTester context, String...args) {
 	  ActiveRulesBuilder builder = new ActiveRulesBuilder();
 	  for(String ruleKey : args) {
-	    builder.create(RuleKey.of("vhdlrc-repository",ruleKey)).setLanguage("vhdl").activate();
+	    builder.addRule(
+	    		new NewActiveRule.Builder()
+	    		.setRuleKey(RuleKey.of("vhdlrc-repository",ruleKey))
+	    		.setLanguage("vhdl")
+	    		.build()
+	    		);
 	  }
     context.setActiveRules(builder.build());	  
 	}
