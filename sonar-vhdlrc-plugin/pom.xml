@@ -20,7 +20,7 @@
   
    <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar.version>7.9</sonar.version>
+    <sonar.version>7.9.1</sonar.version>
     <sslr.version>1.21</sslr.version>
     <license.skip>true</license.skip>
     <jacoco.version>0.8.1</jacoco.version>

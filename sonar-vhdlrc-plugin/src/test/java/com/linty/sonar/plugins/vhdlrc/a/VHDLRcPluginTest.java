@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class VHDLRcPluginTest {
 	
-	private static final Version VERSION_6_7 = Version.create(6, 7);
+	private static final Version VERSION_6_7 = Version.create(7, 4);
 	private VHDLRcPlugin vhdlRcPlugin = new VHDLRcPlugin();
 	
 	@SuppressWarnings("unchecked")

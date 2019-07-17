@@ -33,14 +33,14 @@ import com.linty.sonar.zamia.BuildPathMaker;
 
 public class VHDLRcPlugin implements Plugin {
 
- public static final Version SQ_6_7 = Version.create(6, 7);
+ public static final Version SQ_6_7 = Version.create(7, 4);
  private static final String VHDL_RULECHEKER_SUBCATEGORY = "VHDL RuleChecker";
 	
  @Override 
  public void define(Context context) {
 	  ImmutableList.Builder<Object> builder = ImmutableList.builder();
 	    if (!context.getSonarQubeVersion().isGreaterThanOrEqual(SQ_6_7)) {
-	      throw new IllegalStateException("SonarQube 6.7 is required for VHDL plugin");
+	      throw new IllegalStateException("SonarQube " + SQ_6_7.major() + "." + SQ_6_7.minor() + " is required for VHDLRC plugin");
 	    }
 	    builder.add(
 	      Vhdl.class,
