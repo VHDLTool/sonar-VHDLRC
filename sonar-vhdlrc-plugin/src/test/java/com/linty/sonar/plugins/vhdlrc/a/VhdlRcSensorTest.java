@@ -105,6 +105,7 @@ public class VhdlRcSensorTest  {
 	  assertThat(issues).hasSize(4);
 	  assertNoIssueOnFile(context1,"file_no_issues.vhd");	 
 	  
+	  
 	  Issue issue1 = issues.get(2);
 	  assertThat(issue1.ruleKey().rule()).isEqualTo("STD_00400");
 	  assertThat(issue1.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
