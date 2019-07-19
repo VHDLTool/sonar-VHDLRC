@@ -62,7 +62,6 @@ public class ZamiaRunner {
         cmd.add(programDir.resolve(UNIX_EXE).normalize().toString());
         cmd.add(target.toString());
       }
-//      cmd.addAll(Arrays.asList(ARGS.split(" "))); //Arguments are passed through eclipsec.bat file in rc-scanner
       return cmd;
     }
 
@@ -88,8 +87,6 @@ public class ZamiaRunner {
   private final SensorContext context;
   private final RunnerContext runnerContext;
   private final String scannerHome;
-  
-  public static final int ZAMIACAD_LOG_SIZE = 10;
   
   private static final Logger LOG = Loggers.get(ZamiaRunner.class);
 
@@ -124,17 +121,20 @@ public class ZamiaRunner {
   @VisibleForTesting
   protected void uploadConfigToZamia(Path tempBuildPath) {
     LOG.info("--Load configuration");
+    
     //Embedded resources configuration files 
     String configuration = "/" + CONFIGURATION + "/";
-    InputStream conf1 = ZamiaRunner.class.getResourceAsStream(configuration + RC_CONFIG_SELECTED_RULES);
-    InputStream conf2 = ZamiaRunner.class.getResourceAsStream(configuration + RC_HANDBOOK_PARAMETERS);
-    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + RULESET_PATH);
+    InputStream conf1 = ZamiaRunner.class.getResourceAsStream(configuration + RC_CONFIG_SELECTED_RULES);//Injected at build time
+    InputStream conf2 = ZamiaRunner.class.getResourceAsStream(configuration + RC_HANDBOOK_PARAMETERS);  //Injected at build time
+    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + RULESET_PATH);            //Injected at build time
+    
     //Configuration files destinations in scanner
     Path projectDir = Paths.get(this.scannerHome, PROJECT_DIR);
     Path targetConf1     = projectDir.resolve(CONFIG_DIR).resolve(RC_CONFIG_SELECTED_RULES);
     Path targetConf2     = projectDir.resolve(CONFIG_DIR).resolve(RC_HANDBOOK_PARAMETERS);
     Path hbTarget        = projectDir.resolve(CONFIG_DIR).resolve(HANDBOOK_XML);
-    Path buildPathTarget = projectDir.resolve(BUILD_PATH_TXT);
+    Path buildPathTarget = projectDir.resolve(BUILD_PATH_TXT); //Generated at Scanner time
+    
     if(LOG.isDebugEnabled()) {
       LOG.debug("Load configuration to" + buildPathTarget);
     }

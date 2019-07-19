@@ -52,18 +52,18 @@ public class BuildPathMakerTest {
     assertThat(logTester.logs(LoggerLevel.DEBUG).get(0)).isNotEmpty();
   }
   
-  @Test
-  public void test_multiple_entities() throws IOException, URISyntaxException {
-    MapSettings settings = new MapSettings();
-    settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "top, top1(rtl), work.my_entity(rtl)");
-    
-    Path ComputedBuildPath = BuildPathMaker.make(settings.asConfig());   
-    assertThat(Files.exists(ComputedBuildPath)).isTrue();
-    assertThat(Files.isWritable(ComputedBuildPath)).isTrue();
-    assertThat(getLineOf(ComputedBuildPath,69)).isEqualTo("toplevel TOP");
-    assertThat(getLineOf(ComputedBuildPath,70)).isEqualTo("toplevel TOP1(RTL)");
-    assertThat(getLineOf(ComputedBuildPath,71)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
-  }
+//  @Test
+//  public void test_multiple_entities() throws IOException, URISyntaxException {
+//    MapSettings settings = new MapSettings();
+//    settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "top, top1(rtl), work.my_entity(rtl)");
+//    
+//    Path ComputedBuildPath = BuildPathMaker.make(settings.asConfig());   
+//    assertThat(Files.exists(ComputedBuildPath)).isTrue();
+//    assertThat(Files.isWritable(ComputedBuildPath)).isTrue();
+//    assertThat(getLineOf(ComputedBuildPath,69)).isEqualTo("toplevel TOP");
+//    assertThat(getLineOf(ComputedBuildPath,70)).isEqualTo("toplevel TOP1(RTL)");
+//    assertThat(getLineOf(ComputedBuildPath,71)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
+//  }
   
 //  @Test(expected=IllegalStateException.class)
 //  public void test_IOException() {

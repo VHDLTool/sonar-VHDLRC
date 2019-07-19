@@ -67,8 +67,8 @@ public class VhdlRcSensor implements Sensor {
 	public void execute(SensorContext context) {
 	 
 	  //ZamiaRunner-------------------------------------------------------
-	  if(getTopEntities(context.config()).length == 0) {
-	    LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See BuildPathMaker.TOP_ENTITY_KEY");
+	  if(getTopEntities(context.config()).isEmpty()) {
+	    LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See " + BuildPathMaker.TOP_ENTITY_KEY);
 	    LOG.warn("Zamia Issues will still be imported");
 	  } else {
 	    ZamiaRunner.run(context); 
@@ -126,9 +126,8 @@ public class VhdlRcSensor implements Sensor {
 	}
 	
 	
-	public static String[] getTopEntities(Configuration config ) {
-		return Arrays.stream(config.getStringArray(BuildPathMaker.TOP_ENTITY_KEY))
-				.filter(s -> s != null && !s.trim().isEmpty()).toArray(String[]::new);   
+	public static String getTopEntities(Configuration config ) {
+		return config.get(BuildPathMaker.TOP_ENTITY_KEY).orElse("");  
 	}
 
 }

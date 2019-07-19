@@ -70,8 +70,7 @@ public class VHDLRcPlugin implements Plugin {
         .name("Top Entities")
         .description("Toplevel Entities (each toplevel will be elaborated automatically) " + 
           "\r\nFormat:  LIBRARY.ENTITY(ARCHITECTURE) \r\n" +
-          "Example: WORK.MY_ENTITY(RTL)")
-        .multiValues(true)
+          "Example: WORK.My_entity(Rtl)")
         .defaultValue(BuildPathMaker.DEFAULT_ENTITY)
         .onQualifiers(Qualifiers.PROJECT)
         .build());

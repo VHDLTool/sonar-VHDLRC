@@ -67,15 +67,16 @@ public class BuildPathMaker {
   @VisibleForTesting
   protected Path appendTopEntities(Path target) throws IOException { 
     StringBuilder builder = new StringBuilder();
-    for(String entity : VhdlRcSensor.getTopEntities(this.config)) {
-      builder
-      .append("toplevel ")
-      .append(entity.toUpperCase())
-      .append("\r\n");
-    }
+    String topEntity = VhdlRcSensor.getTopEntities(this.config); 
+    builder
+    .append("toplevel ")
+    .append(topEntity.toUpperCase())
+    .append("\r\n");
+
     return Files.write(target, builder.toString().getBytes(UTF_8), StandardOpenOption.APPEND);
   }
   
+
   
  
 
