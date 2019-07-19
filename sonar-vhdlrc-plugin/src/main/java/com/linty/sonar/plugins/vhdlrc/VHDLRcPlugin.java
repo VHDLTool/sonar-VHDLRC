@@ -27,6 +27,7 @@ import org.sonar.api.resources.Qualifiers;
 import org.sonar.api.utils.Version;
 
 import com.google.common.collect.ImmutableList;
+import com.linty.sonar.plugins.vhdlrc.metrics.MetricSensor;
 import com.linty.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
 import com.linty.sonar.zamia.BuildPathMaker;
 
@@ -46,7 +47,8 @@ public class VHDLRcPlugin implements Plugin {
 	      Vhdl.class,
 	      VhdlRulesDefinition.class,
 	      VhdlRcProfile.class,
-	      VhdlRcSensor.class
+	      VhdlRcSensor.class,
+	      MetricSensor.class
 	      );
 	    builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
 	      .defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
