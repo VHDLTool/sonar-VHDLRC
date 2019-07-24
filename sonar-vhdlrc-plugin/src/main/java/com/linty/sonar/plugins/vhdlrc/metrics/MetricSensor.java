@@ -2,31 +2,38 @@ package com.linty.sonar.plugins.vhdlrc.metrics;
 
 import com.linty.sonar.plugins.vhdlrc.Vhdl;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
-import org.sonar.api.batch.sensor.measure.Measure;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Metric;
 
 public class MetricSensor implements Sensor {
 
-  private Map<Metric<Integer>, Integer> measures;
+  public static final String SSLR_FILE_SUFFIXES = "sonar.vhdl.file.suffixes";
 
-  public MetricSensor() {
-    measures = new HashMap<>();
-  }
-  
   @Override
   public void describe(SensorDescriptor descriptor) {
     descriptor
     .name("VhdlRcMetricSensor")
-    .onlyOnLanguage(Vhdl.KEY);  
-    //add a check for linty sslr presence 
+    .onlyOnLanguage(Vhdl.KEY)
+    .onlyWhenConfiguration(this::noSslrConficts);   
+  }
+
+  private boolean noSslrConficts(Configuration conf) {
+    if(conf.hasKey(SSLR_FILE_SUFFIXES)) {
+      for(String suffix : conf.getStringArray(Vhdl.FILE_SUFFIXES_KEY)) {
+        if(Arrays.asList(conf.getStringArray(SSLR_FILE_SUFFIXES)).contains(suffix)){
+          return false;
+        }
+      }
+      return true;
+    }
+    return true;
   }
 
   @Override
@@ -41,8 +48,8 @@ public class MetricSensor implements Sensor {
     });
   }
 
-  private <T extends Serializable> void saveMetricOnFile(SensorContext context, InputFile InputFile, Metric<T> metric, T value) {
-    context.<T>newMeasure().forMetric(metric).on(InputFile).withValue(value).save();    
+  private <T extends Serializable> void saveMetricOnFile(SensorContext context, InputFile inputFile, Metric<T> metric, T value) {
+    context.<T>newMeasure().forMetric(metric).on(inputFile).withValue(value).save();    
   }
   
 }

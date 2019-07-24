@@ -4,13 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class LineMeasurer {
-  private static final Logger LOG = Loggers.get(LineMeasurer.class);
-  
+
   private int numberLineOfCode = 0;
   private int numberLineComment = 0;
   private final InputFile file;

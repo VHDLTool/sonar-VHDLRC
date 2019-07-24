@@ -69,7 +69,12 @@ public class ReportXmlParser {
 	}
 	
 	public List<Issue> parseXML() throws XMLStreamException {
-		SMInputFactory xmlFactory = new SMInputFactory(XMLInputFactory.newInstance());
+	  XMLInputFactory factory = XMLInputFactory.newInstance();
+    // disable external entities
+	  factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+	  factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+		
+	  SMInputFactory xmlFactory = new SMInputFactory(factory);
 		SMInputCursor rootCursor = xmlFactory.rootElementCursor(reportPath.toFile()).advance();
 		SMInputCursor cursor = rootCursor.childCursor(filter).advance();
 		if("RuleName".equals(cursor.getLocalName())){

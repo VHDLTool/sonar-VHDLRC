@@ -23,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import com.google.common.collect.ImmutableList;
-import com.linty.sonar.plugins.vhdlrc.rules.Rule;
 import org.codehaus.staxmate.SMInputFactory;
 import org.codehaus.staxmate.in.SMEvent;
 import org.codehaus.staxmate.in.SMFilter;
@@ -78,7 +77,12 @@ public class HandbookXmlParser {
 	}
 
 	private void collectRules(InputStream hbStream, List<Rule> rules) throws XMLStreamException {		
-		SMInputFactory xmlFactory = new SMInputFactory(XMLInputFactory.newInstance());
+	  XMLInputFactory factory = XMLInputFactory.newInstance();
+	  // disable external entities
+	  factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+	  factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+
+		SMInputFactory xmlFactory = new SMInputFactory(factory);
 		SMInputCursor cursor = xmlFactory.rootElementCursor(hbStream).advance();
 		SMInputCursor ruleCursor = cursor.childElementCursor(new QName(NAMESPACE_HANDBOOX, "Rule")).advance();
 		

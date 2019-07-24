@@ -17,6 +17,7 @@ import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.measure.Measure;
+import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.measures.CoreMetrics;
 
@@ -59,6 +60,17 @@ public class MetricSensorTest {
   }
   
   @Test
+  public void presence_of_sslr_plugin_should_skip_metric_sensor_to_avoid_conficts() {
+    checkDescriptorPredicate(".vhdl,.vhd",".vhdl,.vhd", false);
+    checkDescriptorPredicate(".vhd,vhdl",".vhdl,.vhd", false);
+    checkDescriptorPredicate(".vhdl",".vhdl,.vhd", false);
+    checkDescriptorPredicate(null,".vhdl,.vhd", true); //no sslr detected
+    checkDescriptorPredicate(".a,.b",".vhdl,.vhd", true);
+       
+  }
+  
+  
+  @Test
   public void descriptor_test() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     MetricSensor sensor = new MetricSensor();
@@ -81,6 +93,19 @@ public class MetricSensorTest {
     } else {
       assertThat(measure.value()).isEqualTo(expectedValue);
     }
+  }
+  
+  private void checkDescriptorPredicate(@Nullable String sslrSuffixes, String vhdlrcSuffixes, boolean expected) {
+    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    MetricSensor sensor = new MetricSensor();
+
+    MapSettings settings = new MapSettings()
+      .setProperty(Vhdl.FILE_SUFFIXES_KEY, vhdlrcSuffixes);
+    if(sslrSuffixes != null) {
+      settings.setProperty(MetricSensor.SSLR_FILE_SUFFIXES, sslrSuffixes);
+    }   
+    sensor.describe(sensorDescriptor);
+    assertThat(sensorDescriptor.configurationPredicate().test(settings.asConfig())).isEqualTo(expected);
   }
 
 }
