@@ -30,11 +30,13 @@ public class LineMeasurer {
       while ((line = br.readLine()) != null) {
         line = line.trim();
         if(!line.isEmpty()) {
-          if(!line.startsWith(COMMENT_START)) {
+          if(!outOfHeader && !line.startsWith(COMMENT_START)) { //skip the header until first occurence of a loc
             outOfHeader=true;
+          }
+          if(!line.startsWith(COMMENT_START)) {
             numberLineOfCode++;
           }
-          if(line.contains(COMMENT_START) && outOfHeader) {
+          if(containsCommentContent(line) && outOfHeader) {
             numberLineComment++;
           } 
         }
@@ -44,6 +46,13 @@ public class LineMeasurer {
     }
    
     
+  }
+
+  private boolean containsCommentContent(String line) {
+    if(line.contains(COMMENT_START)) {
+      return (line.substring(line.indexOf(COMMENT_START))).matches("\\" + COMMENT_START + ".*[a-zA-Z0-9].*");
+    }
+    return false;
   }
 
   public int getNumberLineOfCode() {

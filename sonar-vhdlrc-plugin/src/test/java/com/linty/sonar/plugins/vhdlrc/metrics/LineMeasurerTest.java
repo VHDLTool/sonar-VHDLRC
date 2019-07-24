@@ -19,7 +19,10 @@ public class LineMeasurerTest {
   @Test
   public void test() {
     checkLocMeasure(baseDir,"File1.vhd",45);
-    checkCommentLineMeasure(baseDir,"File1.vhd",19);  
+    checkCommentLineMeasure(baseDir,"File1.vhd",19); 
+    
+    checkLocMeasure(baseDir,"comment_blocks.vhd",27);
+    checkCommentLineMeasure(baseDir,"comment_blocks.vhd",10);
     
     checkLocMeasure(baseDir,"empty.vhd",0);
     checkCommentLineMeasure(baseDir,"empty.vhd",0);
