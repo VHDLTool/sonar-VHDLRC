@@ -40,23 +40,23 @@ import org.sonar.api.utils.log.Loggers;
 @ServerSide
 public class VhdlRulesDefinition implements RulesDefinition {
   
-    public static class HbRessourceContext {
-      protected InputStream getRuleset() {
-        return VhdlRulesDefinition.class.getResourceAsStream(RULESET_PATH);
-      }
+  public static class HbRessourceContext {
+    protected InputStream getRuleset() {
+      return VhdlRulesDefinition.class.getResourceAsStream(RULESET_PATH);
     }
+  }
 
-    public static final String  HANDBOOK_DIR = "/configuration/HANDBOOK";
-    public static final String  RULESET_PATH = HANDBOOK_DIR + "/Rulesets/handbook.xml";
-    public static final String  HANDBOOK_PATH_DESC = "Path to the handbook directory. The path may be absolute or relative to the SonarQube server base directory.";
+  public static final String  HANDBOOK_DIR = "/configuration/HANDBOOK";
+  public static final String  RULESET_PATH = HANDBOOK_DIR + "/Rulesets/handbook.xml";
+  public static final String  HANDBOOK_PATH_DESC = "Path to the handbook directory. The path may be absolute or relative to the SonarQube server base directory.";
 
-    private final Configuration configuration;
-    
-	private static final Logger LOG = Loggers.get(VhdlRulesDefinition.class);
-	
-	private static final Map<String,Severity> SEVERITY_MAP = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-	private static final Map<String,RuleType> TYPE_MAP = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-	private static final Map<String,String> DEBT_MAP = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+  private final Configuration configuration;
+
+  private static final Logger LOG = Loggers.get(VhdlRulesDefinition.class);
+
+  private static final Map<String,Severity> SEVERITY_MAP = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+  private static final Map<String,RuleType> TYPE_MAP = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+  private static final Map<String,String> DEBT_MAP = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 			static {
 				SEVERITY_MAP.put("BLOCKER",  Severity.BLOCKER);
 				SEVERITY_MAP.put("CRITICAL", Severity.CRITICAL);

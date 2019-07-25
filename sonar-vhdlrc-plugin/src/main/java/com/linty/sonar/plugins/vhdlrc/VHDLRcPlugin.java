@@ -21,7 +21,6 @@ package com.linty.sonar.plugins.vhdlrc;
 import org.sonar.api.Plugin;
 import org.sonar.api.PropertyType;
 import org.sonar.api.config.PropertyDefinition;
-import org.sonar.api.config.PropertyFieldDefinition;
 import org.sonar.api.resources.Qualifiers;
 import org.sonar.api.utils.Version;
 
@@ -76,15 +75,11 @@ public class VHDLRcPlugin implements Plugin {
 	      .category(Vhdl.NAME)
         .subCategory("BuildPath")
         .name("Custom Commands")
-        .description("-")
+        .description(BuildPathMaker.customCmdDescription())
         .index(3)
+        .multiValues(false)
         .onQualifiers(Qualifiers.PROJECT)
-        .fields(PropertyFieldDefinition.build("paramkey")
-          .name("Paramter Descritpion")
-          .description(BuildPathMaker.customCmdDescription())
-          .type(PropertyType.STRING)
-          .build()
-          )
+        .type(PropertyType.TEXT)
         .build());
 	  context.addExtensions(builder.build());
   }

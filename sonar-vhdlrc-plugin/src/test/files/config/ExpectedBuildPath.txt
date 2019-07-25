@@ -66,3 +66,10 @@
 # format: [ <LIBRARY> '.' ] <ENTITY [ '(' <ARCHITECTURE> ')' ]
 # toplevel WORK.LEON3MP(RTL)
 # toplevel WORK.TOP 
+toplevel RTL
+extern GRLIB            "$LEON_SRC/lib/grlib"
+ extern TECHMAP          "$LEON_SRC/lib/techmap"
+
+# by default, extern declarations are recursive
+# use the 'nonrecursive' keyword otherwise
+ extern nonrecursive FOO "$LEON_SRC/lib/foo"

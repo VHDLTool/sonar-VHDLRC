@@ -19,8 +19,7 @@
 package com.linty.sonar.plugins.vhdlrc.a;
 
 
-import java.io.FileNotFoundException;
-import java.nio.file.NoSuchFileException;
+
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,6 @@ import org.junit.Test;
 import org.sonar.api.utils.log.LogTester;
 import com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
-import com.linty.sonar.zamia.BuildPathMaker;
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
