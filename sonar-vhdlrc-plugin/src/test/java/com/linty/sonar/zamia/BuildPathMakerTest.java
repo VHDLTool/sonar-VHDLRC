@@ -18,6 +18,7 @@
 package com.linty.sonar.zamia;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -45,30 +46,20 @@ public class BuildPathMakerTest {
     settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "work.my_entity(rtl)");
     
     Path ComputedBuildPath = BuildPathMaker.make(settings.asConfig());  
-    System.out.println(ComputedBuildPath);
+
     assertThat(Files.exists(ComputedBuildPath)).isTrue();
     assertThat(Files.isWritable(ComputedBuildPath)).isTrue();
     assertThat(getLineOf(ComputedBuildPath,69)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
     assertThat(logTester.logs(LoggerLevel.DEBUG).get(0)).isNotEmpty();
   }
   
-//  @Test
-//  public void test_multiple_entities() throws IOException, URISyntaxException {
-//    MapSettings settings = new MapSettings();
-//    settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "top, top1(rtl), work.my_entity(rtl)");
-//    
-//    Path ComputedBuildPath = BuildPathMaker.make(settings.asConfig());   
-//    assertThat(Files.exists(ComputedBuildPath)).isTrue();
-//    assertThat(Files.isWritable(ComputedBuildPath)).isTrue();
-//    assertThat(getLineOf(ComputedBuildPath,69)).isEqualTo("toplevel TOP");
-//    assertThat(getLineOf(ComputedBuildPath,70)).isEqualTo("toplevel TOP1(RTL)");
-//    assertThat(getLineOf(ComputedBuildPath,71)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
-//  }
-  
-//  @Test(expected=IllegalStateException.class)
-//  public void test_IOException() {
-//    
-//  }
+
+  @Test
+  public void test_description() {
+    String desc = BuildPathMaker.customCmdDescription();
+    assertThat(desc).isNotNull();
+    assertThat(desc).isNotEmpty();
+  }
   
 
   public static String getLineOf(Path p, int index) throws IOException {
