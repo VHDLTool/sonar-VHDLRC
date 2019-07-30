@@ -41,6 +41,7 @@ public class HandbookXmlParserTest {
 
   private HandbookXmlParser XmlParser = new HandbookXmlParser();
   List<com.linty.sonar.plugins.vhdlrc.rules.Rule> rl1;
+  List<com.linty.sonar.plugins.vhdlrc.rules.Rule> rl;
 
   @Rule
   public LogTester logTester = new LogTester();
@@ -92,6 +93,23 @@ public class HandbookXmlParserTest {
         assertThat(r.figure.height).isNotNull().isNotEmpty();				
       }
     }
+  }
+  
+  @Test
+  public void test_parameter_capture() throws FileNotFoundException {
+    rl = XmlParser.parseXML(new FileInputStream( new File("src/test/parameters/hbs/handbook_5_rules.xml")));
+    com.linty.sonar.plugins.vhdlrc.rules.Rule r1 = rl.get(0);
+    com.linty.sonar.plugins.vhdlrc.rules.Rule r2 = rl.get(1);
+    com.linty.sonar.plugins.vhdlrc.rules.Rule r3 = rl.get(2);
+    com.linty.sonar.plugins.vhdlrc.rules.Rule r4 = rl.get(3);
+    com.linty.sonar.plugins.vhdlrc.rules.Rule r5 = rl.get(4);
+    //check params
+    assertThat(r1.ruleKey).isEqualTo("CNE_01200");
+    assertThat(r2.ruleKey).isEqualTo("STD_00200");
+    assertThat(r3.ruleKey).isEqualTo("STD_00300");
+    assertThat(r4.ruleKey).isEqualTo("STD_04600");
+    assertThat(r5.ruleKey).isEqualTo("STD_04700");
+    
   }
 
   //Existing but empty file should return a null List<Rule> and raise a warning
