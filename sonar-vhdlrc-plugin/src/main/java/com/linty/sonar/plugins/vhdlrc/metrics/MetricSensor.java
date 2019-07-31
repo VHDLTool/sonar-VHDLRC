@@ -11,10 +11,13 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Metric;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 public class MetricSensor implements Sensor {
 
   public static final String SSLR_FILE_SUFFIXES = "sonar.vhdl.file.suffixes";
+  private static final Logger LOG = Loggers.get(MetricSensor.class);
 
   @Override
   public void describe(SensorDescriptor descriptor) {
@@ -28,6 +31,8 @@ public class MetricSensor implements Sensor {
     if(conf.hasKey(SSLR_FILE_SUFFIXES)) {
       for(String suffix : conf.getStringArray(Vhdl.FILE_SUFFIXES_KEY)) {
         if(Arrays.asList(conf.getStringArray(SSLR_FILE_SUFFIXES)).contains(suffix)){
+          LOG.info("Linty plugin detected: [" + SSLR_FILE_SUFFIXES + "]");
+          LOG.info("Metrics will not be computed by vhdlrc to avoid conficts");
           return false;
         }
       }
