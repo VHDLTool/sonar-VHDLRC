@@ -81,6 +81,14 @@ public class VHDLRcPlugin implements Plugin {
         .onQualifiers(Qualifiers.PROJECT)
         .type(PropertyType.TEXT)
         .build());
+	    builder.add(PropertyDefinition.builder(MetricSensor.SKIP_METRICS_KEY)
+	      .category(Vhdl.NAME)
+	      .subCategory("VHDLrc Metrics")
+	      .name("Skip Vhdlrc metrics")
+	      .description("Activate to avoid conflict with another vhdl plugin. Skip metric sensor of vhdlrc from computing Loc and comment lines")
+	      .type(PropertyType.BOOLEAN)
+	      .defaultValue(String.valueOf(MetricSensor.SKIP_METRICS_DEFAULT))
+	      .build());	      
 	  context.addExtensions(builder.build());
   }
 }

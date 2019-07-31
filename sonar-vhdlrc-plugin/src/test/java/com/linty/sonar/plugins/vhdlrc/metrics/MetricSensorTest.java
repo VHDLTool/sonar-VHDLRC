@@ -60,13 +60,20 @@ public class MetricSensorTest {
   }
   
   @Test
-  public void presence_of_sslr_plugin_should_skip_metric_sensor_to_avoid_conficts() {
-    checkDescriptorPredicate(".vhdl,.vhd",".vhdl,.vhd", false);
-    checkDescriptorPredicate(".vhd,vhdl",".vhdl,.vhd", false);
-    checkDescriptorPredicate(".vhdl",".vhdl,.vhd", false);
-    checkDescriptorPredicate(null,".vhdl,.vhd", true); //no sslr detected
-    checkDescriptorPredicate(".a,.b",".vhdl,.vhd", true);
-       
+  public void metric_sensor_should_only_execute_when_authories_in_properties() {
+    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    MetricSensor sensor = new MetricSensor();
+
+    MapSettings settings1 = new MapSettings()
+      .setProperty(MetricSensor.SKIP_METRICS_KEY, true); //will skip
+    sensor.describe(sensorDescriptor);
+    assertThat(sensorDescriptor.configurationPredicate().test(settings1.asConfig())).isEqualTo(false);
+    
+    MapSettings settings2 = new MapSettings()
+      .setProperty(MetricSensor.SKIP_METRICS_KEY, false); //will execute 
+    sensor.describe(sensorDescriptor);
+    assertThat(sensorDescriptor.configurationPredicate().test(settings2.asConfig())).isEqualTo(true);
+    
   }
   
   
@@ -95,17 +102,5 @@ public class MetricSensorTest {
     }
   }
   
-  private void checkDescriptorPredicate(@Nullable String sslrSuffixes, String vhdlrcSuffixes, boolean expected) {
-    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
-    MetricSensor sensor = new MetricSensor();
-
-    MapSettings settings = new MapSettings()
-      .setProperty(Vhdl.FILE_SUFFIXES_KEY, vhdlrcSuffixes);
-    if(sslrSuffixes != null) {
-      settings.setProperty(MetricSensor.SSLR_FILE_SUFFIXES, sslrSuffixes);
-    }   
-    sensor.describe(sensorDescriptor);
-    assertThat(sensorDescriptor.configurationPredicate().test(settings.asConfig())).isEqualTo(expected);
-  }
 
 }
