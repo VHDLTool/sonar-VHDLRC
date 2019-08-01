@@ -10,7 +10,7 @@
   
   <groupId>com.linty.sonar</groupId>
   <artifactId>sonar-vhdlrc-plugin</artifactId>
-  <version>1.7.004</version>
+  <version>1.7.005</version>
   <packaging>sonar-plugin</packaging>
   <name>SonarQube VHDL Rulechecker Plugin</name>
    <organization>
