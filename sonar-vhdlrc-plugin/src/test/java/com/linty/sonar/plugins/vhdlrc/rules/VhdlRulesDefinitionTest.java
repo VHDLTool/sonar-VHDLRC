@@ -31,6 +31,7 @@ import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
+import com.linty.sonar.plugins.vhdlrc.Vhdl;
 import com.linty.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition.HbRessourceContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,7 +99,7 @@ public class VhdlRulesDefinitionTest {
 	  
 	  assertThat(repository).isNotNull();
 	  assertThat(repository.name()).isEqualTo("VhdlRuleChecker");
-	  assertThat(repository.language()).isEqualTo("vhdl");
+	  assertThat(repository.language()).isEqualTo(Vhdl.KEY);
 	  assertThat(repository.rules()).hasSize(74);
 	  assertThat(repository.rules()).isNotNull().isNotEmpty();
 	  assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();

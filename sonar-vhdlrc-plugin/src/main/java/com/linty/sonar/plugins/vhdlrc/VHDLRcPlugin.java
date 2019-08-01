@@ -36,17 +36,18 @@ public class VHDLRcPlugin implements Plugin {
 	
  @Override 
  public void define(Context context) {
-	  ImmutableList.Builder<Object> builder = ImmutableList.builder();
-	    if (!context.getSonarQubeVersion().isGreaterThanOrEqual(SQ_6_7)) {
-	      throw new IllegalStateException("SonarQube " + SQ_6_7.major() + "." + SQ_6_7.minor() + " is required for VHDLRC plugin");
-	    }
-	    builder.add(
-	      Vhdl.class,
-	      VhdlRulesDefinition.class,
-	      VhdlRcProfile.class,
-	      VhdlRcSensor.class,
-	      MetricSensor.class
-	      );
+   
+  ImmutableList.Builder<Object> builder = ImmutableList.builder();
+      if (!context.getSonarQubeVersion().isGreaterThanOrEqual(SQ_6_7)) {
+        throw new IllegalStateException("SonarQube " + SQ_6_7.major() + "." + SQ_6_7.minor() + " is required for VHDLRC plugin");
+      }
+      builder.add(
+      Vhdl.class,
+      VhdlRulesDefinition.class,
+      VhdlRcProfile.class,
+      VhdlRcSensor.class,
+      MetricSensor.class
+        );
 	    builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
 	      .defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
 	      .name("File suffixes")
@@ -88,7 +89,7 @@ public class VHDLRcPlugin implements Plugin {
 	      .description("Activate to avoid conflict with another vhdl plugin. Skip metric sensor of vhdlrc from computing Loc and comment lines")
 	      .type(PropertyType.BOOLEAN)
 	      .defaultValue(String.valueOf(MetricSensor.SKIP_METRICS_DEFAULT))
-	      .build());	      
+	      .build());
 	  context.addExtensions(builder.build());
   }
 }

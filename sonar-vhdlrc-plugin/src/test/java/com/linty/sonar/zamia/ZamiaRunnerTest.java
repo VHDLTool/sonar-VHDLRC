@@ -19,6 +19,7 @@ package com.linty.sonar.zamia;
 
 
 import com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin;
+import com.linty.sonar.plugins.vhdlrc.Vhdl;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
 import com.linty.sonar.zamia.ZamiaRunner.RunnerContext;
 import java.io.ByteArrayInputStream;
@@ -279,7 +280,7 @@ public class ZamiaRunnerTest {
     System.out.println("temp file created : " + temp.newFile(file).getAbsolutePath());
     DefaultInputFile f = TestInputFileBuilder.create("project-id", file)
       .setModuleBaseDir(projectRoot)
-      .setLanguage("vhdl")
+      .setLanguage(Vhdl.KEY)
       .setCharset(UTF_8)
       .setContents("a random content for this file")
       .build();
