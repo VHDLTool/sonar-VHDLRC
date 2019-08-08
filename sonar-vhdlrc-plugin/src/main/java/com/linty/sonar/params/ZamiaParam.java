@@ -1,39 +1,37 @@
 package com.linty.sonar.params;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import java.util.Map;
-import org.sonar.api.server.rule.RuleParamType;
-import org.sonar.api.server.rule.RulesDefinition.NewParam;
+
+import java.util.List;
 import org.sonar.api.server.rule.RulesDefinition.NewRule;
 
 public abstract class ZamiaParam {
   
-  protected String paramId;
-  protected RuleParamType ruleParamType;
-  protected static String PARAM_DESCRIPTION;
+  //Handbook Xml parameter elements
+  protected String hbParamId;
+  /*Possible values of
+  <hb:Position>
+  <hb:Relation>
+  <hb:Range>
+  */
+  protected String field;
+  protected static List<String> FIELDS;
   
-  public static final Map<String, RuleParamType> paramTypeMap = ImmutableMap.<String, RuleParamType>builder()
-    .put("IntParam", RuleParamType.INTEGER)
-    .put("RangeParam", RuleParamType.INTEGER)
-    .put("StringParam", RuleParamType.STRING)
-    .build();
-  
-  public ZamiaParam(String paramId) {
-    this.paramId = paramId;
+  //Constructor from handbook.xml definition
+  public ZamiaParam(String hbParamId) {
+    this.hbParamId = hbParamId;
   }
   
-  public void setParamId(String paramId) {
-    this.paramId = paramId;
+  //Checks if position is authorized 
+  public void setField(String field) {
+    if(FIELDS.contains(field)) {
+      this.field = field;
+    } else {
+      throw new IllegalStateException("\"" + field + "\"" + " is not one of: " + FIELDS.toString());
+    }
   }
   
-  public String paramId() {
-    return this.paramId;
-  }
-  
-  public NewParam setParam(NewRule nr) {
-    return nr.createParam(paramId);
-  }
-  
-
+  /*Set the parameter for the NewRule created in VhdlRulesDefinition
+   
+   */
+  public abstract void setSonarParams(List<ZamiaParam> params, NewRule nr, String ruleKey);
 }
