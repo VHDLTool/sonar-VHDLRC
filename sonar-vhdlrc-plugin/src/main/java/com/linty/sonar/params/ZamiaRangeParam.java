@@ -6,16 +6,16 @@ import org.sonar.api.server.rule.RulesDefinition.NewRule;
 import static com.linty.sonar.params.ParamTranslator.*;
 
 public class ZamiaRangeParam extends ZamiaParam {
-  private final static String SONAR_MIN_DESC = "Minimum value to respect";
-  private final static String SONAR_MIN_NAME = "Min";
-  private final static String SONAR_MAX_DESC = "Maximum value to respect";
-  private final static String SONAR_MAX_NAME = "Max";
-  private final static String SONAR_RANGE_DESC = "Inclusive and exclusive options";
-  private final static String SONAR_RANGE_NAME = "Range";
+  private static final String SONAR_MIN_DESC = "Minimum value to respect";
+  private static final String SONAR_MIN_NAME = "Min";
+  private static final String SONAR_MAX_DESC = "Maximum value to respect";
+  private static final String SONAR_MAX_NAME = "Max";
+  private static final String SONAR_RANGE_DESC = "Inclusive and exclusive options";
+  private static final String SONAR_RANGE_NAME = "Range";
   
-  public final static String MIN_KEY = "1RG";
-  public final static String RANGE_KEY = "2RG";
-  public final static String MAX_KEY = "3RG";
+  public static final String MIN_KEY = "1RG";
+  public static final String RANGE_KEY = "2RG";
+  public static final String MAX_KEY = "3RG";
   
   private int min;
   private int max;

@@ -8,12 +8,12 @@ import org.sonar.api.server.rule.RulesDefinition.NewRule;
 
 public class ZamiaIntParam extends ZamiaParam {
   
-  private final static String SONAR_RE_DESC = "Relation with the limit";
-  private final static String SONAR_RE_NAME = "Relation";
-  private final static String SONAR_LIMIT_DESC = "Value to be compared with ex: >= value ";
-  private final static String SONAR_LIMIT_NAME = "Limit";
-  public final static String RE_KEY = "IP1";
-  public final static String LI_KEY = "IP2";
+  private static final String SONAR_RE_DESC = "Relation with the limit";
+  private static final String SONAR_RE_NAME = "Relation";
+  private static final String SONAR_LIMIT_DESC = "Value to be compared with ex: >= value ";
+  private static final String SONAR_LIMIT_NAME = "Limit";
+  public static final String RE_KEY = "IP1";
+  public static final String LI_KEY = "IP2";
   
   
 

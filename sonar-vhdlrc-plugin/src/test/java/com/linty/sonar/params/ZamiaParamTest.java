@@ -149,6 +149,17 @@ public class ZamiaParamTest {
       );    
   }
   
+  @Test
+  public void test_instanciatingParamTranlator() {
+    try {
+      new ParamTranslator();
+      fail();
+    } catch (IllegalStateException e) {
+      assertThat(e.getMessage()).contains("Utility class");
+    }
+  }
+
+  
 
   public ZamiaStringParam createStringParam(String hbParamId, String position, String value){
     ZamiaStringParam sp = new ZamiaStringParam(hbParamId);

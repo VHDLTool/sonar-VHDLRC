@@ -9,9 +9,9 @@ import static com.linty.sonar.params.ParamTranslator.*;
 
 public class ZamiaStringParam extends ZamiaParam {
   
-  private final static String SONAR_DESCRIPTION = "Comma seperated pattern to match, ex : *aa,*b*,c ";
-  private final static String SONAR_NAME = "Format";
-  public final static String PARAM_KEY = "STR";
+  private static final String SONAR_DESCRIPTION = "Comma seperated pattern to match, ex : *aa,*b*,c ";
+  private static final String SONAR_NAME = "Format";
+  public static final String PARAM_KEY = "STR";
   
   private String value;
 
