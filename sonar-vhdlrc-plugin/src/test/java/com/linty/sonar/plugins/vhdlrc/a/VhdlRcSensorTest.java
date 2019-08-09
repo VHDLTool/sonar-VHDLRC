@@ -90,7 +90,7 @@ public class VhdlRcSensorTest  {
   public void invalid_path_should_log_error() {
     SensorContextTester Context = createContext("src/test/files","src/invalid/path/");
     sensor.execute(Context);
-    List<Issue> issues = new ArrayList(Context.allIssues());
+    List<Issue> issues = new ArrayList<>(Context.allIssues());
     assertThat(issues).isEmpty();
     assertThat(logTester.logs()).isNotEmpty();
   }
@@ -98,7 +98,7 @@ public class VhdlRcSensorTest  {
 	@Test
 	public void test_two_good_issues_one_failure() {
 	  sensor.execute(context1);
-	  List<Issue> issues = new ArrayList(context1.allIssues());
+	  List<Issue> issues = new ArrayList<>(context1.allIssues());
 	  
 	  assertThat(issues).hasSize(4);
 	  assertNoIssueOnFile(context1,"file_no_issues.vhd");	 

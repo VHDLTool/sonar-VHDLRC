@@ -11,24 +11,23 @@ public class ZamiaStringParam extends ZamiaParam {
   
   private final static String SONAR_DESCRIPTION = "Comma seperated pattern to match, ex : *aa,*b*,c ";
   private final static String SONAR_NAME = "Format";
+  public final static String PARAM_KEY = "STR";
   
   private String value;
-  
-  static {
-    FIELDS = ImmutableList.of(
-      PREFIX,
-      SUFFIX,
-      CONTAIN,
-      EQUAL);
-  }
-  
+
   //Constructor used when parsing handbook (handbook to Sonar) 
   public ZamiaStringParam(String hbParamId) {
     super(hbParamId);
+    this.fields = ImmutableList.copyOf(STRING_FIELDS_LIST);
   }
   
   public void setValue(String value) {
     this.value = value;
+  }
+  
+  //Generate unique Param Key for a given RuleKey
+  public String paramKeyFor(String ruleKey) {
+    return super.paramKeyFor(ruleKey, PARAM_KEY);
   }
   
   /*Translates a handbook parameter into a pseudo regular expression 
@@ -52,18 +51,20 @@ public class ZamiaStringParam extends ZamiaParam {
   }
   
   /*Set the parameter for the NewRule created in VhdlRulesDefinition
-    String parameters relation :
-    Handbook <- n:1 -> NewParam
+   All the StringParam are concatenated into a single parameter 
+   (Handbook <- n:1 -> NewParam)
+   -The format [String] (Comma separated)
    */
   @Override
-  public void setSonarParams(List<ZamiaParam> params, NewRule nr, String ruleKey) {
+  public void setSonarParams(List<ZamiaParam> params, NewRule nr, String ruleKey) {    
     nr
-    .createParam(ruleKey + "-" + this.hbParamId)
-    .setName(SONAR_NAME)
+    .createParam(paramKeyFor(ruleKey))
+    .setName(this.hbParamId + SONAR_NAME)// [<hb:ParamID>][NAME] Ex: P1Format
     .setDescription(SONAR_DESCRIPTION)
     .setType(RuleParamType.STRING)
     .setDefaultValue(params
       .stream()
+      .filter(ZamiaStringParam.class::isInstance) //will ignore non-StringParam parameters
       .map(p -> ((ZamiaStringParam) p).hbValueToSonar())
       .collect(Collectors.joining(","))
       );    

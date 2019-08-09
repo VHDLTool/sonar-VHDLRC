@@ -21,7 +21,6 @@ package com.linty.sonar.plugins.vhdlrc.utils;
 
 import java.io.File;
 import org.sonar.api.platform.ServerFileSystem;
-import org.junit.Test;
 
 
 public class ServerFileSystemTester implements ServerFileSystem{

@@ -1,8 +1,7 @@
 package com.linty.sonar.params;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
 
 public class ParamTranslator {
   
@@ -21,6 +20,11 @@ public class ParamTranslator {
   public final static String SUFFIX = "Suffix";
   public final static String CONTAIN = "Contain";
   public final static String EQUAL = "Equal"; 
+  public static final ImmutableList<String> STRING_FIELDS_LIST = ImmutableList.of(
+    PREFIX,
+    SUFFIX,
+    CONTAIN,
+    EQUAL);
   
   public final static String STAR = "*";
   
@@ -31,8 +35,12 @@ public class ParamTranslator {
   public final static String E   = "E";
   public final static String GET = "GET";
   public final static String GT  = "GT";
-  
-  public static final Map<String,String> INT_FIELDS_MAP = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+  public static final ImmutableBiMap<String, String> INT_FIELDS_MAP = ImmutableBiMap.of(
+    LT  , "<"  ,
+    LET , "<=" ,
+    E   , "="  ,
+    GET , ">=" ,
+    GT  , ">"  );
   
   //Constants of RangeParam
   //Possible values of <hb:Range> in handbook
@@ -40,27 +48,10 @@ public class ParamTranslator {
   public final static String LET_GT = "LET_GT";
   public final static String LET_GET   = "LET_GET";
   public final static String LT_GET = "LT_GET";
-  
-  public static final Map<String,String> RANGE_FIELDS_MAP = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-  
-  static {
-    INT_FIELDS_MAP.put(LT,  "<");
-    INT_FIELDS_MAP.put(LET, "<=");
-    INT_FIELDS_MAP.put(E,   "=");
-    INT_FIELDS_MAP.put(GET, ">=");
-    INT_FIELDS_MAP.put(GT,  ">");
-    
-    RANGE_FIELDS_MAP.put(LT_GT,  "< <");
-    RANGE_FIELDS_MAP.put(LET_GT, "<= <");
-    RANGE_FIELDS_MAP.put(LET_GET,"<= <=");
-    RANGE_FIELDS_MAP.put(LT_GET, "< <=");
-    
-  }
-  
-
-  
-  
-    
-  
+  public static final ImmutableBiMap<String, String> RANGE_FIELDS_MAP = ImmutableBiMap.of(
+    LT_GT   , "< <"   ,
+    LET_GT  , "<= <"  ,
+    LET_GET , "<= <=" ,
+    LT_GET  , "< <="  );
 
 }

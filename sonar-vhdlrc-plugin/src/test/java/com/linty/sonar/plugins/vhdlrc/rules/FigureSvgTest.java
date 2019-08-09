@@ -19,7 +19,6 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 

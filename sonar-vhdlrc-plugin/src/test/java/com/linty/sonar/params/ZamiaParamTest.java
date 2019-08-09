@@ -44,11 +44,17 @@ public class ZamiaParamTest {
     params.add(createStringParam("P2", "Contain", "i"));
     params.add(createStringParam("P3", "Suffix", "_out"));
     params.add(createStringParam("P4", "Equal", "coco"));
-    
-    this.testBuildingRule();   
+    //Attach params to NewRule
+    this.testBuildingRule(); 
     
     assertThat(r.params().size()).isEqualTo(1);
-    checkParamIs(r.params().get(0), "STD_1-P4", "Format", "Comma seperated pattern to match, ex : *aa,*b*,c ", RuleParamType.STRING.type(), "clk*,*i*,*_out,coco");
+    checkParamIs(r.params().get(0), 
+      "STD_1-STR", 
+      "P4Format", //ParamID + NAME
+      "Comma seperated pattern to match, ex : *aa,*b*,c ",
+      RuleParamType.STRING.type(), 
+      "clk*,*i*,*_out,coco"
+      );
   }
   
   @Test
@@ -56,21 +62,60 @@ public class ZamiaParamTest {
     params.add(createIntParam("P1", "LET", 2));//must be ignored
     params.add(createIntParam("P2", "E", 9));  //must be ignored
     params.add(createIntParam("P3", "GET", 123));
-    
+    //Attach params to NewRule
     this.testBuildingRule();
-    
+
     assertThat(r.params().size()).isEqualTo(2);  
-    checkParamIs(r.params().get(0), "STD_1-P3-RE", "Relation", "Relation with the limit", "SINGLE_SELECT_LIST", ">=");
+    checkParamIs(r.params().get(0), 
+      "STD_1-IP1", 
+      "Relation", 
+      "Relation with the limit",
+      "SINGLE_SELECT_LIST", 
+      ">="
+      );
     assertThat(r.params().get(0).type().multiple()).isFalse();
     assertThat(r.params().get(0).type().values()).containsExactlyInAnyOrder("<", "<=", "=", ">=", ">");
-    
-    checkParamIs(r.params().get(1), "STD_1-P3-LI", "Limit", "Value to be compared with ex: >= value ",RuleParamType.INTEGER.type(), "123");
+    checkParamIs(r.params().get(1), 
+      "STD_1-IP2", 
+      "LimitP3", 
+      "Value to be compared with ex: >= value ",
+      RuleParamType.INTEGER.type(), 
+      "123"
+      );
   }
   
   @Test
   public void test_range_param() {
-    
-    
+    params.add(createRangeParam("P1", "LT_GT", 2, 7));//must be ignored
+    params.add(createRangeParam("P2", "LET_GT", -5, 26));
+    //Attach params to NewRule
+    this.testBuildingRule();
+    assertThat(r.params().size()).isEqualTo(3);
+    //min param
+    checkParamIs(r.params().get(0), 
+      "STD_1-1RG",
+      "MinP2",
+      "Minimum value to respect",
+      RuleParamType.INTEGER.type(),
+      "-5"
+      );
+    //relation param
+    assertThat(r.params().get(1).type().multiple()).isFalse();
+    checkParamIs(r.params().get(1),
+      "STD_1-2RG",
+      "Range",
+      "Inclusive and exclusive options",
+      "SINGLE_SELECT_LIST",
+      "<= <"
+      );
+     //max param
+     checkParamIs(r.params().get(2),
+      "STD_1-3RG",
+      "MaxP2",
+      "Maximum value to respect",
+      RuleParamType.INTEGER.type(),
+      "26"
+      );
   }
   
   @Test
@@ -81,6 +126,27 @@ public class ZamiaParamTest {
     } catch (IllegalStateException e) {
       assertThat(e.getMessage()).isNotNull().isNotEmpty();
     }
+  }
+  
+  //If there are non StringParam in a StringParamList, they should be ignored silently 
+  @Test
+  public void test_heterogeneous_list_of_params() {
+    params.add(createIntParam("P1", "GT", 99));//Should be ignored
+    params.add(createStringParam("P2", "Prefix", "a"));
+    params.add(createStringParam("P3", "Contain", "bb"));
+    params.add(createRangeParam("P4", "LT_GT", 3, 7));//should be ignored
+    params.add(createStringParam("P5", "Suffix", "cc"));
+    
+    this.testBuildingRule();
+    
+    assertThat(r.params().size()).isEqualTo(1);
+    checkParamIs(r.params().get(0), 
+      "STD_1-STR", 
+      "P5Format", //ParamID + NAME
+      "Comma seperated pattern to match, ex : *aa,*b*,c ",
+      RuleParamType.STRING.type(), 
+      "a*,*bb*,*cc"
+      );    
   }
   
 
@@ -97,6 +163,15 @@ public class ZamiaParamTest {
     ip.setValue(value);
     return ip;
   }
+  
+  public ZamiaRangeParam createRangeParam(String hbParamId, String range, int min, int max) {
+    ZamiaRangeParam rp = new ZamiaRangeParam(hbParamId);
+    rp.setField(range);
+    rp.setMin(min);
+    rp.setMax(max);
+    return rp;
+  }
+  
   
   public void testBuildingRule() {
     params.get(params.size()-1).setSonarParams(params, nr, nr.key());
