@@ -64,7 +64,7 @@ public class HandbookXmlParser {
 	    }
 	    List<Rule> rules = new ArrayList<>();
 	    collectRules(hbStream, rules);					
-	    return rules;
+	    return rules; 
 	    
 	  } catch (XMLStreamException e) {
 	    throw new IllegalStateException("Error when parsing rules in " + VhdlRulesDefinition.RULESET_PATH + " line " + e.getLocation().getLineNumber(),e);

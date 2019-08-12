@@ -17,25 +17,25 @@ public class ZamiaRangeParam extends ZamiaParam {
   public static final String RANGE_KEY = "2RG";
   public static final String MAX_KEY = "3RG";
   
-  private int min;
-  private int max;
-  
-    
-
+  protected int min;
+  protected int max;
 
   //Constructor used when parsing handbook (handbook to Sonar) 
-  public ZamiaRangeParam(String hbParamId) {
-    super(hbParamId);
+  public ZamiaRangeParam() {
+    super();
     this.fields = RANGE_FIELDS_MAP.keySet().stream().collect(ImmutableList.toImmutableList());
   }
   
-  public void setMin(int min) {
-    this.min = min;    
+  public ZamiaRangeParam setMin(int min) {
+    this.min = min;   
+    return this;
   }
   
-  public void setMax(int max) {
-    this.max = max;    
+  public ZamiaRangeParam setMax(int max) {
+    this.max = max; 
+    return this;
   }
+  
   
   /*Set the parameter for the NewRule created in VhdlRulesDefinition
    The unique selected RangeParam leads to 3 parameters in Sonar

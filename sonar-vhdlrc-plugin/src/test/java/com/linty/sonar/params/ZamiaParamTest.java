@@ -158,28 +158,31 @@ public class ZamiaParamTest {
       assertThat(e.getMessage()).contains("Utility class");
     }
   }
-
   
 
   public ZamiaStringParam createStringParam(String hbParamId, String position, String value){
-    ZamiaStringParam sp = new ZamiaStringParam(hbParamId);
-    sp.setField(position);
+    ZamiaStringParam sp = new ZamiaStringParam()
+      .setHbParamId(hbParamId)
+      .setField(position);
     sp.setValue(value);
     return sp;
   }
   
   public ZamiaIntParam createIntParam(String hbParamId, String relation, int value) {
-    ZamiaIntParam ip = new ZamiaIntParam(hbParamId);
-    ip.setField(relation);
+    ZamiaIntParam ip = new ZamiaIntParam()
+      .setHbParamId(hbParamId)
+      .setField(relation);
     ip.setValue(value);
     return ip;
   }
   
   public ZamiaRangeParam createRangeParam(String hbParamId, String range, int min, int max) {
-    ZamiaRangeParam rp = new ZamiaRangeParam(hbParamId);
-    rp.setField(range);
-    rp.setMin(min);
-    rp.setMax(max);
+    ZamiaRangeParam rp = new ZamiaRangeParam()
+      .setHbParamId(hbParamId)
+      .setField(range);
+    rp
+    .setMin(min)
+    .setMax(max);
     return rp;
   }
   

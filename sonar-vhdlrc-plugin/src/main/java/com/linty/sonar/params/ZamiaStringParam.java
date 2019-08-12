@@ -13,18 +13,20 @@ public class ZamiaStringParam extends ZamiaParam {
   private static final String SONAR_NAME = "Format";
   public static final String PARAM_KEY = "STR";
   
-  private String value;
+  protected String value;
 
   //Constructor used when parsing handbook (handbook to Sonar) 
-  public ZamiaStringParam(String hbParamId) {
-    super(hbParamId);
+  public ZamiaStringParam() {
+    super();
     this.fields = ImmutableList.copyOf(STRING_FIELDS_LIST);
   }
   
-  public void setValue(String value) {
-    this.value = value;
-  }
   
+  public ZamiaStringParam setValue(String value) {
+    this.value = value;
+    return this;
+  }
+    
   //Generate unique Param Key for a given RuleKey
   public String paramKeyFor(String ruleKey) {
     return super.paramKeyFor(ruleKey, PARAM_KEY);

@@ -15,23 +15,17 @@ public class ZamiaIntParam extends ZamiaParam {
   public static final String RE_KEY = "IP1";
   public static final String LI_KEY = "IP2";
   
-  
-
-  private int value;
-  
-  //Possible values of <hb:Relation> in handbook
-
-    
-
+  protected int value;
 
   //Constructor used when parsing handbook (handbook to Sonar) 
-  public ZamiaIntParam(String hbParamId) {
-    super(hbParamId);
+  public ZamiaIntParam() {
+    super();
     this.fields = INT_FIELDS_MAP.keySet().stream().collect(ImmutableList.toImmutableList());
   }
 
-  public void setValue(int value) {
-    this.value = value;    
+  public ZamiaIntParam setValue(int value) {
+    this.value = value; 
+    return this;
   }
   
   /*Set the parameter for the NewRule created in VhdlRulesDefinition
