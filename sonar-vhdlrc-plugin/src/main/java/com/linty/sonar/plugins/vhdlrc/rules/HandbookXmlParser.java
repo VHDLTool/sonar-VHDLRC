@@ -67,10 +67,7 @@ public class HandbookXmlParser {
 	    return rules;
 	    
 	  } catch (XMLStreamException e) {
-	    if (LOG.isDebugEnabled()) {
-	      LOG.debug("Error when parsing handbook.xml file at line: {}\n{}",e.getLocation().getLineNumber(),e.getMessage());
-	    }
-	    throw new IllegalStateException(e);
+	    throw new IllegalStateException("Error when parsing rules in " + VhdlRulesDefinition.RULESET_PATH + " line " + e.getLocation().getLineNumber(),e);
 	  } catch (IOException e) {
 	    throw new IllegalStateException("Unable to read handbook.xml in jar ressources",e);
     }

@@ -31,8 +31,11 @@ import org.sonar.api.utils.log.LoggerLevel;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
+
 import org.junit.Rule;
 import org.apache.commons.io.input.BrokenInputStream;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,7 +52,12 @@ public class HandbookXmlParserTest {
   @Before
   public void setup() throws FileNotFoundException {
     InputStream hb = new FileInputStream( new File("src/test/files/handbooks/VHDL_Handbook_STD-master/Rulesets/handbook_STD.xml"));		
-    rl1 = XmlParser.parseXML(hb);		
+    rl1 = XmlParser.parseXML(hb);	
+  }
+  
+  @After
+  public void clean() {
+    logTester.clear();
   }
 
 
@@ -117,34 +125,33 @@ public class HandbookXmlParserTest {
   public void empty_xml_file_should_log_warning() throws FileNotFoundException {
     InputStream hb = new FileInputStream( new File("src/test/files/handbooks/empty_file.xml"));
     rl1 = XmlParser.parseXML(hb);
+    assertThat(rl1).isNull();
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.WARN)).contains("Handbook.xml is empty, no rules will be loaded");
   }
   
-  @Test (expected = IllegalStateException.class)
+  @Test
   public void parse_error_should_log_location() throws FileNotFoundException {
-    //logTester.setLevel(LoggerLevel.DEBUG);
-    rl1 = XmlParser.parseXML(new FileInputStream(new File("src/test/files/handbooks/parsing_issue.xml")));
-    String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/parsing_issue.xml");
-    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Error when parsing xml file: " + filename + " at line: 28" );
+    try {
+      rl1 = XmlParser.parseXML(new FileInputStream(new File("src/test/files/handbooks/parsing_issue.xml")));
+      fail();
+    } catch (IllegalStateException e) {
+      assertThat(e.getMessage()).isEqualTo("Error when parsing rules in " + VhdlRulesDefinition.RULESET_PATH + " line 29");
+    }
+
   }
 
-  @Test (expected = IllegalStateException.class)
-  public void parse_error_should_log_location_in_debug() throws FileNotFoundException {
-    logTester.setLevel(LoggerLevel.DEBUG);
-    rl1 = XmlParser.parseXML(new FileInputStream(new File("src/test/files/handbooks/parsing_issue.xml")));
-    String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/parsing_issue.xml");
-    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Error when parsing xml file: " + filename + " at line: 28" );
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1).contains("XML file parsing failed because of : org.xml.sax.SAXParseException; systemId: file: ");
-  }
 
-  @Test (expected = IllegalStateException.class)
+  @Test 
   public void no_rule_key_should_be_is_illegale() throws FileNotFoundException {
+    try {
     rl1 = XmlParser.parseXML(new FileInputStream(new File("src/test/files/handbooks/no_rule_key.xml")));
-    String filename = FilenameUtils.separatorsToSystem("src/test/files/handbooks/no_rule_key.xml");
-    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Error when parsing xml file: " + filename + " at line: 28"
-      +"\nNo mandatory RuleUID is defined");
-
+    fail();
+    } catch (IllegalStateException e) {
+      assertThat(e.getMessage()).isEqualTo("Error when parsing rules in " + VhdlRulesDefinition.RULESET_PATH + " line 142");
+      assertThat(e.getCause().getMessage()).contains("No mandatory RuleUID is defined");
+    }
+      
   }
 
   @Test (expected = IllegalStateException.class)
