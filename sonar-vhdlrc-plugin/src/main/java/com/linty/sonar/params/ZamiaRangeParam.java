@@ -13,9 +13,9 @@ public class ZamiaRangeParam extends ZamiaParam {
   private static final String SONAR_RANGE_DESC = "Inclusive and exclusive options";
   private static final String SONAR_RANGE_NAME = "Range";
   
-  public static final String MIN_KEY = "1RG";
-  public static final String RANGE_KEY = "2RG";
-  public static final String MAX_KEY = "3RG";
+  public static final String MIN_KEY = "Min  "; //use 2 spaces to have the good hash order
+  public static final String RANGE_KEY = "Range";
+  public static final String MAX_KEY = "Max  "; //use 2 spaces to have the good hash order
   
   protected int min;
   protected int max;
@@ -49,15 +49,15 @@ public class ZamiaRangeParam extends ZamiaParam {
     //Min value parameter
     super.createIntValueParam(
       nr, 
-      super.paramKeyFor(ruleKey, MIN_KEY),
+      MIN_KEY,
       SONAR_MIN_NAME + this.hbParamId, //[NAME][<hb:ParamID>] Ex: MinP1
       SONAR_MIN_DESC,
       this.min);
-    
+
     //Relation list of option
     super.createSingleListParam(
       nr, 
-      super.paramKeyFor(ruleKey, RANGE_KEY),
+      RANGE_KEY,
       SONAR_RANGE_NAME,
       SONAR_RANGE_DESC,
       RANGE_FIELDS_MAP);     
@@ -65,11 +65,10 @@ public class ZamiaRangeParam extends ZamiaParam {
     //Max value parameter 
     super.createIntValueParam(
       nr, 
-      super.paramKeyFor(ruleKey, MAX_KEY),
+      MAX_KEY,
       SONAR_MAX_NAME + this.hbParamId, //[NAME][<hb:ParamID>] Ex: MinP1
       SONAR_MAX_DESC,
-      this.max);
-    
+      this.max);       
   }
 
 }

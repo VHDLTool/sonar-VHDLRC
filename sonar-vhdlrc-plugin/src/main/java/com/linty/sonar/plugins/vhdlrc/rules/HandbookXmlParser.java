@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import com.google.common.collect.ImmutableList;
+import com.linty.sonar.params.ParamXmlParser;
 import org.codehaus.staxmate.SMInputFactory;
 import org.codehaus.staxmate.in.SMEvent;
 import org.codehaus.staxmate.in.SMFilter;
@@ -40,6 +41,7 @@ public class HandbookXmlParser {
 	private static final String RULE_CONTENT = "RuleContent"; 	
 	private static final String SONARQUBE = "Sonarqube"; 
 	private static final String RULE_DESC = "RuleDesc"; 
+	private static final String RULE_PARAMS = "RuleParams"; 
 
 	
 	private static final ImmutableList<String> IGNORE = ImmutableList.of(
@@ -99,15 +101,24 @@ public class HandbookXmlParser {
 	private void collectRule(Rule r, SMInputCursor sectionCursor) throws XMLStreamException {
 		while(sectionCursor.asEvent() != null) {
 			switch(sectionCursor.getLocalName()) {
+			//Ignore <hb:RuleUID>
+			//Ignore <hb:RuleHist>
+			//<hb:RuleContent> section
 			case RULE_CONTENT:
-				collectRuleContent(r, sectionCursor.childCursor(filter).advance());
+				collectRuleContent(r, sectionCursor.childCursor(filter).advance()); 
 				break;
+			//<hb:Sonarqube> section
 			case SONARQUBE:
 				collectRuleSQ(r, sectionCursor.childCursor(filter).advance());
 				break;
+			//<hb:RuleDesc> section
 			case RULE_DESC:
 				collectRuleDesc(r, sectionCursor.childCursor(filter).advance());
 				break;
+			//<hb:RuleParams> section
+			case RULE_PARAMS:
+        collectRuleParams(r, sectionCursor);
+        break;
 			default:
 				// Nothing, ignore other tags
 			}
@@ -115,7 +126,7 @@ public class HandbookXmlParser {
 		}
 	}
 
-	private void collectRuleContent(Rule r, SMInputCursor cursor) throws XMLStreamException {
+  private void collectRuleContent(Rule r, SMInputCursor cursor) throws XMLStreamException {
 		while (cursor.asEvent() != null) {
 			switch (cursor.getLocalName()) {
 			case "Name":
@@ -200,6 +211,10 @@ public class HandbookXmlParser {
 			}
 			cursor.advance();
 		}
+	}
+	
+	private void collectRuleParams(Rule r, SMInputCursor cursor) throws XMLStreamException {
+	  ParamXmlParser.collectParameters(r.parameters(),cursor);
 	}
 	
 	private FigureSvg collectFigureRef(SMInputCursor cursor) throws XMLStreamException {

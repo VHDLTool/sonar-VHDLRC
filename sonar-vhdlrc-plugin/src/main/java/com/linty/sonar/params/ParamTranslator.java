@@ -50,10 +50,10 @@ public class ParamTranslator {
   public static final String LET_GET   = "LET_GET";
   public static final String LT_GET = "LT_GET";
   public static final ImmutableBiMap<String, String> RANGE_FIELDS_MAP = ImmutableBiMap.of(
-    LT_GT   , "< <"   ,
-    LET_GT  , "<= <"  ,
-    LET_GET , "<= <=" ,
-    LT_GET  , "< <="  );
+    LT_GT   , "<_<"   ,
+    LET_GT  , "<=_<"  ,
+    LET_GET , "<=_<=" ,
+    LT_GET  , "<_<="  );
 
   @VisibleForTesting
   protected ParamTranslator() {

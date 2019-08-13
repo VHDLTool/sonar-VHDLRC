@@ -9,9 +9,9 @@ import static com.linty.sonar.params.ParamTranslator.*;
 
 public class ZamiaStringParam extends ZamiaParam {
   
-  private static final String SONAR_DESCRIPTION = "Comma seperated pattern to match, ex : *aa,*b*,c ";
+  private static final String SONAR_DESCRIPTION = "Comma seperated pattern to match, use *";
   private static final String SONAR_NAME = "Format";
-  public static final String PARAM_KEY = "STR";
+  public static final String PARAM_KEY = "Format";
   
   protected String value;
 
@@ -27,10 +27,6 @@ public class ZamiaStringParam extends ZamiaParam {
     return this;
   }
     
-  //Generate unique Param Key for a given RuleKey
-  public String paramKeyFor(String ruleKey) {
-    return super.paramKeyFor(ruleKey, PARAM_KEY);
-  }
   
   /*Translates a handbook parameter into a pseudo regular expression 
    by adding * according to the given position in handbook
@@ -60,7 +56,7 @@ public class ZamiaStringParam extends ZamiaParam {
   @Override
   public void setSonarParams(List<ZamiaParam> params, NewRule nr, String ruleKey) {    
     nr
-    .createParam(paramKeyFor(ruleKey))
+    .createParam(PARAM_KEY)
     .setName(this.hbParamId + SONAR_NAME)// [<hb:ParamID>][NAME] Ex: P1Format
     .setDescription(SONAR_DESCRIPTION)
     .setType(RuleParamType.STRING)

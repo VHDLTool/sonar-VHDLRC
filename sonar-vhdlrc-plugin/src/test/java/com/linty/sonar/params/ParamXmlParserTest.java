@@ -54,7 +54,11 @@ public class ParamXmlParserTest {
     
   @Test
   public void test_parsing_mixed_param_type_should_pass() throws XMLStreamException {
-    parseXmlParam("src/test/parameters/int_param.xml");
+    parseXmlParam("src/test/parameters/mixed_param.xml");
+    assertThat(params.size()).isEqualTo(3);
+    checkXmlParam(0, ZamiaStringParam.class, "P1", "Contain", "reset");
+    checkXmlParam(1, ZamiaRangeParam.class, "P1", "LET_GT", "-5:10050"); 
+    checkXmlParam(2, ZamiaIntParam.class, "P2", "LET", "-5");  
   }
   
   @Test
@@ -64,6 +68,7 @@ public class ParamXmlParserTest {
       fail();
     } catch (XMLStreamException e) {
       assertThat(e.getMessage()).contains("Unknown parameter type : UnknownParam");
+      assertThat(e.getLocation().getLineNumber()).isEqualTo(4);
     }
     
   }

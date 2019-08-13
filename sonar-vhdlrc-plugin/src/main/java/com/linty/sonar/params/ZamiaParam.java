@@ -26,12 +26,6 @@ public abstract class ZamiaParam {
   public ZamiaParam() {
   }
   
-  //Generates a key for the parameter for a given rule key
-  //Use to retrieve parameters from key for a given rule key when loading activeRules
-  public String paramKeyFor(String ruleKey, String key) {
-    return ruleKey + "-" + key;
-  }
-  
   @SuppressWarnings("unchecked")
   public <T extends ZamiaParam> T setHbParamId(String hbParamId) {
     this.hbParamId = hbParamId;

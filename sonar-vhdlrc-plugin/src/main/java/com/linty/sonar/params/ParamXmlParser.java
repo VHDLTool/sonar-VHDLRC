@@ -2,6 +2,7 @@ package com.linty.sonar.params;
 
 
 import java.util.List;
+import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import org.codehaus.staxmate.in.SMEvent;
 import org.codehaus.staxmate.in.SMFilter;
@@ -13,13 +14,15 @@ public class ParamXmlParser {
   //Filter is mandatory for SMInputCursor to advance
   private SMFilter filter = new IgnoreSomeRuleElements();
 
-  //Static method called if parameters exist and are not empty
+  /*Static method called if parameters exist and are not empty
+   * Entry point is as section SMInputCursor at <hb:RuleParams>
+   */
   public static void collectParameters(List<ZamiaParam> params, SMInputCursor ruleParamsCursor)  throws XMLStreamException {
        new ParamXmlParser().parseParameters(params, ruleParamsCursor);
   }
   
   //Collect all parameters into the given List<ZamiaParam> for a rule
-  private void parseParameters(List<ZamiaParam> params, SMInputCursor ruleParamsCursor) throws XMLStreamException {  
+  private void parseParameters(List<ZamiaParam> params, SMInputCursor ruleParamsCursor) throws XMLStreamException { 
     SMInputCursor paramCursor = ruleParamsCursor.childCursor(filter).advance();
         while(paramCursor.asEvent() != null) { 
       params.add(collectParameter(paramCursor));
@@ -30,6 +33,7 @@ public class ParamXmlParser {
   //Parse one parameter section and returns a ZamiaParam filled with it
   private ZamiaParam collectParameter(SMInputCursor paramCursor) throws XMLStreamException {       
     String paramType = paramCursor.getLocalName();
+    Location l = paramCursor.getCursorLocation();
     SMInputCursor contentCursor = paramCursor.childCursor(filter).advance();
         if(STRING_PARAM.equals(paramType)) {
       return collectStringParam(contentCursor);
@@ -38,7 +42,7 @@ public class ParamXmlParser {
     } else if (RANGE_PARAM.equals(paramType)) {
       return collectRangeParam(contentCursor);
     } else {
-      throw new XMLStreamException("Unknown parameter type : " + paramType);
+      throw new XMLStreamException("Unknown parameter type : " + paramType, l);
     }
   }
 
@@ -75,10 +79,7 @@ public class ParamXmlParser {
   private class IgnoreSomeRuleElements extends SMFilter {   
     @Override
     public boolean accept(SMEvent evt, SMInputCursor caller) throws XMLStreamException {
-      if (! evt.hasLocalName()) {
-        return false;
-      }
-      return true;
+      return evt.hasLocalName();
     }
   }
 

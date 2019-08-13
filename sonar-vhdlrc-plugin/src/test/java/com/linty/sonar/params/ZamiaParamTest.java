@@ -10,7 +10,6 @@ import org.sonar.api.server.rule.RulesDefinition.NewRule;
 import org.sonar.api.server.rule.RulesDefinition.Param;
 import org.sonar.api.server.rule.RulesDefinition.Repository;
 import org.sonar.api.server.rule.RulesDefinition.Rule;
-
 import org.junit.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -49,11 +48,11 @@ public class ZamiaParamTest {
     
     assertThat(r.params().size()).isEqualTo(1);
     checkParamIs(r.params().get(0), 
-      "STD_1-STR", 
-      "P4Format", //ParamID + NAME
-      "Comma seperated pattern to match, ex : *aa,*b*,c ",
-      RuleParamType.STRING.type(), 
-      "clk*,*i*,*_out,coco"
+      "Format", //key
+      "P4Format", //name : ParamID + NAME
+      "Comma seperated pattern to match, ex : *aa,*b*,c ",//description
+      RuleParamType.STRING.type(), //type
+      "clk*,*i*,*_out,coco" //value
       );
   }
   
@@ -67,18 +66,18 @@ public class ZamiaParamTest {
 
     assertThat(r.params().size()).isEqualTo(2);  
     checkParamIs(r.params().get(0), 
-      "STD_1-IP1", 
-      "Relation", 
-      "Relation with the limit",
-      "SINGLE_SELECT_LIST", 
-      ">="
+      "Relation", //key
+      "Relation",  //name
+      "Relation with the limit", //description
+      "SINGLE_SELECT_LIST", //type
+      ">=" //value
       );
     assertThat(r.params().get(0).type().multiple()).isFalse();
     assertThat(r.params().get(0).type().values()).containsExactlyInAnyOrder("<", "<=", "=", ">=", ">");
     checkParamIs(r.params().get(1), 
-      "STD_1-IP2", 
+      "Limit", 
       "LimitP3", 
-      "Value to be compared with ex: >= value ",
+      "Value to be compared with ex: < value ",
       RuleParamType.INTEGER.type(), 
       "123"
       );
@@ -93,7 +92,7 @@ public class ZamiaParamTest {
     assertThat(r.params().size()).isEqualTo(3);
     //min param
     checkParamIs(r.params().get(0), 
-      "STD_1-1RG",
+      "Min  ",
       "MinP2",
       "Minimum value to respect",
       RuleParamType.INTEGER.type(),
@@ -102,15 +101,15 @@ public class ZamiaParamTest {
     //relation param
     assertThat(r.params().get(1).type().multiple()).isFalse();
     checkParamIs(r.params().get(1),
-      "STD_1-2RG",
+      "Range",
       "Range",
       "Inclusive and exclusive options",
       "SINGLE_SELECT_LIST",
-      "<= <"
+      "<=_<"
       );
      //max param
      checkParamIs(r.params().get(2),
-      "STD_1-3RG",
+      "Max  ",
       "MaxP2",
       "Maximum value to respect",
       RuleParamType.INTEGER.type(),
@@ -141,9 +140,9 @@ public class ZamiaParamTest {
     
     assertThat(r.params().size()).isEqualTo(1);
     checkParamIs(r.params().get(0), 
-      "STD_1-STR", 
+      "Format", 
       "P5Format", //ParamID + NAME
-      "Comma seperated pattern to match, ex : *aa,*b*,c ",
+      "Comma seperated pattern to match, use * ",
       RuleParamType.STRING.type(), 
       "a*,*bb*,*cc"
       );    
@@ -185,8 +184,7 @@ public class ZamiaParamTest {
     .setMax(max);
     return rp;
   }
-  
-  
+    
   public void testBuildingRule() {
     params.get(params.size()-1).setSonarParams(params, nr, nr.key());
     newRepo.done();

@@ -19,6 +19,8 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 
+import com.linty.sonar.params.ZamiaIntParam;
+import com.linty.sonar.params.ZamiaStringParam;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,7 +44,11 @@ public class RuleTest {
         r.goodExampleRef=   "STD_00400_good";
         r.goodExampleCode=  "if() \n then \n else";
         r.badExDesc=        "Extracted from STD_00400_bad.vhd";
-        r.badExampleRef=    "STD_00400_bad";       
+        r.badExampleRef=    "STD_00400_bad";      
+        r.parameters().add(new ZamiaIntParam().setHbParamId("1"));
+        r.parameters().add(new ZamiaIntParam().setHbParamId("2"));
+        r.parameters().add(new ZamiaStringParam().setHbParamId("3"));
+        ((ZamiaStringParam) r.parameters().get(2)).setValue("lolo");
         
         assertThat(r.figureDesc).isNotNull();       
         String htmlDesc = r.buildHtmlDescritpion();
@@ -55,7 +61,9 @@ public class RuleTest {
         assertThat(htmlDesc).contains("Description");
         assertThat(htmlDesc).contains("Rational");
         
-        System.out.println(htmlDesc);
+        assertThat(r.parameters().size()).isEqualTo(3);
+        assertThat(r.parameters().get(0)).isInstanceOf(ZamiaIntParam.class);     
+        //System.out.println(htmlDesc);
 	}
 	
 	@Test

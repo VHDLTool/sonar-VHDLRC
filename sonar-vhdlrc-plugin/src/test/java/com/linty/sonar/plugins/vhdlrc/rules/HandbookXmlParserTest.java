@@ -23,9 +23,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import com.linty.sonar.params.ZamiaStringParam;
 import com.linty.sonar.plugins.vhdlrc.rules.HandbookXmlParser;
 
-import org.sonar.api.internal.apachecommons.io.FilenameUtils;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
 import java.util.List;
@@ -103,9 +103,11 @@ public class HandbookXmlParserTest {
     }
   }
   
+
   @Test
   public void test_parameter_capture() throws FileNotFoundException {
     rl = XmlParser.parseXML(new FileInputStream( new File("src/test/parameters/hbs/handbook_5_rules.xml")));
+    assertThat(rl).hasSize(5);
     com.linty.sonar.plugins.vhdlrc.rules.Rule r1 = rl.get(0);
     com.linty.sonar.plugins.vhdlrc.rules.Rule r2 = rl.get(1);
     com.linty.sonar.plugins.vhdlrc.rules.Rule r3 = rl.get(2);
@@ -113,10 +115,20 @@ public class HandbookXmlParserTest {
     com.linty.sonar.plugins.vhdlrc.rules.Rule r5 = rl.get(4);
     //check params
     assertThat(r1.ruleKey).isEqualTo("CNE_01200");
+    assertThat(r1.parameters()).hasSize(1);
+    assertThat(r1.parameters().get(0)).isInstanceOf(ZamiaStringParam.class);
+    
     assertThat(r2.ruleKey).isEqualTo("STD_00200");
+    assertThat(r2.parameters()).hasSize(2);
+    
     assertThat(r3.ruleKey).isEqualTo("STD_00300");
+    assertThat(r3.parameters()).hasSize(3);
+    
     assertThat(r4.ruleKey).isEqualTo("STD_04600");
+    assertThat(r4.parameters()).hasSize(1);
+    
     assertThat(r5.ruleKey).isEqualTo("STD_04700");
+    assertThat(r5.parameters()).hasSize(1);
     
   }
 

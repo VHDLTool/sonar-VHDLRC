@@ -101,17 +101,28 @@ public class VhdlRulesDefinition implements RulesDefinition {
 	      }
 	      repository.done();
 	    } else { LOG.warn("No VHDL RuleCheker rules loaded!");}
-	  } else {LOG.error("handboo not found in jar ressources, re-build with {}", RULESET_PATH);}	  
+	  } else {LOG.error("handbook not found in jar ressources, re-build with {}", RULESET_PATH);}	  
 	}
 
 	@VisibleForTesting
 	protected void newRule(com.linty.sonar.plugins.vhdlrc.rules.Rule r, NewRepository repository) {
 		NewRule nr = repository.createRule(r.ruleKey);
-		nr.setHtmlDescription(r.buildHtmlDescritpion());
+		nr.setHtmlDescription(r.buildHtmlDescritpion());		
 		addMetadataTo(nr,r);
+		addParameters(nr,r);
 	}
 
-	private void addMetadataTo(NewRule nr, com.linty.sonar.plugins.vhdlrc.rules.Rule r) {
+	private void addParameters(NewRule nr, com.linty.sonar.plugins.vhdlrc.rules.Rule r) {
+    if(!r.parameters().isEmpty()) {
+      r
+      .parameters()
+      .get(r.parameters().size()-1) //Sets sonar params according to the last parameter
+      .setSonarParams(r.parameters(), nr, nr.key());
+    }
+    
+  }
+
+  private void addMetadataTo(NewRule nr, com.linty.sonar.plugins.vhdlrc.rules.Rule r) {
 		nr
 		.setInternalKey(r.ruleKey)
 		.setName(r.name)

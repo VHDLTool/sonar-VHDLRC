@@ -10,10 +10,10 @@ public class ZamiaIntParam extends ZamiaParam {
   
   private static final String SONAR_RE_DESC = "Relation with the limit";
   private static final String SONAR_RE_NAME = "Relation";
-  private static final String SONAR_LIMIT_DESC = "Value to be compared with ex: >= value ";
+  private static final String SONAR_LIMIT_DESC = "Value to be compared with ex: < value ";
   private static final String SONAR_LIMIT_NAME = "Limit";
-  public static final String RE_KEY = "IP1";
-  public static final String LI_KEY = "IP2";
+  public static final String RE_KEY = "Relation";
+  public static final String LI_KEY = "Limit";
   
   protected int value;
 
@@ -38,7 +38,7 @@ public class ZamiaIntParam extends ZamiaParam {
     //Define the relation option in a list of possible options
     super.createSingleListParam(
       nr, 
-      super.paramKeyFor(ruleKey, RE_KEY),
+      RE_KEY,
       SONAR_RE_NAME,
       SONAR_RE_DESC,
       INT_FIELDS_MAP);
@@ -46,7 +46,7 @@ public class ZamiaIntParam extends ZamiaParam {
     //Define the integer limit value to set
     super.createIntValueParam(
       nr,
-      super.paramKeyFor(ruleKey, LI_KEY),
+      LI_KEY,
       SONAR_LIMIT_NAME + this.hbParamId, //[NAME][<hb:ParamID>] Ex: LimitP1
       SONAR_LIMIT_DESC,
       this.value);   
