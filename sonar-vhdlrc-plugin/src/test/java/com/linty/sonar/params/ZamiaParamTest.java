@@ -50,7 +50,7 @@ public class ZamiaParamTest {
     checkParamIs(r.params().get(0), 
       "Format", //key
       "P4Format", //name : ParamID + NAME
-      "Comma seperated pattern to match, ex : *aa,*b*,c ",//description
+      "Comma seperated pattern to match, use *",//description
       RuleParamType.STRING.type(), //type
       "clk*,*i*,*_out,coco" //value
       );
@@ -142,20 +142,10 @@ public class ZamiaParamTest {
     checkParamIs(r.params().get(0), 
       "Format", 
       "P5Format", //ParamID + NAME
-      "Comma seperated pattern to match, use * ",
+      "Comma seperated pattern to match, use *",
       RuleParamType.STRING.type(), 
       "a*,*bb*,*cc"
       );    
-  }
-  
-  @Test
-  public void test_instanciatingParamTranlator() {
-    try {
-      new ParamTranslator();
-      fail();
-    } catch (IllegalStateException e) {
-      assertThat(e.getMessage()).contains("Utility class");
-    }
   }
   
 

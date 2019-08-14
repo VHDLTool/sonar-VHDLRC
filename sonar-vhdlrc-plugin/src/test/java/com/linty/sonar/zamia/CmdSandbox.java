@@ -76,7 +76,6 @@ public class CmdSandbox {
     try {
       execute(programPath, arguments, targetPath );
     } catch (IOException | InterruptedException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

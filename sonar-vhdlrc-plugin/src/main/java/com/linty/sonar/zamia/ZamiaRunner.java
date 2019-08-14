@@ -106,6 +106,9 @@ public class ZamiaRunner {
   protected void run() {
     LOG.info("----------Vhdlrc Analysis---------");
     Path tempBuildPath = BuildPathMaker.make(this.context.config());
+//    ActiveRuleLoader loader = new ActiveRuleLoader(this.context.activeRules());
+//    Path rcHandbookParameters = loader.makeRcHandbookParameters();
+//    Path rcConfigSelectedRules = SelectedRulesMaker.makeWith(loader.activeRuleKeys());
     uploadConfigToZamia(tempBuildPath);
     clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     clean(Paths.get(this.scannerHome, PROJECT_DIR, REPORTING_RULE));
@@ -124,16 +127,16 @@ public class ZamiaRunner {
     
     //Embedded resources configuration files 
     String configuration = "/" + CONFIGURATION + "/";
-    InputStream conf1 = ZamiaRunner.class.getResourceAsStream(configuration + RC_CONFIG_SELECTED_RULES);//Injected at build time
-    InputStream conf2 = ZamiaRunner.class.getResourceAsStream(configuration + RC_HANDBOOK_PARAMETERS);  //Injected at build time
-    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + RULESET_PATH);            //Injected at build time
+    InputStream conf1 = ZamiaRunner.class.getResourceAsStream(configuration + RC_CONFIG_SELECTED_RULES);//rc_config_selected_rules.xml (Injected at build time)
+    InputStream conf2 = ZamiaRunner.class.getResourceAsStream(configuration + RC_HANDBOOK_PARAMETERS);  //rc_handbook_parameters.xml   (Injected at build time)
+    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + RULESET_PATH);            //handbook.xml                 (Injected at build time)
     
     //Configuration files destinations in scanner
     Path projectDir = Paths.get(this.scannerHome, PROJECT_DIR);
     Path targetConf1     = projectDir.resolve(CONFIG_DIR).resolve(RC_CONFIG_SELECTED_RULES);
     Path targetConf2     = projectDir.resolve(CONFIG_DIR).resolve(RC_HANDBOOK_PARAMETERS);
     Path hbTarget        = projectDir.resolve(CONFIG_DIR).resolve(HANDBOOK_XML);
-    Path buildPathTarget = projectDir.resolve(BUILD_PATH_TXT); //Generated at Scanner time
+    Path buildPathTarget = projectDir.resolve(BUILD_PATH_TXT); // BuidlPath.txt (Generated at Scanner time)
     
     if(LOG.isDebugEnabled()) {
       LOG.debug("Load configuration to" + buildPathTarget);

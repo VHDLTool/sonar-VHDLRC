@@ -3,6 +3,7 @@ package com.linty.sonar.params;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import org.fest.util.VisibleForTesting;
+import org.sonar.api.batch.rule.ActiveRule;
 
 public class ParamTranslator {
   
@@ -54,6 +55,44 @@ public class ParamTranslator {
     LET_GT  , "<=_<"  ,
     LET_GET , "<=_<=" ,
     LT_GET  , "<_<="  );
+  
+  //Method to check the parameter type
+  public static boolean hasStringParam(ActiveRule ar) {
+    return ar.param(ZamiaStringParam.PARAM_KEY) != null;
+  }
+  
+  public static boolean hasIntParam(ActiveRule ar) {
+    return ar.param(ZamiaIntParam.LI_KEY) != null;
+  }
+  
+  public static boolean hasRangeParam(ActiveRule ar) {
+    return ar.param(ZamiaRangeParam.MIN_KEY) != null;
+  }
+  
+  public static String positionOf(String param) {
+    if(param.startsWith(STAR) && param.endsWith(STAR)) {
+      return CONTAIN;
+    } else if (param.startsWith(STAR)) {
+      return SUFFIX;
+    } else if (param.endsWith(STAR)) {
+      return PREFIX;
+    } else {
+      return EQUAL;
+    }
+  }
+  
+  public static String stringValueOf(String param) {
+    return param.replaceAll("\\*", "");
+  }
+  
+  public static String relationOf(String param) {
+    return INT_FIELDS_MAP.inverse().get(param);
+  }
+  
+  public static String rangeOf(String param) {
+    return RANGE_FIELDS_MAP.inverse().get(param);
+  }
+  
 
   @VisibleForTesting
   protected ParamTranslator() {

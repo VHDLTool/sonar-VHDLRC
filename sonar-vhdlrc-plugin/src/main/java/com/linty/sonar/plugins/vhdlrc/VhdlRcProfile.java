@@ -30,5 +30,6 @@ public class VhdlRcProfile implements BuiltInQualityProfilesDefinition{
 		NewBuiltInQualityProfile vhdlRcQP = context.createBuiltInQualityProfile(BUILT_IN_PROFILE_NAME, Vhdl.KEY);
 		vhdlRcQP.setDefault(true)
 		.done();
+		
 	}
 }

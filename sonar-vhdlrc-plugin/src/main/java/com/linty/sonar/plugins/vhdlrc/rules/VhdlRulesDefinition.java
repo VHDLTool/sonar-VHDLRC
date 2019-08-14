@@ -45,10 +45,11 @@ public class VhdlRulesDefinition implements RulesDefinition {
       return VhdlRulesDefinition.class.getResourceAsStream(RULESET_PATH);
     }
   }
+  
+  public static final String VHDLRC_REPOSITORY_KEY = "vhdlrc-repository";
 
   public static final String  HANDBOOK_DIR = "/configuration/HANDBOOK";
   public static final String  RULESET_PATH = HANDBOOK_DIR + "/Rulesets/handbook.xml";
-  public static final String  HANDBOOK_PATH_DESC = "Path to the handbook directory. The path may be absolute or relative to the SonarQube server base directory.";
 
   private final Configuration configuration;
 
@@ -65,7 +66,7 @@ public class VhdlRulesDefinition implements RulesDefinition {
 				SEVERITY_MAP.put("INFO",     Severity.INFO);
 				
 				TYPE_MAP.put("BUG",           RuleType.BUG);
-				TYPE_MAP.put("VULNERABILITY", RuleType.VULNERABILITY);
+				TYPE_MAP.put("VULNERABILITY", RuleType.VULNERABILITY); 
 				TYPE_MAP.put("CODE_SMELL",    RuleType.CODE_SMELL);//Default
 				
 				DEBT_MAP.put("Trivial", "5min");
@@ -89,7 +90,7 @@ public class VhdlRulesDefinition implements RulesDefinition {
 	@VisibleForTesting
 	public void defineFromRessources(Context context, HbRessourceContext ressourceContext){
 	  NewRepository repository = context
-	    .createRepository("vhdlrc-repository", Vhdl.KEY)
+	    .createRepository(VHDLRC_REPOSITORY_KEY, Vhdl.KEY)
 	    .setName("VhdlRuleChecker");
 	  InputStream rulesetXML = ressourceContext.getRuleset();
 	  if(rulesetXML != null) {
@@ -128,6 +129,7 @@ public class VhdlRulesDefinition implements RulesDefinition {
 		.setName(r.name)
 		.setSeverity(SEVERITY_MAP.getOrDefault(r.sonarSeverity, Severity.MINOR).toString())
 		.setType(TYPE_MAP.getOrDefault(r.type, RuleType.CODE_SMELL))
+		.setActivatedByDefault(true)
 		.setDebtRemediationFunction(nr.debtRemediationFunctions().constantPerIssue(DEBT_MAP.getOrDefault(r.remediationEffort, DEBT_MAP.get("easy"))))
 		;
 		addTags(nr,r.tag);

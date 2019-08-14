@@ -58,9 +58,6 @@ public class ZamiaRunnerTest {
     @Override
     protected ArrayList<String> buildCmd(String scannerHome) {
       ArrayList<String> cmd = new ArrayList<>();
-//      cmd.add("P:\\Tools\\notepad++\\notepad++.exe");  
-//      cmd.add("-alwaysOnTop"); 
-//      cmd.add("P:\\dev\\eclipse_test.bat"); 
       cmd.add("no");
       return cmd;
     }
