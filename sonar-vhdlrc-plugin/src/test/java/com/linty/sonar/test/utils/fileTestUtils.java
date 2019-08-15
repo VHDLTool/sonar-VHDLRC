@@ -4,9 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.builder.Input;
+import org.xmlunit.diff.ComparisonControllers;
+import org.xmlunit.diff.Diff;
+import org.xmlunit.diff.Difference;
+import org.xmlunit.matchers.CompareMatcher;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThat;
 
 public class fileTestUtils {
 
@@ -28,7 +36,17 @@ public class fileTestUtils {
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read file", e);
     }
+  }
 
+  public static void compareXml(Path result, Path expected) {
+    assertThat(
+      Input.fromFile(result.toFile()), 
+      CompareMatcher
+      .isIdenticalTo(Input.fromFile(expected.toFile()))
+      .ignoreComments()
+      .ignoreWhitespace()
+      );
   }
   
 }
+

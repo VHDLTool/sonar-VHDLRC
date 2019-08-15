@@ -79,4 +79,9 @@
 	   </hb:RuleParams>
 	</hb:Rule>
 	
+	<hb:Rule UID="CNE_00007">
+		<hb:RuleUID>CNE_00007</hb:RuleUID>
+		<hb:RuleGEN>GEN_00007</hb:RuleGEN>
+	</hb:Rule>
+	
 </hb:handbook_parameters>
