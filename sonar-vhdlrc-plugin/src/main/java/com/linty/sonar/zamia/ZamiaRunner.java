@@ -83,6 +83,7 @@ public class ZamiaRunner {
   public static final String                CONFIGURATION = "configuration";
   public static final String                  VIRGIN_CONF = "virgin_conf";
   public static final String                 RULESET_PATH = "HANDBOOK/Rulesets/handbook.xml";
+  private static final String RC_HANDBOOK_PARAMETERS_PATH = CONFIGURATION + "/" + RC_HANDBOOK_PARAMETERS; 
   
   private final SensorContext context;
   private final RunnerContext runnerContext;
@@ -106,7 +107,7 @@ public class ZamiaRunner {
   protected void run() {
     LOG.info("----------Vhdlrc Analysis---------");
     Path tempBuildPath = BuildPathMaker.make(this.context.config());
-//    ActiveRuleLoader loader = new ActiveRuleLoader(this.context.activeRules());
+//    ActiveRuleLoader loader = new ActiveRuleLoader(this.context.activeRules(), "/" + RC_HANDBOOK_PARAMETERS_PATH);
 //    Path rcHandbookParameters = loader.makeRcHandbookParameters();
 //    Path rcConfigSelectedRules = SelectedRulesMaker.makeWith(loader.activeRuleKeys());
     uploadConfigToZamia(tempBuildPath);

@@ -3,6 +3,7 @@ package com.linty.sonar.zamia;
 import com.linty.sonar.params.ZamiaIntParam;
 import com.linty.sonar.params.ZamiaRangeParam;
 import com.linty.sonar.params.ZamiaStringParam;
+import com.linty.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
 import com.linty.sonar.test.utils.fileTestUtils;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,12 +21,7 @@ import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.LogTester;
-import org.sonar.api.utils.log.LoggerLevel;
 import org.xml.sax.SAXException;
-import org.xmlunit.builder.Input;
-import org.xmlunit.diff.ComparisonControllers;
-import org.xmlunit.diff.ComparisonFormatter;
-import org.xmlunit.matchers.CompareMatcher;
 
 import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +35,8 @@ public class ActiveRuleLoaderTest {
   private static final String RANGE = ZamiaRangeParam.RANGE_KEY;
   private static final String MAX__ = ZamiaRangeParam.MAX_KEY;
   
+  private static final String REPO_KEY = VhdlRulesDefinition.VHDLRC_REPOSITORY_KEY;
+  
   ActiveRulesBuilder builder;
   ActiveRules activeRules;
 
@@ -49,16 +47,16 @@ public class ActiveRuleLoaderTest {
   @Before
   public void init() {
     builder = new ActiveRulesBuilder();
-    //[RuleKey] [Ligne] [Parameters in source.xml] -> [Parameters in expected.xml] [Param Type]
+    //[RuleKey] [Line in source.xml] [Parameters in source.xml] -> [Parameters in expected.xml] [Param Type]
     
     //STD_00001 l.13 1 -> 2 STRING
     builder.addRule(stringRule("STD_00001", FORMAT,"*_TOTO,*TITI*"));
     
-    //STD_00002 l.30 2 -> 1 STRING
-    builder.addRule(stringRule("STD_00002", FORMAT,"AAA*"));
+    //CNE_00002 l.25 2 -> 1 STRING
+    builder.addRule(stringRule("CNE_00002", FORMAT,"AAA*"));
     
-    //STD_00003 l.42 0 -> 0 (UNTOUCHED)
-    builder.addRule(aRule("STD_00003").build());
+    //CNE_00003 l.42 0 -> 0 (UNTOUCHED)
+    builder.addRule(aRule("CNE_00003").build());
     
     //STD_00004 l.48 2 -> INT
     builder.addRule(intRule("STD_00004", RELATION, "<", LIMIT, "99" ));
@@ -69,8 +67,10 @@ public class ActiveRuleLoaderTest {
     //STD_00006 l.70 1 -> 1 (UNTOUCHED because no parameter in Sonar) 
     builder.addRule(aRule("STD_00006").build());
     
-    //STD_00007 l.42 0 -> 0 (UNTOUCHED because not in Sonar ActiveRules)
-    builder.addRule(aRule("STD_00007").build());
+    //CNE_00007 l.82 0 -> 0 (UNTOUCHED because not in Sonar ActiveRules)
+     
+    //STD_00008 l.87 1 -> 1 (UNTOUCHED because parameter in sonar is not a Zamia Type) 
+    builder.addRule(stringRule("STD_00008", "not_a_zamia_key", "AAA*"));
     
     activeRules = builder.build();
   }
@@ -96,10 +96,12 @@ public class ActiveRuleLoaderTest {
     //Expected result to match
     Path expected = Paths.get("src/test/parameters/rc_parameters/expected.xml");
 
+    printActiveRules(activeRules);
     //Generate the new rc_handbook_parameter.xml
     Path result = tryWritingXmlFrom(activeRules, "src/test/parameters/rc_parameters/source.xml");
 
     //Compare Xml Files
+    fileTestUtils.printFile(result);
     fileTestUtils.compareXml(result, expected);
 
   }
@@ -116,17 +118,17 @@ public class ActiveRuleLoaderTest {
   
   @Test
   public void test_getting_active_rule_keys() {
-    activeRules = new ActiveRulesBuilder().build();
-    ActiveRuleLoader arl = new ActiveRuleLoader(activeRules);
-    //Try getting activeRuleList before loading them
-    try {
-      arl.activeRuleKeys();
-      fail("Expected IllegaleStateException");
-    } catch (IllegalStateException e) { 
-      assertThat(e.getMessage()).isNotNull();
-    }
-    arl.makeRcHandbookParameters();
-    assertThat(arl.activeRuleKeys()).isEmpty();;
+//    activeRules = new ActiveRulesBuilder().build();
+//    ActiveRuleLoader arl = new ActiveRuleLoader(activeRules,"src/test/parameters/rc_parameters/source.xml");
+//    //Try getting activeRuleList before loading them
+//    try {
+//      arl.activeRuleKeys();
+//      fail("Expected IllegaleStateException");
+//    } catch (IllegalStateException e) { 
+//      assertThat(e.getMessage()).isNotNull();
+//    }
+//    tryWritingXmlFrom();
+//    assertThat(arl.activeRuleKeys()).isEmpty();;
     
   }
     
@@ -138,7 +140,7 @@ public class ActiveRuleLoaderTest {
   
   public NewActiveRule.Builder aRule(String ruleKey) {
     return new NewActiveRule.Builder()
-      .setRuleKey(RuleKey.of("vhdlrc-repository",ruleKey))
+      .setRuleKey(RuleKey.of(REPO_KEY,ruleKey))
       .setLanguage("vhdl");
   }
   public NewActiveRule stringRule(String ruleKey, String paramKey, String value) {
@@ -163,16 +165,30 @@ public class ActiveRuleLoaderTest {
   }
   
   private Path tryWritingXmlFrom(ActiveRules activeRules, String source) {   
-    InputStream sourceIS;
+    InputStream sourceIs;
     try {
-      sourceIS = new FileInputStream(new File(source));
-      return new ActiveRuleLoader(activeRules).writeParametersInXml(sourceIS); 
+      sourceIs = new FileInputStream(new File(source));
+      return new ActiveRuleLoader(activeRules, "").writeParametersInXml(sourceIs); 
     } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
-      e.printStackTrace();
-      throw new IllegalStateException();
+      throw new IllegalStateException("source file not found in test",e);
     }
-   
+    
   }
   
-  
+  private static void printActiveRules(ActiveRules activeRules) {
+    System.out.println("--------List of activeRules:-------\n");
+    activeRules
+    .findByRepository(REPO_KEY)
+    .stream()
+    .forEach(r -> { 
+      System.out.println(r.ruleKey()); 
+      r.params()
+      .keySet()
+      .stream()
+      .forEach(k -> System.out.println("  " + k + ":" + r.param(k)));
+    });
+    System.out.println("----------------------------------");
+  }
+
+
 }

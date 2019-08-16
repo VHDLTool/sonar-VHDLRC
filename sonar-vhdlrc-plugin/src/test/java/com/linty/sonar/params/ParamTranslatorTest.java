@@ -45,20 +45,64 @@ public class ParamTranslatorTest {
       )
       .addRule(
         new NewActiveRule.Builder()
+      .setRuleKey(RuleKey.of("repo","2.1"))
+      .setLanguage("vhdl")
+      .setParam(ZamiaIntParam.RE_KEY, "<")
+      .setParam("not_a_key", "8")
+      .build()
+      )
+      .addRule(
+        new NewActiveRule.Builder()
       .setRuleKey(RuleKey.of("repo","3"))
       .setLanguage("vhdl")
       .setParam(ZamiaRangeParam.MIN_KEY, "7")
       .setParam(ZamiaRangeParam.RANGE_KEY, "<_<")
       .setParam(ZamiaRangeParam.MAX_KEY, "9")
       .build()
-      ).build();
+      )
+      .addRule(
+        new NewActiveRule.Builder()
+      .setRuleKey(RuleKey.of("repo","3.1"))
+      .setLanguage("vhdl")
+      .setParam(ZamiaRangeParam.MIN_KEY, "7")
+      .setParam("not_a_key", "<_<")
+      .setParam(ZamiaRangeParam.MAX_KEY, "9")
+      .build()
+      )
+      .addRule(
+        new NewActiveRule.Builder()
+      .setRuleKey(RuleKey.of("repo","3.2"))
+      .setLanguage("vhdl")
+      .setParam(ZamiaRangeParam.MIN_KEY, "7")
+      .setParam(ZamiaRangeParam.RANGE_KEY, "<_<")
+      .setParam("not_a_key", "9")
+      .build()
+      )
+      .addRule(
+        new NewActiveRule.Builder()
+        .setRuleKey(RuleKey.of("repo","4"))
+        .setLanguage("vhdl")
+        .setParam("not_a_ZamiaK_key","6")
+        .build()
+        )
+      .build();
     
     assertThat(ParamTranslator.hasStringParam(rules.find(RuleKey.of("repo","1")))).isTrue();
     assertThat(ParamTranslator.hasStringParam(rules.find(RuleKey.of("repo","2")))).isFalse();
+    
     assertThat(ParamTranslator.hasIntParam(rules.find(RuleKey.of("repo","2")))).isTrue();
+    assertThat(ParamTranslator.hasIntParam(rules.find(RuleKey.of("repo","2.1")))).isFalse();
     assertThat(ParamTranslator.hasIntParam(rules.find(RuleKey.of("repo","3")))).isFalse();
+    
     assertThat(ParamTranslator.hasRangeParam(rules.find(RuleKey.of("repo","3")))).isTrue();
+    assertThat(ParamTranslator.hasRangeParam(rules.find(RuleKey.of("repo","3.1")))).isFalse();
+    assertThat(ParamTranslator.hasRangeParam(rules.find(RuleKey.of("repo","3.2")))).isFalse();
     assertThat(ParamTranslator.hasRangeParam(rules.find(RuleKey.of("repo","1")))).isFalse();
+    
+    assertThat(ParamTranslator.hasZamiaParam(rules.find(RuleKey.of("repo","1")))).isTrue();
+    assertThat(ParamTranslator.hasZamiaParam(rules.find(RuleKey.of("repo","2")))).isTrue();
+    assertThat(ParamTranslator.hasZamiaParam(rules.find(RuleKey.of("repo","3")))).isTrue();
+    assertThat(ParamTranslator.hasZamiaParam(rules.find(RuleKey.of("repo","4")))).isFalse();
   }
   
   @Test

@@ -13,7 +13,7 @@
 	<hb:Rule UID="STD_00001">
 		<hb:RuleUID>CNE_00001</hb:RuleUID>
 		<hb:RuleGEN>GEN_00001</hb:RuleGEN>	
-	   	<hb:RuleParams>
+		<hb:RuleParams>
 			<hb:StringParam>
 			   <hb:ParamID>P1</hb:ParamID>
 			   <hb:Position>Suffix</hb:Position>
@@ -82,9 +82,16 @@
 	   </hb:RuleParams>
 	</hb:Rule>
 	
-	<hb:Rule UID="CNE_00007">
-		<hb:RuleUID>CNE_00007</hb:RuleUID>
-		<hb:RuleGEN>GEN_00007</hb:RuleGEN>
+	<hb:Rule UID="STD_00008">
+		<hb:RuleUID>STD_00008</hb:RuleUID>
+		<hb:RuleGEN>GEN_00008</hb:RuleGEN>	
+		<hb:RuleParams>
+			<hb:StringParam>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Position>Prefix</hb:Position>
+			   <hb:Value>p_</hb:Value>
+		   </hb:StringParam>
+	   </hb:RuleParams>
 	</hb:Rule>
 	
 </hb:handbook_parameters>

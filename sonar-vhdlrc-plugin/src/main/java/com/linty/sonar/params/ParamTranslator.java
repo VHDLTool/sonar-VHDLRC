@@ -62,11 +62,18 @@ public class ParamTranslator {
   }
   
   public static boolean hasIntParam(ActiveRule ar) {
-    return ar.param(ZamiaIntParam.LI_KEY) != null;
+    return ar.param(ZamiaIntParam.LI_KEY) != null 
+      && ar.param(ZamiaIntParam.RE_KEY) != null;
   }
   
   public static boolean hasRangeParam(ActiveRule ar) {
-    return ar.param(ZamiaRangeParam.MIN_KEY) != null;
+    return ar.param(ZamiaRangeParam.MIN_KEY) != null 
+      && ar.param(ZamiaRangeParam.RANGE_KEY) != null 
+      && ar.param(ZamiaRangeParam.MAX_KEY) != null;
+  }
+  
+  public static boolean hasZamiaParam(ActiveRule ar) {
+    return hasStringParam(ar) || hasIntParam(ar) || hasRangeParam(ar);
   }
   
   public static String positionOf(String param) {

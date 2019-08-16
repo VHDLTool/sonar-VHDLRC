@@ -1,15 +1,12 @@
 package com.linty.sonar.test.utils;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
-import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
-import org.xmlunit.diff.ComparisonControllers;
-import org.xmlunit.diff.Diff;
-import org.xmlunit.diff.Difference;
 import org.xmlunit.matchers.CompareMatcher;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -48,5 +45,20 @@ public class fileTestUtils {
       );
   }
   
+  public static void printFile(Path p) {
+    try (BufferedReader br = new BufferedReader(new FileReader(p.toFile()))) {
+      String line = null;
+      while ((line = br.readLine()) != null) {
+        System.out.println(line);
+      }
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
 }
 
