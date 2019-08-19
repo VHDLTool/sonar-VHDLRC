@@ -52,10 +52,9 @@ public class ZamiaRunner {
 
     protected ArrayList<String> buildCmd(String scannerHome) {
       ArrayList<String> cmd = new ArrayList<>();
-      boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
       Path programDir = Paths.get(scannerHome, ECLIPSE_DIR).normalize();
       Path target = Paths.get(scannerHome, PROJECT_DIR).normalize();
-      if (isWindows) {
+      if (isWindows()) {
         cmd.add(doubleQuote(programDir.resolve(WIN_EXE).normalize()));
         cmd.add(doubleQuote(target));
       } else {
@@ -64,11 +63,20 @@ public class ZamiaRunner {
       }
       return cmd;
     }
-
+    
+    protected boolean isWindows() {
+      return System.getProperty("os.name").toLowerCase().startsWith("windows");
+    }
+    
     private String doubleQuote(Path p) {
       return DOUBLE_QUOTE + p.toString() + DOUBLE_QUOTE;
     }
   }
+  
+  //----------------------------------------------------------------------------------------------------
+  /*
+   * File structure of an rc directory containing the eclipse instance, a jre, and a configured project
+   */
   
   public static final String                  PROJECT_DIR = VhdlRcSensor.PROJECT_DIR;
   public static final String               BUILD_PATH_TXT = "BuildPath.txt";
@@ -85,6 +93,7 @@ public class ZamiaRunner {
   public static final String                 RULESET_PATH = "HANDBOOK/Rulesets/handbook.xml";
   public static final String  RC_HANDBOOK_PARAMETERS_PATH = CONFIGURATION + "/" + RC_HANDBOOK_PARAMETERS; 
   
+  //------------------------------------------------------------------------------------------------------
   private final SensorContext context;
   private final RunnerContext runnerContext;
   private final String scannerHome;
@@ -140,7 +149,7 @@ public class ZamiaRunner {
     Path buildPathTarget = projectDir.resolve(BUILD_PATH_TXT); // BuidlPath.txt (Generated at Scanner time)
     
     if(LOG.isDebugEnabled()) {
-      LOG.debug("Load configuration to" + buildPathTarget);
+      LOG.debug("Loading configuration to " + buildPathTarget);
     }
     try {
       Files.copy(tempBuildPath, buildPathTarget, StandardCopyOption.REPLACE_EXISTING);
@@ -148,7 +157,7 @@ public class ZamiaRunner {
       Files.copy(conf2, targetConf2, StandardCopyOption.REPLACE_EXISTING);
       Files.copy(hb, hbTarget, StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
-      LOG.error("unable to upload configuration files to scanner",e);
+      LOG.error("unable to upload configuration files to scanner: \n{} \n{}",e.getClass(), e.getMessage());
     }
     LOG.info("--Load configuration (done)");
   }
@@ -162,7 +171,7 @@ public class ZamiaRunner {
       try {
         uploadInputFile(file);
       } catch (IOException e) {
-        LOG.error("Unable to upload vhdl sources to scanner",e);
+        LOG.error("Unable to upload this vhdl source to project: \n {} ", e.getMessage());
       }
     });
     LOG.info("--Load Vhdl files (done)"); 
@@ -184,23 +193,26 @@ public class ZamiaRunner {
     }
   }
 
+  
   @VisibleForTesting
   protected void runZamia() {
     LOG.info("--Running analysis");
-    Process process;
-    ProcessBuilder builder = new ProcessBuilder();
-    builder.command(runnerContext.buildCmd(scannerHome));
-    builder.redirectErrorStream(true);
+
+    ProcessBuilder builder = new ProcessBuilder()
+      .command(this.runnerContext.buildCmd(scannerHome))
+      .redirectErrorStream(true);
+    Process process;  
+
     if(LOG.isDebugEnabled()) {
       LOG.info("Running " + Arrays.toString(builder.command().toArray()));
     }
-  try {
-    process = builder.start();
-    consume(process.getInputStream());
-    process.waitFor(300, TimeUnit.SECONDS);
-    process.destroy();       
+    try {
+      process = builder.start();
+      consume(process.getInputStream());
+      process.waitFor(300, TimeUnit.SECONDS);
+      process.destroy();       
     } catch (IOException e) {
-      LOG.error("Analysis has failed : {}", e.getMessage());
+      LOG.error("Analysis has failed : {} {}",e.getClass(), e.getMessage());
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       LOG.error("Analysis has failed : {}", e.getMessage());
