@@ -35,6 +35,10 @@ public class fileTestUtils {
     }
   }
 
+  public static void compareFiles(Path f1, Path f2, boolean printLines) {
+    new fileTestUtils().compareFileLines(f1, f2, printLines);
+  }
+  
   public static void compareXml(Path result, Path expected) {
     assertThat(
       Input.fromFile(result.toFile()), 

@@ -131,8 +131,6 @@ public class ZamiaRunner {
     LOG.info("----------Vhdlrc Analysis---------(done)");
   }
 
-
-
   /*
    * BuidlPath.txt:                      Embedded default -> Custom of {sonar.vhdlrc.topEntities, sonar.vhdlrc.customCmd}
    * rc_handbook_parameters.xml:   Injected at build time -> Custom of API:ActiveRules (Quality profile on project)
