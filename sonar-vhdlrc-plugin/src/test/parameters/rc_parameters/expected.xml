@@ -82,6 +82,10 @@
 	   </hb:RuleParams>
 	</hb:Rule>
 	
+	<hb:Rule UID="CNE_00007">
+		<hb:RuleUID>CNE_00007</hb:RuleUID>
+		<hb:RuleGEN>GEN_00007</hb:RuleGEN>
+	</hb:Rule>					  
 	<hb:Rule UID="STD_00008">
 		<hb:RuleUID>STD_00008</hb:RuleUID>
 		<hb:RuleGEN>GEN_00008</hb:RuleGEN>	

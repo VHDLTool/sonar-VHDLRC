@@ -5,6 +5,7 @@ import com.linty.sonar.params.ZamiaIntParam;
 import com.linty.sonar.params.ZamiaRangeParam;
 import com.linty.sonar.params.ZamiaStringParam;
 import com.linty.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -57,17 +58,17 @@ public class ActiveRuleLoader {
   private static final Logger LOG = Loggers.get(ActiveRuleLoader.class);
 
   public ActiveRuleLoader(ActiveRules activeRules, String ressource) {
-    PRINT("\n_______________START__________________\n");//TODO
     this.sonarActiveRules = activeRules.findByRepository(REPO_KEY);
-    this.RESSOURCE = ressource;
-    PRINT("size of activeRulesList = " + this.sonarActiveRules.size());//TODO   
+    this.RESSOURCE = ressource; 
   }
 
   public Path makeRcHandbookParameters() {
     try { 
       InputStream sourceIs = BuildPathMaker.class.getResourceAsStream(this.RESSOURCE);
-      //If null throw expection
-      return writeParametersInXml(sourceIs);
+      if(sourceIs != null) {
+        return writeParametersInXml(sourceIs);
+      }
+      throw new FileNotFoundException("rc_handbook_paramters.xml not found");
     } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
       throw new IllegalStateException(e);
     }
@@ -76,7 +77,6 @@ public class ActiveRuleLoader {
   protected Path writeParametersInXml(InputStream source) throws IOException, ParserConfigurationException, SAXException, TransformerException {
     //Initiates the list of active rules to put in rc_selected_rules.xml later
     selectedRuleKeys = new ArrayList<>();
-    
     //Create a Temporary xml file with a random name
     Path target = Files.createTempFile("target",".xml");
     target.toFile().deleteOnExit();
@@ -106,7 +106,6 @@ public class ActiveRuleLoader {
 
   private void treatRuleNode(Node ruleNode) {
     String nodeUid = ruleNode.getAttributes().getNamedItem(UID).getNodeValue();
-    PRINT(nodeUid);
     //Try to get the matching rule of UID in sonar activeRules
     ActiveRule sonarRule = sonarActiveRules.stream()
       .filter(r -> r.ruleKey().equals(RuleKey.of(REPO_KEY, nodeUid)))
@@ -114,10 +113,8 @@ public class ActiveRuleLoader {
       .orElse(null);
     //If present
     if(sonarRule != null) {
-      PRINT("> Active in sonar");//TODO
       selectedRuleKeys.add(nodeUid); //Add it to the list of selected rules
       if(!sonarRule.params().isEmpty() && ParamTranslator.hasZamiaParam(sonarRule)) {
-        PRINT("> has param in sonar");//TODO
         writeParam(ruleNode, sonarRule);
       }
     }
@@ -125,7 +122,7 @@ public class ActiveRuleLoader {
   }
 
   private void writeParam(Node ruleNode, ActiveRule sonarRule) {
-    //printNodes(ruleNode.getChildNodes());//TODO
+    //hb:RuleParam
     Node paramNode = initNode(ruleNode, hb(RULE_PARAMS));
     if (ParamTranslator.hasStringParam(sonarRule)) {
       writeStringParams(paramNode, sonarRule);
@@ -134,34 +131,37 @@ public class ActiveRuleLoader {
     } else {
       writeRangeParam(paramNode, sonarRule);     
     }
-    //Don't write anything if param is not type anything
-   // printNodes(ruleNode.getChildNodes());//TODO
+    //Don't write anything if param is not type String, Int or Range
   }
-
-
+  
+  //Receives <hb:RuleParams><> to fill
   private void writeStringParams(Node paramNode, ActiveRule sonarRule) {
-   // printNodes(paramNode.getChildNodes());//TODO
-//    PRINT("Writing string param");
-//    Stream.of(sonarRule.param(ZamiaStringParam.PARAM_KEY).split(","))
-//    .collect(Collectors.toList())
-//    .forEach(action);
-//    String position = ParamTranslator.positionOf("");
-//    String value = ParamTranslator.stringValueOf( "");
-//    
-//    //hb:StringParam
-//    Node strParamNode = paramNode.appendChild(this.doc.createElement(hb(STRING_PARAM)));
-//    
-//    //hb:ParamID
-//    strParamNode.appendChild(paramLine(hb(PARAM_ID), "P1"));    
-//    //hb:Relation
-//    strParamNode.appendChild(paramLine(hb(POSITION),""));    
-//    //hb:Value
-//    strParamNode.appendChild(paramLine(hb(VALUE), value));    
+    
+    // "*a,*b*,c" -> List{"*a" , "*b*" , "c"} each one leads to a param 
+    List<String> ls = Stream.of(sonarRule.param(ZamiaStringParam.PARAM_KEY).split(","))
+      .collect(Collectors.toList());
+    String position;
+    String value;
+    int i = 1;
+    for(String s : ls) {
+      //Translates the string expression "[?*][value][?*]
+      position = ParamTranslator.positionOf(s);
+      value = ParamTranslator.stringValueOf(s);
+      //hb:StringParam
+      Node strParamNode = paramNode.appendChild(this.doc.createElement(hb(STRING_PARAM)));
+      
+      //hb:ParamID : P1, P2, P3, ..., P[i]
+      strParamNode.appendChild(paramLine(hb(PARAM_ID), "P" + String.valueOf(i++)));    
+      //hb:Relation
+      strParamNode.appendChild(paramLine(hb(POSITION),position));    
+      //hb:Value
+      strParamNode.appendChild(paramLine(hb(VALUE), value));
+    }  
   }
 
+//Receives <hb:RuleParams><> to fill
   private void writeIntParam(Node paramNode, ActiveRule sonarRule) {
-    // TODO Auto-generated method stub
-    PRINT("Writing int param");
+
     String relation = ParamTranslator.relationOf(sonarRule.param(ZamiaIntParam.RE_KEY));
     String value = sonarRule.param(ZamiaIntParam.LI_KEY);
     
@@ -176,9 +176,9 @@ public class ActiveRuleLoader {
     intParamNode.appendChild(paramLine(hb(VALUE), value));
   }
 
+//Receives <hb:RuleParams><> to fill
   private void writeRangeParam(Node paramNode, ActiveRule sonarRule) {
-    // TODO Auto-generated method stub
-    PRINT("Writing range param");
+
     String range = ParamTranslator.rangeOf(sonarRule.param(ZamiaRangeParam.RANGE_KEY));
     String valueMin = sonarRule.param(ZamiaRangeParam.MIN_KEY);
     String valueMax = sonarRule.param(ZamiaRangeParam.MAX_KEY);
@@ -203,10 +203,13 @@ public class ActiveRuleLoader {
   }
 
   private Node initNode(Node node, String nodeName) {
+    //clear <hb:RuleParams><>
     clearOldParams(node);
-    return node.insertBefore(this.doc.createElement(nodeName), node.getLastChild());
+    //adds new empty node <hb:RuleParams><>
+    return node.insertBefore(this.doc.createElement(nodeName), node.getLastChild());//
   }
 
+  //If present deletes old <hb:RuleParams><> section
   private void clearOldParams(Node ruleNode) {
     NodeList nodes = ruleNode.getChildNodes();
     for(int i = 0; i < nodes.getLength(); i++) {
@@ -236,18 +239,4 @@ public class ActiveRuleLoader {
     return NAME_SPACE + element;
   }
   
-  //TODO: Delete this function meant only for testing
-  public static void PRINT(String s) {
-    System.out.println(s);
-  }
-  
-  //TODO delete
-  public static void printNodes(NodeList nl) {
-    System.out.println("----Node list------");
-    for(int i = 0; i < nl.getLength(); i++) {
-      System.out.println(i + ")" + nl.item(i).getNodeName() + " : " +  nl.item(i).getTextContent());
-    }
-    System.out.println("----end------\n");
-  }
-
 }

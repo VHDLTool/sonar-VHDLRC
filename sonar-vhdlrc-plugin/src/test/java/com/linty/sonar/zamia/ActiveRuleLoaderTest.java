@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.junit.Before;
@@ -25,6 +26,7 @@ import org.xml.sax.SAXException;
 
 import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 public class ActiveRuleLoaderTest {
   
@@ -39,6 +41,7 @@ public class ActiveRuleLoaderTest {
   
   ActiveRulesBuilder builder;
   ActiveRules activeRules;
+  ActiveRuleLoader activeRuleLoader;
 
   
   @org.junit.Rule
@@ -96,14 +99,22 @@ public class ActiveRuleLoaderTest {
     //Expected result to match
     Path expected = Paths.get("src/test/parameters/rc_parameters/expected.xml");
 
-    printActiveRules(activeRules);
     //Generate the new rc_handbook_parameter.xml
     Path result = tryWritingXmlFrom(activeRules, "src/test/parameters/rc_parameters/source.xml");
 
     //Compare Xml Files
-    fileTestUtils.printFile(result);
     fileTestUtils.compareXml(result, expected);
-
+    
+    //Check active rules in zamia
+    List<String> selectedRules = activeRuleLoader.activeRuleKeys();
+    assertThat(selectedRules).hasSize(7);
+    assertThat(selectedRules.get(0)).isEqualTo("STD_00001");
+    assertThat(selectedRules.get(1)).isEqualTo("CNE_00002");
+    assertThat(selectedRules.get(2)).isEqualTo("CNE_00003");
+    assertThat(selectedRules.get(3)).isEqualTo("STD_00004");
+    assertThat(selectedRules.get(4)).isEqualTo("STD_00005");
+    assertThat(selectedRules.get(5)).isEqualTo("STD_00006");
+    assertThat(selectedRules.get(6)).isEqualTo("STD_00008");
   }
   
   /*activeRuleKeys() should be filled with rule that:
@@ -112,30 +123,42 @@ public class ActiveRuleLoaderTest {
    [2] Are activated in Sonar <=> are present in activeRules
    */
   @Test
-  public void test_content_of__active_Rule_Keys() {
-    fail("Not yet implemented");
+  public void test_getting_active_rule_keys_before_parsing_should_raise_exeption() throws FileNotFoundException, IOException, ParserConfigurationException, SAXException, TransformerException {
+    activeRules = new ActiveRulesBuilder().build();
+    ActiveRuleLoader arl = new ActiveRuleLoader(activeRules,"");
+    //Try getting activeRuleList before loading them
+    try {
+      arl.activeRuleKeys();
+      fail("Expected IllegaleStateException");
+    } catch (IllegalStateException e) { 
+      assertThat(e.getMessage()).isNotNull();
+    }
+    String source = "src/test/parameters/rc_parameters/no_rules.xml";
+    arl.writeParametersInXml(new FileInputStream(new File(source)));
+    List<String> l = arl.activeRuleKeys();
+    assertThat(l).isNotNull();
+    assertThat(l).hasSize(0);
   }
-  
-  @Test
-  public void test_getting_active_rule_keys() {
-//    activeRules = new ActiveRulesBuilder().build();
-//    ActiveRuleLoader arl = new ActiveRuleLoader(activeRules,"src/test/parameters/rc_parameters/source.xml");
-//    //Try getting activeRuleList before loading them
-//    try {
-//      arl.activeRuleKeys();
-//      fail("Expected IllegaleStateException");
-//    } catch (IllegalStateException e) { 
-//      assertThat(e.getMessage()).isNotNull();
-//    }
-//    tryWritingXmlFrom();
-//    assertThat(arl.activeRuleKeys()).isEmpty();;
-    
-  }
-    
+
   
   @Test
   public void test_repo_not_found() {
-    fail("Not yet implemented");
+    ActiveRuleLoader arl = new ActiveRuleLoader(activeRules,"src/test/do_not_exist.no");
+    try {
+      arl.makeRcHandbookParameters();
+      fail("Expected IllegaleStateException");
+    } catch (IllegalStateException e) { 
+      assertThat(e.getMessage()).isNotNull();
+    }    
+  }
+  
+  @Test
+  public void test_repo_found_but_not_a_file() throws IOException, ParserConfigurationException, SAXException, TransformerException {
+    ActiveRuleLoader arl = spy(new ActiveRuleLoader(activeRules,""));
+    doReturn(Paths.get("aPath")).when(arl).writeParametersInXml(any());
+    Path result = arl.makeRcHandbookParameters();
+    assertThat(result).isEqualTo("aPath");
+
   }
   
   public NewActiveRule.Builder aRule(String ruleKey) {
@@ -168,27 +191,11 @@ public class ActiveRuleLoaderTest {
     InputStream sourceIs;
     try {
       sourceIs = new FileInputStream(new File(source));
-      return new ActiveRuleLoader(activeRules, "").writeParametersInXml(sourceIs); 
+      activeRuleLoader = new ActiveRuleLoader(activeRules, "");
+      return activeRuleLoader.writeParametersInXml(sourceIs); 
     } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
       throw new IllegalStateException("source file not found in test",e);
-    }
-    
+    }  
   }
   
-  private static void printActiveRules(ActiveRules activeRules) {
-    System.out.println("--------List of activeRules:-------\n");
-    activeRules
-    .findByRepository(REPO_KEY)
-    .stream()
-    .forEach(r -> { 
-      System.out.println(r.ruleKey()); 
-      r.params()
-      .keySet()
-      .stream()
-      .forEach(k -> System.out.println("  " + k + ":" + r.param(k)));
-    });
-    System.out.println("----------------------------------");
-  }
-
-
 }
