@@ -144,8 +144,9 @@ public class ZamiaRunnerTest {
   
     ZamiaRunner zamiaRunner = new ZamiaRunner(context, runnerContext);
     Path tempBuildPath =  createConfigTempFile("temp");
+    Path tempRcHandbookParameters =  createConfigTempFile("temp2");
     
-    zamiaRunner.uploadConfigToZamia(tempBuildPath);  
+    zamiaRunner.uploadConfigToZamia(tempBuildPath, tempRcHandbookParameters);  
     
     assertThat(new File(project,"BuildPath.txt").exists()).isTrue();
     assertThat(new File(ruleChecker,"rc_config_selected_rules.xml").exists()).isTrue();
@@ -196,9 +197,10 @@ public class ZamiaRunnerTest {
     logTester.setLevel(LoggerLevel.DEBUG);  
     ZamiaRunner zamiaRunner = new ZamiaRunner(context, runnerContext);
     Path tempBuildPath =  createConfigTempFile("temp");
+    Path temp2 =  createConfigTempFile("temp2");
         
     bp.setReadOnly();
-    zamiaRunner.uploadConfigToZamia(tempBuildPath);   
+    zamiaRunner.uploadConfigToZamia(tempBuildPath, temp2);   
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("unable to upload configuration files to scanner:");
   }
   

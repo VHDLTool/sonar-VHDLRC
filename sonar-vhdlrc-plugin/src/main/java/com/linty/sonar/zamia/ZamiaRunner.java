@@ -45,9 +45,10 @@ public class ZamiaRunner {
   
   public static class RunnerContext{
     private static final String ECLIPSE_DIR = "rc/App/eclipse";
+    //Arguments are passed into script in eclipse(_rv)|(.bat) 
+    //"-clean -nosplash -application org.zamia.plugin.Check"
     private static final String WIN_EXE = "eclipsec.bat"; 
     private static final String UNIX_EXE = "eclipse_rc";
-    private static final String ARGS = "-clean -nosplash -application org.zamia.plugin.Check";
     private static final String DOUBLE_QUOTE = "\"";
 
     protected ArrayList<String> buildCmd(String scannerHome) {
@@ -116,10 +117,10 @@ public class ZamiaRunner {
   protected void run() {
     LOG.info("----------Vhdlrc Analysis---------");
     Path tempBuildPath = BuildPathMaker.make(this.context.config());
-//    ActiveRuleLoader loader = new ActiveRuleLoader(this.context.activeRules(), "/" + RC_HANDBOOK_PARAMETERS_PATH);
-//    Path rcHandbookParameters = loader.makeRcHandbookParameters();
+    ActiveRuleLoader loader = new ActiveRuleLoader(this.context.activeRules(), "/" + RC_HANDBOOK_PARAMETERS_PATH);
+    Path rcHandbookParameters = loader.makeRcHandbookParameters();
 //    Path rcConfigSelectedRules = SelectedRulesMaker.makeWith(loader.activeRuleKeys());
-    uploadConfigToZamia(tempBuildPath);
+    uploadConfigToZamia(tempBuildPath, rcHandbookParameters);
     clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     clean(Paths.get(this.scannerHome, PROJECT_DIR, REPORTING_RULE));
     uploadInputFilesToZamia();
@@ -131,31 +132,38 @@ public class ZamiaRunner {
   }
 
 
+
+  /*
+   * BuidlPath.txt:                      Embedded default -> Custom of {sonar.vhdlrc.topEntities, sonar.vhdlrc.customCmd}
+   * rc_handbook_parameters.xml:   Injected at build time -> Custom of API:ActiveRules (Quality profile on project)
+   * rc_config_selected_rules.xml:       Embedded default -> Custom of API:ActiveRules && rc_handbook_parameters.xml
+   * handbook.xml:                 Injected at build time -> Untouched
+   */
+
   @VisibleForTesting
-  protected void uploadConfigToZamia(Path tempBuildPath) {
+  protected void uploadConfigToZamia(Path tempBuildPath, Path rcHbParam ) {
     LOG.info("--Load configuration");
     
     //Embedded resources configuration files 
     String configuration = "/" + CONFIGURATION + "/";
-    InputStream conf1 = ZamiaRunner.class.getResourceAsStream(configuration + RC_CONFIG_SELECTED_RULES);//rc_config_selected_rules.xml (Injected at build time)
-    InputStream conf2 = ZamiaRunner.class.getResourceAsStream(configuration + RC_HANDBOOK_PARAMETERS);  //rc_handbook_parameters.xml   (Injected at build time)
-    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + RULESET_PATH);            //handbook.xml                 (Injected at build time)
+    InputStream conf1 = ZamiaRunner.class.getResourceAsStream(configuration + RC_CONFIG_SELECTED_RULES);//rc_config_selected_rules.xml 
+    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + RULESET_PATH);            //handbook.xml                 
     
     //Configuration files destinations in scanner
-    Path projectDir = Paths.get(this.scannerHome, PROJECT_DIR);
-    Path targetConf1     = projectDir.resolve(CONFIG_DIR).resolve(RC_CONFIG_SELECTED_RULES);
-    Path targetConf2     = projectDir.resolve(CONFIG_DIR).resolve(RC_HANDBOOK_PARAMETERS);
-    Path hbTarget        = projectDir.resolve(CONFIG_DIR).resolve(HANDBOOK_XML);
-    Path buildPathTarget = projectDir.resolve(BUILD_PATH_TXT); // BuidlPath.txt (Generated at Scanner time)
+    Path projectDir = Paths.get(this.scannerHome, PROJECT_DIR); // $SCANNER_HOME/rc/Data/workspace/project
+    Path buildPathTarget = projectDir.resolve(BUILD_PATH_TXT);       // rc/Data/workspace/project/
+    Path targetConf1     = projectDir.resolve(CONFIG_DIR).resolve(RC_CONFIG_SELECTED_RULES); // rc/Data/workspace/project/rule_checker/
+    Path targetConf2     = projectDir.resolve(CONFIG_DIR).resolve(RC_HANDBOOK_PARAMETERS);   // rc/Data/workspace/project/rule_checker/
+    Path hbTarget        = projectDir.resolve(CONFIG_DIR).resolve(HANDBOOK_XML);             // rc/Data/workspace/project/rule_checker/
     
     if(LOG.isDebugEnabled()) {
       LOG.debug("Loading configuration to " + buildPathTarget);
     }
     try {
-      Files.copy(tempBuildPath, buildPathTarget, StandardCopyOption.REPLACE_EXISTING);
-      Files.copy(conf1, targetConf1, StandardCopyOption.REPLACE_EXISTING);
-      Files.copy(conf2, targetConf2, StandardCopyOption.REPLACE_EXISTING);
-      Files.copy(hb, hbTarget, StandardCopyOption.REPLACE_EXISTING);
+      Files.copy(tempBuildPath, buildPathTarget, StandardCopyOption.REPLACE_EXISTING); // BuidlPath.txt 
+      Files.copy(conf1        , targetConf1,     StandardCopyOption.REPLACE_EXISTING); // rc_config_selected_rules.xml
+      Files.copy(rcHbParam    , targetConf2,     StandardCopyOption.REPLACE_EXISTING); // rc_handbook_parameters.xml
+      Files.copy(hb           , hbTarget ,       StandardCopyOption.REPLACE_EXISTING); // handbook.xml
     } catch (IOException e) {
       LOG.error("unable to upload configuration files to scanner: \n{} \n{}",e.getClass(), e.getMessage());
     }
