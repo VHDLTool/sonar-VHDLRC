@@ -38,13 +38,20 @@
       <version>3.5.2</version>
       <scope>test</scope>
    </dependency>
-   <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+   <!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito2 -->
 	<dependency>
-	    <groupId>org.mockito</groupId>
-	    <artifactId>mockito-core</artifactId>
-	    <version>2.10.0</version>
+	    <groupId>org.powermock</groupId>
+	    <artifactId>powermock-api-mockito2</artifactId>
+	    <version>2.0.2</version>
 	    <scope>test</scope>
-	</dependency>   
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.powermock/powermock-module-junit4 -->
+	<dependency>
+	    <groupId>org.powermock</groupId>
+	    <artifactId>powermock-module-junit4</artifactId>
+	    <version>2.0.2</version>
+	    <scope>test</scope>
+	</dependency>
    <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>

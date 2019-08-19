@@ -10,22 +10,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.xml.parsers.DocumentBuilder;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.lang3.StringUtils;
 import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.rule.RuleKey;
@@ -52,19 +51,19 @@ public class ActiveRuleLoader {
   
   private Collection<ActiveRule> sonarActiveRules;
   private List<String> selectedRuleKeys;
-  private final String RESSOURCE;
+  private final String ressource;
   private Document doc;
   
   private static final Logger LOG = Loggers.get(ActiveRuleLoader.class);
 
   public ActiveRuleLoader(ActiveRules activeRules, String ressource) {
     this.sonarActiveRules = activeRules.findByRepository(REPO_KEY);
-    this.RESSOURCE = ressource; 
+    this.ressource = ressource; 
   }
 
   public Path makeRcHandbookParameters() {
     try { 
-      InputStream sourceIs = BuildPathMaker.class.getResourceAsStream(this.RESSOURCE);
+      InputStream sourceIs = BuildPathMaker.class.getResourceAsStream(this.ressource);
       if(sourceIs != null) {
         return writeParametersInXml(sourceIs);
       }
@@ -74,30 +73,36 @@ public class ActiveRuleLoader {
     }
   }
 
+
   protected Path writeParametersInXml(InputStream source) throws IOException, ParserConfigurationException, SAXException, TransformerException {
     //Initiates the list of active rules to put in rc_selected_rules.xml later
     selectedRuleKeys = new ArrayList<>();
+
     //Create a Temporary xml file with a random name
     Path target = Files.createTempFile("target",".xml");
     target.toFile().deleteOnExit();
     
     // write the content into xml file
-    this.doc = DocumentBuilderFactory
-      .newInstance()
+    DocumentBuilderFactory dbf = DocumentBuilderFactory
+      .newInstance();
+    dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+    this.doc = dbf
       .newDocumentBuilder()
       .parse(source);
     
     NodeList ruleNodes = doc.getElementsByTagName(hb(RULE));
-    //PRINT("NodeList zise: " + String.valueOf(ruleNodes.getLength()));
     
     for(int i = 0; i < ruleNodes.getLength(); i++) {
       treatRuleNode(ruleNodes.item(i));
     }
     
     // write the content into xml file
-    Transformer transfo = TransformerFactory
-    .newInstance()
+    TransformerFactory tf = TransformerFactory
+    .newInstance();
+    tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+    Transformer transfo = tf
     .newTransformer();
+
     transfo.setOutputProperty(OutputKeys.INDENT, "yes");
     transfo.transform(new DOMSource(this.doc), new StreamResult(target.toFile()));
 
@@ -138,7 +143,7 @@ public class ActiveRuleLoader {
   private void writeStringParams(Node paramNode, ActiveRule sonarRule) {
     
     // "*a,*b*,c" -> List{"*a" , "*b*" , "c"} each one leads to a param 
-    List<String> ls = Stream.of(sonarRule.param(ZamiaStringParam.PARAM_KEY).split(","))
+    List<String> ls = Stream.of(StringUtils.split(sonarRule.param(ZamiaStringParam.PARAM_KEY), ","))
       .collect(Collectors.toList());
     String position;
     String value;
@@ -151,7 +156,7 @@ public class ActiveRuleLoader {
       Node strParamNode = paramNode.appendChild(this.doc.createElement(hb(STRING_PARAM)));
       
       //hb:ParamID : P1, P2, P3, ..., P[i]
-      strParamNode.appendChild(paramLine(hb(PARAM_ID), "P" + String.valueOf(i++)));    
+      strParamNode.appendChild(paramLine(hb(PARAM_ID), "P" + i++));    
       //hb:Relation
       strParamNode.appendChild(paramLine(hb(POSITION),position));    
       //hb:Value

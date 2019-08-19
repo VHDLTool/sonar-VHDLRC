@@ -83,7 +83,7 @@ public class ZamiaRunner {
   public static final String                CONFIGURATION = "configuration";
   public static final String                  VIRGIN_CONF = "virgin_conf";
   public static final String                 RULESET_PATH = "HANDBOOK/Rulesets/handbook.xml";
-  private static final String RC_HANDBOOK_PARAMETERS_PATH = CONFIGURATION + "/" + RC_HANDBOOK_PARAMETERS; 
+  public static final String  RC_HANDBOOK_PARAMETERS_PATH = CONFIGURATION + "/" + RC_HANDBOOK_PARAMETERS; 
   
   private final SensorContext context;
   private final RunnerContext runnerContext;

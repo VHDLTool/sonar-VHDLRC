@@ -26,7 +26,6 @@ import org.xml.sax.SAXException;
 
 import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 public class ActiveRuleLoaderTest {
   
@@ -49,6 +48,7 @@ public class ActiveRuleLoaderTest {
   
   @Before
   public void init() {
+    
     builder = new ActiveRulesBuilder();
     //[RuleKey] [Line in source.xml] [Parameters in source.xml] -> [Parameters in expected.xml] [Param Type]
     
@@ -152,13 +152,19 @@ public class ActiveRuleLoaderTest {
     }    
   }
   
+  /*
+   * This test verifies the presence and readability of rc_handbook_parameters.xml
+   * If it fails or throw and error you must verify this configuration file
+   */
   @Test
-  public void test_repo_found_but_not_a_file() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-    ActiveRuleLoader arl = spy(new ActiveRuleLoader(activeRules,""));
-    doReturn(Paths.get("aPath")).when(arl).writeParametersInXml(any());
+  public void verify_that_rc_handbook_parameters_is_present() {
+    ActiveRuleLoader arl = new ActiveRuleLoader(activeRules,"/" + ZamiaRunner.RC_HANDBOOK_PARAMETERS_PATH);     
+    try {
     Path result = arl.makeRcHandbookParameters();
-    assertThat(result).isEqualTo("aPath");
-
+    assertThat(result).isNotNull();
+    } catch (IllegalStateException e) {
+      throw new IllegalStateException("Fail to find or read configuration file : " + ZamiaRunner.RC_HANDBOOK_PARAMETERS_PATH, e);
+    }    
   }
   
   public NewActiveRule.Builder aRule(String ruleKey) {
