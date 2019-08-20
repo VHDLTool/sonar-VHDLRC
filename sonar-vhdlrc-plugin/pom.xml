@@ -38,20 +38,6 @@
       <version>3.5.2</version>
       <scope>test</scope>
    </dependency>
-   <!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito2 -->
-	<dependency>
-	    <groupId>org.powermock</groupId>
-	    <artifactId>powermock-api-mockito2</artifactId>
-	    <version>2.0.2</version>
-	    <scope>test</scope>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.powermock/powermock-module-junit4 -->
-	<dependency>
-	    <groupId>org.powermock</groupId>
-	    <artifactId>powermock-module-junit4</artifactId>
-	    <version>2.0.2</version>
-	    <scope>test</scope>
-	</dependency>
    <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
@@ -85,13 +71,20 @@
     	<groupId>commons-lang</groupId>
     	<artifactId>commons-lang</artifactId>
     	<version>2.6</version>
-    </dependency>
+    </dependency>	
 	<!-- https://mvnrepository.com/artifact/org.codehaus.staxmate/staxmate -->
+<!-- 	<dependency> -->
+<!-- 	    <groupId>org.codehaus.staxmate</groupId> -->
+<!-- 	    <artifactId>staxmate</artifactId> -->
+<!-- 	    <version>2.0.1</version> -->
+<!-- 	</dependency>  -->
+<!-- https://mvnrepository.com/artifact/com.fasterxml.staxmate/staxmate -->
 	<dependency>
-	    <groupId>org.codehaus.staxmate</groupId>
+	    <groupId>com.fasterxml.staxmate</groupId>
 	    <artifactId>staxmate</artifactId>
-	    <version>2.0.1</version>
-	</dependency> 
+	    <version>2.3.1</version>
+	</dependency>
+
 	<dependency>
 	    <groupId>org.xmlunit</groupId>
 	    <artifactId>xmlunit-core</artifactId>
