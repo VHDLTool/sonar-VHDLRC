@@ -135,7 +135,7 @@ public class ZamiaRunnerTest {
     assertThat(vhdlTargetFolder.toFile()).exists();              //vhdl folder should not be deleted after analysis
     assertThat(vhdlTargetFolder.toFile().listFiles()).isEmpty(); //vhdl folder should be cleaned after analysis when debug is off
     assertThat(rule).exists();    
-    assertThat(rule.listFiles()).isEmpty();  //reports should be cleaned before analysis, since no reports are genrated it should be empty at the end here
+    assertThat(rule.listFiles()).isEmpty();  //reports should be cleaned before analysis, since no reports are generated it should be empty at the end here
     //walkin(testScanner.getRoot(),"+--");
   }
   
@@ -145,8 +145,9 @@ public class ZamiaRunnerTest {
     ZamiaRunner zamiaRunner = new ZamiaRunner(context, runnerContext);
     Path tempBuildPath =  createConfigTempFile("temp");
     Path tempRcHandbookParameters =  createConfigTempFile("temp2");
+    Path tempRcSelectedRules =  createConfigTempFile("temp3");
     
-    zamiaRunner.uploadConfigToZamia(tempBuildPath, tempRcHandbookParameters);  
+    zamiaRunner.uploadConfigToZamia(tempBuildPath, tempRcHandbookParameters, tempRcSelectedRules);  
     
     assertThat(new File(project,"BuildPath.txt").exists()).isTrue();
     assertThat(new File(ruleChecker,"rc_config_selected_rules.xml").exists()).isTrue();
@@ -193,14 +194,28 @@ public class ZamiaRunnerTest {
   }
   
   @Test
+  public void test_no_cleaning_vhdl_source_when_debug() throws IOException {
+    logTester.setLevel(LoggerLevel.DEBUG); 
+    testProject.newFolder("home","project1","src");
+    addTestFile2(context, testProject, "home/project1/src/Top.vhd");
+
+    new ZamiaRunner(context, runnerContext).run();
+    
+    Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve(PROJECT_DIRECTORY).resolve("vhdl");
+    assertThat(vhdlTargetFolder.resolve("home/project1/src/Top.vhd").toFile().exists()).isTrue();
+    //walkin(testScanner.getRoot(),"+--"); 
+  }
+  
+  @Test
   public void test_uploading_config_io_exeption_with_debug_on() throws IOException {
     logTester.setLevel(LoggerLevel.DEBUG);  
     ZamiaRunner zamiaRunner = new ZamiaRunner(context, runnerContext);
     Path tempBuildPath =  createConfigTempFile("temp");
     Path temp2 =  createConfigTempFile("temp2");
+    Path tempRcSelectedRules =  createConfigTempFile("temp3");
         
     bp.setReadOnly();
-    zamiaRunner.uploadConfigToZamia(tempBuildPath, temp2);   
+    zamiaRunner.uploadConfigToZamia(tempBuildPath, temp2, tempRcSelectedRules);   
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("unable to upload configuration files to scanner:");
   }
   
@@ -220,7 +235,7 @@ public class ZamiaRunnerTest {
     new ZamiaRunner(context, runnerContext).runZamia();
     
     assertThat(logTester.logs(LoggerLevel.INFO).size()).isGreaterThan(2);
-    assertThat(logTester.logs(LoggerLevel.INFO).get(1)).contains("Running [java, -version]");    
+    assertThat(logTester.logs(LoggerLevel.DEBUG).get(0)).contains("Running [java, -version]");    
   }
   
   @Test
@@ -256,14 +271,15 @@ public class ZamiaRunnerTest {
   }
     
   public static void addTestFile2(SensorContextTester context,  TemporaryFolder temp, String file) throws IOException {
-    System.out.println("temp file created : " + temp.newFile(file).getAbsolutePath());
+    //System.out.println("temp file created : " + 
+    temp.newFile(file).getAbsolutePath();
     DefaultInputFile f = TestInputFileBuilder.create("project-id", file)
       .setModuleBaseDir(projectRoot)
       .setLanguage(Vhdl.KEY)
       .setCharset(UTF_8)
       .setContents("a random content for this file")
       .build();
-    System.out.println("input file created : " + f.absolutePath());
+    //System.out.println("input file created : " + f.absolutePath());
     context.fileSystem().add(f);
   }
   

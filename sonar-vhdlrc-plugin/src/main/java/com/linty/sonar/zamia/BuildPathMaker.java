@@ -53,6 +53,7 @@ public class BuildPathMaker {
 
   public static Path make(Configuration config){
      try {
+      LOG.debug("Generating BuildPath.txt");
       return new BuildPathMaker(config).make();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to generate BuildPath.txt", e);
@@ -62,9 +63,6 @@ public class BuildPathMaker {
   protected Path make() throws IOException { 
       Path target = Files.createTempFile("BuildPath", ".txt");//Random name will be generated, ex:"BuildPath3100633746685270227.txt"
       target.toFile().deleteOnExit();
-      if(LOG.isDebugEnabled()) {
-        LOG.debug("TempFile created by buildPathMaker : " + target);
-      }
       InputStream source = BuildPathMaker.class.getResourceAsStream(VIRGIN_FILE_PATH);
       Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
       return appendParameters(target.toAbsolutePath());

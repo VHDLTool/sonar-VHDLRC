@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import org.fest.util.VisibleForTesting;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -24,30 +25,31 @@ public class SelectedRulesMaker {
   
   private static final Logger LOG = Loggers.get(SelectedRulesMaker.class);
   
-  public SelectedRulesMaker(List<String> ruleKeys) {
+  protected SelectedRulesMaker(List<String> ruleKeys) {
     this.ruleKeys = ruleKeys;
   }
 
   public static Path makeWith(List<String> ruleKeys) {
+    LOG.debug("Generating " + ZamiaRunner.RC_CONFIG_SELECTED_RULES);
+    if(ruleKeys.isEmpty()) {
+      LOG.warn("No rules to load in " + ZamiaRunner.RC_CONFIG_SELECTED_RULES);
+    }
+    InputStream ressource = BuildPathMaker.class.getResourceAsStream(RC_CONFIG_SELECTED_RULES_PATH);
+    return new SelectedRulesMaker(ruleKeys).make(ressource);
+
+  }
+
+  @VisibleForTesting
+  protected Path make(InputStream ressource) {
     try {
-      if(ruleKeys.isEmpty()) {
-        LOG.warn("No rules to load in " + ZamiaRunner.RC_CONFIG_SELECTED_RULES);
-      }
-      return new SelectedRulesMaker(ruleKeys).make();
+      Path target = Files.createTempFile("tempFile", ".xml");
+      target.toFile().deleteOnExit();      
+      Files.copy(ressource, target, StandardCopyOption.REPLACE_EXISTING);
+      return appendRules(target.toAbsolutePath());
     } catch (IOException e) {
       throw new IllegalStateException("Unable to generate " + ZamiaRunner.RC_CONFIG_SELECTED_RULES, e);
     }
-  }
 
-  private Path make() throws IOException {
-    Path target = Files.createTempFile("tempFile", ".xml");
-    target.toFile().deleteOnExit();
-    if(LOG.isDebugEnabled()) {
-      LOG.debug("TempFile created by SelectedRulesMaker : " + target);
-    }
-    InputStream source = BuildPathMaker.class.getResourceAsStream(RC_CONFIG_SELECTED_RULES_PATH);
-    Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-    return appendRules(target.toAbsolutePath());
   }
 
   private Path appendRules(Path target) throws IOException {
