@@ -68,7 +68,7 @@ public class ZamiaParamTest {
     checkParamIs(r.params().get(0), 
       "Format", //key
       "P4Format", //name : ParamID + NAME
-      "Comma seperated pattern to match, use *",//description
+      "Comma seperated pattern to match, use only * symbol e.g. : *prefix** , **suffix* , **contains** , *equal*",//description
       RuleParamType.STRING.type(), //type
       "clk*,*i*,*_out,coco" //value
       );
@@ -95,7 +95,7 @@ public class ZamiaParamTest {
     checkParamIs(r.params().get(1), 
       "Limit", 
       "LimitP3", 
-      "Value to be compared with ex: < value ",
+      "Value to be compared with ex: a < limit value",
       RuleParamType.INTEGER.type(), 
       "123"
       );
@@ -160,7 +160,7 @@ public class ZamiaParamTest {
     checkParamIs(r.params().get(0), 
       "Format", 
       "P5Format", //ParamID + NAME
-      "Comma seperated pattern to match, use *",
+      "Comma seperated pattern to match, use only * symbol e.g. : *prefix** , **suffix* , **contains** , *equal*",
       RuleParamType.STRING.type(), 
       "a*,*bb*,*cc"
       );    

@@ -49,22 +49,23 @@ public class VHDLRcPlugin implements Plugin {
       MetricSensor.class
         );
 	    builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
+	      .category(Vhdl.VHDLRC_CATEGORY)
+	      .subCategory("General")
 	      .defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
 	      .name("File suffixes")
 	      .index(1)
 	      .multiValues(true)
 	      .description("Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.")
-	      .subCategory("General")
 	      .onQualifiers(Qualifiers.PROJECT)
 	      .build());
 	    builder.add(PropertyDefinition.builder(VhdlRcSensor.SCANNER_HOME_KEY)
-	      .category(Vhdl.NAME)
+	      .category(Vhdl.VHDLRC_CATEGORY)
 	      .subCategory(VHDL_RULECHEKER_SUBCATEGORY)
 	      .name("RuleChecker Path")
 	      .hidden()
 	      .build());
 	    builder.add(PropertyDefinition.builder(BuildPathMaker.TOP_ENTITY_KEY)
-	      .category(Vhdl.NAME)
+	      .category(Vhdl.VHDLRC_CATEGORY)
         .subCategory("BuildPath")
         .name("Top Entities")
         .description("Toplevel Entity \r\n" + "Format:  LIBRARY.ENTITY(ARCHITECTURE) \r\n" + "Example: WORK.My_entity(Rtl)")
@@ -73,7 +74,7 @@ public class VHDLRcPlugin implements Plugin {
         .onQualifiers(Qualifiers.PROJECT)
         .build());
 	    builder.add(PropertyDefinition.builder(BuildPathMaker.CUSTOM_CMD_KEY)
-	      .category(Vhdl.NAME)
+	      .category(Vhdl.VHDLRC_CATEGORY)
         .subCategory("BuildPath")
         .name("Custom Commands")
         .description(BuildPathMaker.customCmdDescription())
@@ -82,14 +83,6 @@ public class VHDLRcPlugin implements Plugin {
         .onQualifiers(Qualifiers.PROJECT)
         .type(PropertyType.TEXT)
         .build());
-	    builder.add(PropertyDefinition.builder(MetricSensor.SKIP_METRICS_KEY)
-	      .category(Vhdl.NAME)
-	      .subCategory("VHDLrc Metrics")
-	      .name("Skip Vhdlrc metrics")
-	      .description("Activate to avoid conflict with another vhdl plugin. Skip metric sensor of vhdlrc from computing Loc and comment lines")
-	      .type(PropertyType.BOOLEAN)
-	      .defaultValue(String.valueOf(MetricSensor.SKIP_METRICS_DEFAULT))
-	      .build());
 	  context.addExtensions(builder.build());
   }
 }

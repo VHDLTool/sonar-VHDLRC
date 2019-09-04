@@ -77,23 +77,6 @@ public class MetricSensorTest {
     
   }
   
-  @Test
-  public void metric_sensor_should_only_execute_when_authories_in_properties() {
-    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
-    MetricSensor sensor = new MetricSensor();
-
-    MapSettings settings1 = new MapSettings()
-      .setProperty(MetricSensor.SKIP_METRICS_KEY, true); //will skip
-    sensor.describe(sensorDescriptor);
-    assertThat(sensorDescriptor.configurationPredicate().test(settings1.asConfig())).isEqualTo(false);
-    
-    MapSettings settings2 = new MapSettings()
-      .setProperty(MetricSensor.SKIP_METRICS_KEY, false); //will execute 
-    sensor.describe(sensorDescriptor);
-    assertThat(sensorDescriptor.configurationPredicate().test(settings2.asConfig())).isEqualTo(true);
-    
-  }
-  
   
   @Test
   public void descriptor_test() {

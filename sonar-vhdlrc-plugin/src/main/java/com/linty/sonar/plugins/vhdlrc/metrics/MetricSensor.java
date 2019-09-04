@@ -30,15 +30,11 @@ import org.sonar.api.measures.Metric;
 
 public class MetricSensor implements Sensor {
 
-  public static final String SKIP_METRICS_KEY = "sonar.vhdlrc.skipMetrics";
-  public static final boolean SKIP_METRICS_DEFAULT = false;
-
   @Override
   public void describe(SensorDescriptor descriptor) {
     descriptor
     .name("VhdlRcMetricSensor")
-    .onlyOnLanguage(Vhdl.KEY)
-    .onlyWhenConfiguration(c -> !c.getBoolean(SKIP_METRICS_KEY).orElse(SKIP_METRICS_DEFAULT));   
+    .onlyOnLanguage(Vhdl.KEY);   
   }
 
   @Override

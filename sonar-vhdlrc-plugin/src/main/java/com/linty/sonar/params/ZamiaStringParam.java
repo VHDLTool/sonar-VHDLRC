@@ -27,7 +27,7 @@ import static com.linty.sonar.params.ParamTranslator.*;
 
 public class ZamiaStringParam extends ZamiaParam {
   
-  private static final String SONAR_DESCRIPTION = "Comma seperated pattern to match, use *";
+  private static final String SONAR_DESCRIPTION = "Comma seperated pattern to match, use only * symbol e.g. : *prefix** , **suffix* , **contains** , *equal*";
   private static final String SONAR_NAME = "Format";
   public static final String PARAM_KEY = "Format";
   

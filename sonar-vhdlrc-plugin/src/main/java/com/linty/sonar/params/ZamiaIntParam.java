@@ -28,7 +28,7 @@ public class ZamiaIntParam extends ZamiaParam {
   
   private static final String SONAR_RE_DESC = "Relation with the limit";
   private static final String SONAR_RE_NAME = "Relation";
-  private static final String SONAR_LIMIT_DESC = "Value to be compared with ex: < value ";
+  private static final String SONAR_LIMIT_DESC = "Value to be compared with ex: a < limit value";
   private static final String SONAR_LIMIT_NAME = "Limit";
   public static final String RE_KEY = "Relation";
   public static final String LI_KEY = "Limit";

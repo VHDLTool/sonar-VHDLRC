@@ -3,8 +3,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="HANDBOOK ../XSD/handbook.xsd ">
 
-	<hb:Rule UID="STD_00000">
-		<hb:RuleUID>STD_00000</hb:RuleUID>
+	<hb:Rule UID="TST_00100">
+		<hb:RuleUID>TST_00100</hb:RuleUID>
 		<hb:RuleHist>
 			<hb:Status>Validated</hb:Status>
 			<hb:Version>1</hb:Version>
