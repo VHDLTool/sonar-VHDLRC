@@ -16,9 +16,9 @@ The external tool is wrapped in rc-scanner and is fully taken care of.
 
 ## Quickstart
 1. Setup a SonarQube 7.9 LTS instance  
-2. Install the plugin (see [Installation](wiki/Try-it-in-3-clics))  
-3. [Install the rc-scanner](wiki/Install-The-Scanner) 
-4. Run an analysis (see [Running the analysis](wiki/Use-VHDL-RC))  
+2. [Install the plugin](https://github.com/Linty-Services/VHDL-RC/wiki/Try-it-in-3-clics))  
+3. [Install the rc-scanner](https://github.com/Linty-Services/VHDL-RC/wiki/Install-The-Scanner) 
+4. [Run an analysis](https://github.com/Linty-Services/VHDL-RC/wiki/Run-Analysis))  
 
 ## License  
 Copyright 2018-2019 Maxime Facquet    
