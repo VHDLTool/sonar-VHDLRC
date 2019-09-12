@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import com.google.common.collect.ImmutableList;
-import com.linty.sonar.plugins.vhdlrc.rules.Rule;
+import com.linty.sonar.params.ParamXmlParser;
 import org.codehaus.staxmate.SMInputFactory;
 import org.codehaus.staxmate.in.SMEvent;
 import org.codehaus.staxmate.in.SMFilter;
@@ -41,6 +41,7 @@ public class HandbookXmlParser {
 	private static final String RULE_CONTENT = "RuleContent"; 	
 	private static final String SONARQUBE = "Sonarqube"; 
 	private static final String RULE_DESC = "RuleDesc"; 
+	private static final String RULE_PARAMS = "RuleParams"; 
 
 	
 	private static final ImmutableList<String> IGNORE = ImmutableList.of(
@@ -65,20 +66,22 @@ public class HandbookXmlParser {
 	    }
 	    List<Rule> rules = new ArrayList<>();
 	    collectRules(hbStream, rules);					
-	    return rules;
+	    return rules; 
 	    
 	  } catch (XMLStreamException e) {
-	    if (LOG.isDebugEnabled()) {
-	      LOG.debug("Error when parsing handbook.xml file at line: {}\n{}",e.getLocation().getLineNumber(),e.getMessage());
-	    }
-	    throw new IllegalStateException(e);
+	    throw new IllegalStateException("Error when parsing rules in " + VhdlRulesDefinition.RULESET_PATH + " line " + e.getLocation().getLineNumber(),e);
 	  } catch (IOException e) {
 	    throw new IllegalStateException("Unable to read handbook.xml in jar ressources",e);
     }
 	}
 
 	private void collectRules(InputStream hbStream, List<Rule> rules) throws XMLStreamException {		
-		SMInputFactory xmlFactory = new SMInputFactory(XMLInputFactory.newInstance());
+	  XMLInputFactory factory = XMLInputFactory.newInstance();
+	  // disable external entities
+	  factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+	  factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+
+		SMInputFactory xmlFactory = new SMInputFactory(factory);
 		SMInputCursor cursor = xmlFactory.rootElementCursor(hbStream).advance();
 		SMInputCursor ruleCursor = cursor.childElementCursor(new QName(NAMESPACE_HANDBOOX, "Rule")).advance();
 		
@@ -98,15 +101,24 @@ public class HandbookXmlParser {
 	private void collectRule(Rule r, SMInputCursor sectionCursor) throws XMLStreamException {
 		while(sectionCursor.asEvent() != null) {
 			switch(sectionCursor.getLocalName()) {
+			//Ignore <hb:RuleUID>
+			//Ignore <hb:RuleHist>
+			//<hb:RuleContent> section
 			case RULE_CONTENT:
-				collectRuleContent(r, sectionCursor.childCursor(filter).advance());
+				collectRuleContent(r, sectionCursor.childCursor(filter).advance()); 
 				break;
+			//<hb:Sonarqube> section
 			case SONARQUBE:
 				collectRuleSQ(r, sectionCursor.childCursor(filter).advance());
 				break;
+			//<hb:RuleDesc> section
 			case RULE_DESC:
 				collectRuleDesc(r, sectionCursor.childCursor(filter).advance());
 				break;
+			//<hb:RuleParams> section
+			case RULE_PARAMS:
+        collectRuleParams(r, sectionCursor);
+        break;
 			default:
 				// Nothing, ignore other tags
 			}
@@ -114,7 +126,7 @@ public class HandbookXmlParser {
 		}
 	}
 
-	private void collectRuleContent(Rule r, SMInputCursor cursor) throws XMLStreamException {
+  private void collectRuleContent(Rule r, SMInputCursor cursor) throws XMLStreamException {
 		while (cursor.asEvent() != null) {
 			switch (cursor.getLocalName()) {
 			case "Name":
@@ -199,6 +211,10 @@ public class HandbookXmlParser {
 			}
 			cursor.advance();
 		}
+	}
+	
+	private void collectRuleParams(Rule r, SMInputCursor cursor) throws XMLStreamException {
+	  ParamXmlParser.collectParameters(r.parameters(),cursor);
 	}
 	
 	private FigureSvg collectFigureRef(SMInputCursor cursor) throws XMLStreamException {

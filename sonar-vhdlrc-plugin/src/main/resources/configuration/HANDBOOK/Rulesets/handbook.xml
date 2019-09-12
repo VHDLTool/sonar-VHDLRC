@@ -3,6 +3,55 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="HANDBOOK ../XSD/handbook.xsd ">
 
+	<hb:Rule UID="TST_00100">
+		<hb:RuleUID>TST_00100</hb:RuleUID>
+		<hb:RuleHist>
+			<hb:Status>Validated</hb:Status>
+			<hb:Version>1</hb:Version>
+			<hb:Creation>2019-08-13</hb:Creation>
+			<hb:Modified>2019-08-13</hb:Modified>
+			<hb:Revision>
+				V1 : 2019-08-13 : Creation
+			</hb:Revision>
+		</hb:RuleHist>
+		<hb:RuleContent>
+			<hb:Name>Dummy rule with Range parameter</hb:Name>
+			<hb:IsParent>false</hb:IsParent>
+			<hb:IsSon>true</hb:IsSon>
+			<hb:ParentUID>STD_00000</hb:ParentUID>
+			<hb:Technology>VLSI</hb:Technology>
+			<hb:ApplicationFields>General</hb:ApplicationFields>
+			<hb:Category>Formatting</hb:Category>
+			<hb:SubCategory>Naming</hb:SubCategory>
+			<hb:Severity>Minor</hb:Severity>
+			<hb:Rationale>This is a demonstration rule with a range parameter</hb:Rationale>
+			<hb:ShortDesc>Try modifying the parameter.</hb:ShortDesc>
+			<hb:LongDesc>No additional information.</hb:LongDesc>
+		</hb:RuleContent>
+		<hb:Sonarqube>
+			<hb:SonarType>TBD</hb:SonarType>
+			<hb:SonarSeverity>TBD</hb:SonarSeverity>
+			<hb:RemediationEffort>TBD</hb:RemediationEffort>
+			<hb:SonarTag>TBD</hb:SonarTag>
+		</hb:Sonarqube>
+		<hb:RuleDesc>
+			<hb:GoodExDesc />
+			<hb:GoodExample />
+			<hb:BadExDesc />
+			<hb:BadExample />
+			<hb:FigureDesc />
+			<hb:Figure />
+		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:RangeParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Range>LET_GT</hb:Range>
+				<hb:ValueMin>-5</hb:ValueMin>
+				<hb:ValueMax>150</hb:ValueMax>
+			</hb:RangeParam>
+		</hb:RuleParams>
+	</hb:Rule>
+	
 	<hb:Rule UID="STD_00600">
 		<hb:RuleUID>STD_00600</hb:RuleUID>
 		<hb:RuleHist>

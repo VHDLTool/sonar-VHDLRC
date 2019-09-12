@@ -17,11 +17,14 @@
  */
 package com.linty.sonar.zamia;
 
+import com.linty.sonar.test.utils.fileTestUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import org.junit.Rule;
@@ -33,18 +36,20 @@ import org.sonar.api.utils.log.LoggerLevel;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
+
 public class BuildPathMakerTest {
   
   @Rule
   public LogTester logTester = new LogTester();
   
   @Test
-  public void test() throws IOException, URISyntaxException {
+  public void test_top_entity() throws IOException, URISyntaxException {
     logTester.setLevel(LoggerLevel.DEBUG);
     MapSettings settings = new MapSettings();
     settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "work.my_entity(rtl)");
+    
     Path ComputedBuildPath = BuildPathMaker.make(settings.asConfig());  
-    System.out.println(ComputedBuildPath);
+
     assertThat(Files.exists(ComputedBuildPath)).isTrue();
     assertThat(Files.isWritable(ComputedBuildPath)).isTrue();
     assertThat(getLineOf(ComputedBuildPath,69)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
@@ -52,21 +57,32 @@ public class BuildPathMakerTest {
   }
   
   @Test
-  public void test_multiple_entities() throws IOException, URISyntaxException {
-      MapSettings settings = new MapSettings();
-      settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "top, top1(rtl), work.my_entity(rtl)");
-      Path ComputedBuildPath = BuildPathMaker.make(settings.asConfig());   
-      assertThat(Files.exists(ComputedBuildPath)).isTrue();
-      assertThat(Files.isWritable(ComputedBuildPath)).isTrue();
-      assertThat(getLineOf(ComputedBuildPath,69)).isEqualTo("toplevel TOP");
-      assertThat(getLineOf(ComputedBuildPath,70)).isEqualTo("toplevel TOP1(RTL)");
-      assertThat(getLineOf(ComputedBuildPath,71)).isEqualTo("toplevel WORK.MY_ENTITY(RTL)");
+  public void test_custom_cmd() throws IOException {
+    MapSettings settings = new MapSettings();
+    settings
+    .setProperty(BuildPathMaker.TOP_ENTITY_KEY, "rtl")
+    .setProperty(BuildPathMaker.CUSTOM_CMD_KEY, 
+      "extern GRLIB            \"$LEON_SRC/lib/grlib\"\r\n" + 
+      " extern TECHMAP          \"$LEON_SRC/lib/techmap\"\r\n" + 
+      "\r\n" + 
+      "# by default, extern declarations are recursive\r\n" + 
+      "# use the 'nonrecursive' keyword otherwise\r\n" + 
+      " extern nonrecursive FOO \"$LEON_SRC/lib/foo\"");
+    
+    Path ComputedBuildPath = BuildPathMaker.make(settings.asConfig()); 
+    
+    assertThat(Files.exists(ComputedBuildPath)).isTrue();
+    assertThat(Files.isWritable(ComputedBuildPath)).isTrue();
+    new fileTestUtils().compareFileLines(ComputedBuildPath, Paths.get("src/test/files/config/ExpectedBuildPath.txt"), false);
   }
   
-//  @Test(expected=IllegalStateException.class)
-//  public void test_IOException() {
-//    
-//  }
+
+  @Test
+  public void test_description() {
+    String desc = BuildPathMaker.customCmdDescription();
+    assertThat(desc).isNotNull();
+    assertThat(desc).isNotEmpty();
+  }
   
 
   public static String getLineOf(Path p, int index) throws IOException {

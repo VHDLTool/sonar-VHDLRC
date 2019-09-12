@@ -1,0 +1,2 @@
+-- entity hello_world is
+-- end;

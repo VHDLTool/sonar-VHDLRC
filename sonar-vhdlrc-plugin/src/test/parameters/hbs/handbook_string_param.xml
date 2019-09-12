@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hb:RuleSet xmlns:hb="HANDBOOK"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="HANDBOOK ../XSD/handbook.xsd ">
+
+	<hb:Rule UID="CNE_01200">
+		<hb:RuleUID>CNE_01200</hb:RuleUID>
+		<hb:RuleHist>
+			<hb:Status>Validated</hb:Status>
+			<hb:Version>4</hb:Version>
+			<hb:Creation>2014-09-30</hb:Creation>
+			<hb:Modified>2015-07-16</hb:Modified>
+			<hb:Revision>
+				V1 : 2014-09-30 : Creation
+				V2 : 2014-12-01 : Status ; Name ; Rationale 
+				V3 : 2015-02-17 : Technology
+				V4 : 2015-07-16 : GoodExample ; BadExample ; GoodExDesc ; BadExDesc
+			</hb:Revision>
+		</hb:RuleHist>
+		<hb:RuleContent>
+			<hb:Name>Identification of process label</hb:Name>
+			<hb:IsParent>false</hb:IsParent>
+			<hb:IsSon>true</hb:IsSon>
+			<hb:ParentUID>STD_00100</hb:ParentUID>
+			<hb:Technology>VLSI</hb:Technology>
+			<hb:ApplicationFields>General</hb:ApplicationFields>
+			<hb:Category>Formatting</hb:Category>
+			<hb:SubCategory>Naming</hb:SubCategory>
+			<hb:Severity>Minor</hb:Severity>
+			<hb:Rationale>Differentiating process label from other VHDL object improves readability.</hb:Rationale>
+			<hb:ShortDesc>Process label name starts by a prefix: "P_".</hb:ShortDesc>
+			<hb:LongDesc>No additional information.</hb:LongDesc>
+		</hb:RuleContent>
+		<hb:RuleDesc>
+			<hb:GoodExDesc>Extracted from CNE_01200_good.vhd</hb:GoodExDesc>
+			<hb:GoodExample >CNE_01200_good</hb:GoodExample>
+			<hb:BadExDesc>Extracted from CNE_01200_bad.vhd</hb:BadExDesc>
+			<hb:BadExample >CNE_01200_bad</hb:BadExample>
+			<hb:FigureDesc />
+			<hb:Figure />
+		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:StringParam>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Position>Prefix</hb:Position>
+			   <hb:Value>p_</hb:Value>
+		   </hb:StringParam>
+	   </hb:RuleParams>
+	</hb:Rule>
+	
+	<hb:Rule UID="STD_00300">
+		<hb:RuleUID>STD_00300</hb:RuleUID>
+		<hb:RuleHist>
+			<hb:Status>Active</hb:Status>
+			<hb:Version>6</hb:Version>
+			<hb:Creation>2014-09-30</hb:Creation>
+			<hb:Modified>2017-11-24</hb:Modified>
+			<hb:Revision>
+				V1 : 2014-09-30 : Creation
+				V2 : 2014-12-01 : Technology ; Rationale ; LongDesc
+			</hb:Revision>
+		</hb:RuleHist>
+		<hb:RuleContent>
+			<hb:Name>Name of reset signal</hb:Name>
+			<hb:IsParent>false</hb:IsParent>
+			<hb:IsSon>true</hb:IsSon>
+			<hb:ParentUID>STD_00100</hb:ParentUID>
+			<hb:Technology>VLSI</hb:Technology>
+			<hb:ApplicationFields>General</hb:ApplicationFields>
+			<hb:Category>Formatting</hb:Category>
+			<hb:SubCategory>Naming</hb:SubCategory>
+			<hb:Severity>Major</hb:Severity>
+			<hb:Rationale>The .</hb:Rationale>
+			<hb:ShortDesc>The reset</hb:ShortDesc>
+			<hb:LongDesc>A signal .</hb:LongDesc>
+		</hb:RuleContent>
+		<hb:Sonarqube>
+			<hb:SonarType>Code_Smell</hb:SonarType>
+			<hb:SonarSeverity>Blocker</hb:SonarSeverity>
+			<hb:RemediationEffort>Easy</hb:RemediationEffort>
+			<hb:SonarTag>Confusing</hb:SonarTag>
+		</hb:Sonarqube>
+		<hb:RuleDesc>
+			<hb:GoodExDesc>Extracted from STD_00300_good.vhd</hb:GoodExDesc>
+			<hb:GoodExample >STD_00300_good</hb:GoodExample>
+			<hb:BadExDesc></hb:BadExDesc>
+			<hb:BadExample ></hb:BadExample>
+			<hb:FigureDesc />
+			<hb:Figure />
+		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:StringParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Position>Contain</hb:Position>
+				<hb:Value>reset</hb:Value>
+			</hb:StringParam>
+			<hb:StringParam>
+				<hb:ParamID>P2</hb:ParamID>
+				<hb:Position>Contain</hb:Position>
+				<hb:Value>rst</hb:Value>
+			</hb:StringParam>
+			<hb:StringParam>
+				<hb:ParamID>P3</hb:ParamID>
+				<hb:Position>Contain</hb:Position>
+				<hb:Value>clr</hb:Value>
+			</hb:StringParam>
+		</hb:RuleParams>
+	</hb:Rule>
+	
+	<hb:RuleSetHist>
+		<hb:Version>5</hb:Version>
+		<hb:Creation>2014-09-30</hb:Creation>
+		<hb:Modified>2017-11-24</hb:Modified>
+		<hb:Revision>V1 : 2014-11-13 : Creation.
+V2   : 2014-12-01 : Update of rules with remarks from partners about V1 revision, rules have been transferred to CNES handbook.
+V3   : 2015-02-17 : Update of rules with remarks from partners about V2 revision
+V4   : 2015-07-16 : Update of rules with examples
+V4.1 : 2015-11-18 : Correct several data from remarks
+V5   : 2017-11-24 : Creation of Sonarqube data and update of some status
+		</hb:Revision>
+	</hb:RuleSetHist>	
+</hb:RuleSet>

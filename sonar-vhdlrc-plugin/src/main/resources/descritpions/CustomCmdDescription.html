@@ -1,0 +1,40 @@
+Additional parameters injected in BuildPath.txt
+<br><i>Append parameters, one per line</i>
+<p>
+	<b>Local variable</b> 
+	<br>SRC=&quot;$HOME/projects&quot; 
+</p>
+<p>
+	<b>External BuildPath.txt</b> 
+	<br>include &quot;/dir/BuildPath.txt&quot; 
+</p>
+<p>
+	<b>Libraries</b>
+	<i>Entry format:</i> 
+	<br>( 'extern'|'local'|'default' ) ('recursive'|'nonrecursive') [ 'list' ] ( &lt;library_id&gt; | 'none' ) &lt;path_prefix&gt;
+</p>
+<p>
+	<i>External sources and their target libs:</i>
+	<br>extern LIB &quot;$SRC/lib/l1&quot;
+	<br>extern LIB2 &quot;$SRC/lib2&quot;
+</p>
+<p>
+	<i>By default, extern declarations are recursive, use the 'nonrecursive' keyword otherwise:</i>
+	<br>extern nonrecursive FOO &quot;$SRC/foo&quot;
+</p>
+<p>
+	<b>External source files</b>
+	<br>extern list MYLIB &quot;$SRC/list.txt&quot;
+<p>
+	<i>External sources that are declared readonly will be cached on your local disk:</i>
+	<br>extern readonly SPW &quot;$SRC/lib/spw&quot;
+</p>
+<p>
+	Target library for sources inside your workspace:
+	<br>local GAISLER &quot;gaisler&quot; 
+</p>
+<p>
+	<b>Default target library for local sources</b>
+	<br><i>you can also use the keyword &quot;NONE&quot; here to exclude sources that reside in no sub directory:</i>
+	<br>default none
+</p>

@@ -21,7 +21,6 @@ package com.linty.sonar.plugins.vhdlrc;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
@@ -34,7 +33,6 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
-import org.sonar.api.config.Configuration;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -45,8 +43,8 @@ import com.linty.sonar.zamia.BuildPathMaker;
 import com.linty.sonar.zamia.ZamiaRunner;
 
 public class VhdlRcSensor implements Sensor {
-  public static final String SCANNER_HOME_KEY ="sonar.vhdlrc.scanner.home";
-  public static final String      PROJECT_DIR = "rc/Data/workspace/project";
+	public static final String SCANNER_HOME_KEY ="sonar.vhdlrc.scanner.home";
+	public static final String      PROJECT_DIR = "rc/Data/workspace/project";
 	public static final String   REPORTING_PATH = PROJECT_DIR + "/rule_checker/reporting/rule";
 	private static final Logger LOG = Loggers.get(VhdlRcSensor.class);
 	private static List<String> unfoundFiles = new ArrayList<>();
@@ -64,8 +62,8 @@ public class VhdlRcSensor implements Sensor {
 	public void execute(SensorContext context) {
 	 
 	  //ZamiaRunner-------------------------------------------------------
-	  if(getTopEntities(context.config()).length == 0) {
-	    LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See BuildPathMaker.TOP_ENTITY_KEY");
+	  if(BuildPathMaker.getTopEntities(context.config()).isEmpty()) {
+	    LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See " + BuildPathMaker.TOP_ENTITY_KEY);
 	    LOG.warn("Zamia Issues will still be imported");
 	  } else {
 	    ZamiaRunner.run(context); 
@@ -118,14 +116,8 @@ public class VhdlRcSensor implements Sensor {
 	      .at(inputFile.selectLine(i.line()))
 	      .message(i.errorMsg());
 	    ni.at(issueLocation);
-	    ni.save();	    
+	    ni.save(); 
 	  }
 	}
 	
-	
-	 public static String[] getTopEntities(Configuration config ) {
-	    return Arrays.stream(config.getStringArray(BuildPathMaker.TOP_ENTITY_KEY))
-	      .filter(s -> s != null && !s.trim().isEmpty()).toArray(String[]::new);   
-	  }
-
 }

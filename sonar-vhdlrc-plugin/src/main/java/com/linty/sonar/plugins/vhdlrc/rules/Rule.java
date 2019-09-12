@@ -19,77 +19,86 @@
 package com.linty.sonar.plugins.vhdlrc.rules;
 
 
+import com.linty.sonar.params.ZamiaParam;
 import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 public class Rule {
 	
-	String ruleKey;
-	String name;
-	
-	  String parentUid;
-	  String technology;
-	  String applicationFields;
-    String category;
-    String subCategoty; 
-    String rationale;
-    String shortDescription;
-    String longDescription; 
-    
-    String type;
-    String sonarSeverity;
-    String remediationEffort;
-    String tag;
+  String ruleKey;
+  String name;
 
-    String goodExDesc;
-    String goodExampleRef;
-    String goodExampleCode;
-    
-    String badExDesc;
-    String badExampleRef;
-    String badExampleCode;
-    
-    String figureDesc;
-    FigureSvg figure;
-    
-    private static final String EMPTY_STRING="";
-     
-    public Rule(){
-    	  this.name=             EMPTY_STRING;
-    	  this.parentUid=        EMPTY_STRING;
-    	  this.technology=       EMPTY_STRING;
-    	  this.applicationFields=EMPTY_STRING;
-        this.category=         EMPTY_STRING;
-        this.remediationEffort=EMPTY_STRING;
-        this.sonarSeverity=    EMPTY_STRING;
-        this.tag=              EMPTY_STRING;
-        this.type=             EMPTY_STRING;  
-        this.subCategoty=      EMPTY_STRING;    
-        this.rationale=        EMPTY_STRING;
-        this.shortDescription= EMPTY_STRING;
-        this.longDescription=  EMPTY_STRING;         
-        this.goodExDesc=       EMPTY_STRING;
-        this.goodExampleRef=   EMPTY_STRING;        
-        this.badExDesc=        EMPTY_STRING;
-        this.badExampleRef=    EMPTY_STRING;       
-        this.figureDesc=       EMPTY_STRING; 
-    }
-    
-    
+  String parentUid;
+  String technology;
+  String applicationFields;
+  String category;
+  String subCategoty; 
+  String rationale;
+  String shortDescription;
+  String longDescription; 
+
+  String type;
+  String sonarSeverity;
+  String remediationEffort;
+  String tag;
+
+  String goodExDesc;
+  String goodExampleRef;
+  String goodExampleCode;
+
+  String badExDesc;
+  String badExampleRef;
+  String badExampleCode;
+
+  String figureDesc;
+  FigureSvg figure;
+  
+  private List<ZamiaParam> parameters = new ArrayList<>();
+  
+  public List<ZamiaParam> parameters(){
+    return this.parameters;
+  }
+
+  private static final String EMPTY_STRING="";
+
+  public Rule(){
+    this.name=             EMPTY_STRING;
+    this.parentUid=        EMPTY_STRING;
+    this.technology=       EMPTY_STRING;
+    this.applicationFields=EMPTY_STRING;
+    this.category=         EMPTY_STRING;
+    this.remediationEffort=EMPTY_STRING;
+    this.sonarSeverity=    EMPTY_STRING;
+    this.tag=              EMPTY_STRING;
+    this.type=             EMPTY_STRING;  
+    this.subCategoty=      EMPTY_STRING;    
+    this.rationale=        EMPTY_STRING;
+    this.shortDescription= EMPTY_STRING;
+    this.longDescription=  EMPTY_STRING;         
+    this.goodExDesc=       EMPTY_STRING;
+    this.goodExampleRef=   EMPTY_STRING;        
+    this.badExDesc=        EMPTY_STRING;
+    this.badExampleRef=    EMPTY_STRING;       
+    this.figureDesc=       EMPTY_STRING; 
+  }
+
+
     public String buildHtmlDescritpion() {
 
-    	StringBuilder htmlCode = new StringBuilder();
+      StringBuilder htmlCode = new StringBuilder();
 
-    	htmlCode
-    	.append(theCategorySection())
-    	.append(theDesciptionSection())
-    	.append(theRationaleSection())
-    	.append(theExamplesSection())
-    	.append(theFigureSection());
+      htmlCode
+      .append(theCategorySection())
+      .append(theDesciptionSection())
+      .append(theRationaleSection())
+      .append(theExamplesSection())
+      .append(theFigureSection());
 
-    	return String.valueOf(htmlCode);    
+      return String.valueOf(htmlCode);    
     }
-      
+
     
     private String theCategorySection() {
     	StringBuilder text = new StringBuilder(); 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hb:RuleSet xmlns:hb="HANDBOOK"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="HANDBOOK ../XSD/handbook.xsd ">
+	
+		<hb:RuleParams>
+			<hb:StringParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Position>Contain</hb:Position>
+				<hb:Value>reset</hb:Value>
+			</hb:StringParam>
+			<hb:StringParam>
+				<hb:ParamID>P2</hb:ParamID>
+				<hb:Position>Prefix</hb:Position>
+				<hb:Value>rst</hb:Value>
+			</hb:StringParam>
+			<hb:StringParam>
+				<hb:ParamID>P3</hb:ParamID>
+				<hb:Position>Suffix</hb:Position>
+				<hb:Value>clr</hb:Value>
+			</hb:StringParam>
+		</hb:RuleParams>
+</hb:RuleSet>

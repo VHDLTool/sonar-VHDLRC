@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hb:RuleSet xmlns:hb="HANDBOOK"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="HANDBOOK ../XSD/handbook.xsd ">
+
+		<hb:Rule UID="STD_04600">
+		<hb:RuleUID>STD_04600</hb:RuleUID>
+		<hb:RuleHist>
+			<hb:Status>Active</hb:Status>
+			<hb:Version>4</hb:Version>
+			<hb:Creation>2014-09-30</hb:Creation>
+			<hb:Modified>2017-11-24</hb:Modified>
+			<hb:Revision>
+				V1 : 2014-09-30 : Creation
+			</hb:Revision>
+		</hb:RuleHist>
+		<hb:RuleContent>
+			<hb:Name>Clock domain number in the design</hb:Name>
+			<hb:IsParent>false</hb:IsParent>
+			<hb:IsSon>false</hb:IsSon>
+			<hb:ParentUID xsi:nil="true" />
+			<hb:Technology>FPGA</hb:Technology>
+			<hb:ApplicationFields>General</hb:ApplicationFields>
+			<hb:Category>Design</hb:Category>
+			<hb:SubCategory>Clocking</hb:SubCategory>
+			<hb:Severity>Minor</hb:Severity>
+			<hb:Rationale>R.</hb:ShortDesc>
+			<hb:LongDesc>Tn.</hb:LongDesc>
+		</hb:RuleContent>
+		<hb:Sonarqube>
+			<hb:SonarType>Code_Smell</hb:SonarType>
+			<hb:SonarSeverity>Critical</hb:SonarSeverity>
+			<hb:RemediationEffort>Complex</hb:RemediationEffort>
+			<hb:SonarTag>Suspicious</hb:SonarTag>
+		</hb:Sonarqube>
+		<hb:RuleDesc>
+			<hb:GoodExDesc></hb:GoodExDesc>
+			<hb:GoodExample />
+			<hb:BadExDesc></hb:BadExDesc>
+			<hb:BadExample />
+			<hb:FigureDesc />
+			<hb:Figure fileref="STD_04600.svg" height="450px"
+				width="450px" />
+		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:RangeParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Range>LT_GT</hb:Range>
+				<hb:ValueMin>5</hb:ValueMin>
+				<hb:ValueMax>10</hb:ValueMax>
+			</hb:RangeParam>
+		</hb:RuleParams>
+	</hb:Rule>
+	
+	<hb:Rule UID="STD_04700">
+		<hb:RuleUID>STD_04700</hb:RuleUID>
+		<hb:RuleHist>
+			<hb:Status>Active</hb:Status>
+			<hb:Version>4</hb:Version>
+			<hb:Creation>2014-09-30</hb:Creation>
+			<hb:Modified>2017-11-24</hb:Modified>
+			<hb:Revision>
+				V1 : 2014-09-30 : Creation
+				V2 : 2014-12-01 : LongDesc
+			</hb:Revision>
+		</hb:RuleHist>
+		<hb:RuleContent>
+			<hb:Name>Number of clock domains per modules</hb:Name>
+			<hb:IsParent>false</hb:IsParent>
+			<hb:IsSon>false</hb:IsSon>
+			<hb:ParentUID xsi:nil="true" />
+			<hb:Technology>FPGA</hb:Technology>
+			<hb:ApplicationFields>General</hb:ApplicationFields>
+			<hb:Category>Design</hb:Category>
+			<hb:SubCategory>Clocking</hb:SubCategory>
+			<hb:Severity>Minor</hb:Severity>
+			<hb:Rationale> the clock .</hb:Rationale>
+			<hb:ShortDesc>Each .</hb:ShortDesc>
+			<hb:LongDesc>Entity </hb:LongDesc>
+		</hb:RuleContent>
+		<hb:Sonarqube>
+			<hb:SonarType>Code_Smell</hb:SonarType>
+			<hb:SonarSeverity>Critical</hb:SonarSeverity>
+			<hb:RemediationEffort>High</hb:RemediationEffort>
+			<hb:SonarTag>Suspicious</hb:SonarTag>
+		</hb:Sonarqube>
+		<hb:RuleDesc>
+			<hb:GoodExDesc></hb:GoodExDesc>
+			<hb:GoodExample />
+			<hb:BadExDesc></hb:BadExDesc>
+			<hb:BadExample />
+			<hb:FigureDesc />
+			<hb:Figure />
+		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:RangeParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Range>LET_GT</hb:Range>
+				<hb:ValueMin>-5</hb:ValueMin>
+				<hb:ValueMax>10050</hb:ValueMax>
+			</hb:RangeParam>
+		</hb:RuleParams>
+	</hb:Rule>
+	
+	
+	<hb:RuleSetHist>
+		<hb:Version>5</hb:Version>
+		<hb:Creation>2014-09-30</hb:Creation>
+		<hb:Modified>2017-11-24</hb:Modified>
+		<hb:Revision>V1 : 2014-11-13 : Creation.
+V2   : 2014-12-01 : Update of rules with remarks from partners about V1 revision, rules have been transferred to CNES handbook.
+V3   : 2015-02-17 : Update of rules with remarks from partners about V2 revision
+V4   : 2015-07-16 : Update of rules with examples
+V4.1 : 2015-11-18 : Correct several data from remarks
+V5   : 2017-11-24 : Creation of Sonarqube data and update of some status
+		</hb:Revision>
+	</hb:RuleSetHist>	
+</hb:RuleSet>

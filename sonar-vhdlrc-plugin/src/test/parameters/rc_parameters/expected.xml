@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
+
+<hb:handbook_parameters xmlns:hb="HANDBOOK">
+	<hb:description>Handbook rules may rely on existing generic rules. A
+		generic rule is composed of an algorithm and some generic parameters.
+		The generic rule and parameters values are configured through the
+		verifiers parameters file. In case that some parameters are missing in
+		the parameters file, then they are replaced with default values that
+		are hard coded.</hb:description>
+	<hb:version_revision>creation</hb:version_revision>
+
+	<hb:Rule UID="STD_00001">
+		<hb:RuleUID>CNE_00001</hb:RuleUID>
+		<hb:RuleGEN>GEN_00001</hb:RuleGEN>	
+		<hb:RuleParams>
+			<hb:StringParam>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Position>Suffix</hb:Position>
+			   <hb:Value>_TOTO</hb:Value>
+		   </hb:StringParam>
+		   <hb:StringParam>
+			   <hb:ParamID>P2</hb:ParamID>
+			   <hb:Position>Contain</hb:Position>
+			   <hb:Value>TITI</hb:Value>
+		   </hb:StringParam>
+	   </hb:RuleParams>
+	</hb:Rule>
+	
+	<hb:Rule UID="CNE_00002">
+		<hb:RuleUID>CNE_00002</hb:RuleUID>
+		<hb:RuleGEN>GEN_00002</hb:RuleGEN>
+		<hb:RuleParams>
+		   <hb:StringParam>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Position>Prefix</hb:Position>
+			   <hb:Value>AAA</hb:Value>
+		   </hb:StringParam>
+		</hb:RuleParams>
+	</hb:Rule>
+	
+	<hb:Rule UID="CNE_00003">
+		<hb:RuleUID>CNE_00003</hb:RuleUID>
+		<hb:RuleGEN>GEN_00003</hb:RuleGEN>
+	</hb:Rule>
+
+	
+	<hb:Rule UID="STD_00004">
+		<hb:RuleUID>STD_00004</hb:RuleUID>
+		<hb:RuleGEN>STD_00004</hb:RuleGEN>		
+		<hb:RuleParams>
+		   <hb:IntParam>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Relation>LT</hb:Relation>
+			   <hb:Value>99</hb:Value>
+		   </hb:IntParam>
+		</hb:RuleParams>
+	</hb:Rule>
+	
+	<hb:Rule UID="STD_00005">
+		<hb:RuleUID>STD_00005</hb:RuleUID>
+		<hb:RuleGEN>STD_00005</hb:RuleGEN>
+		<hb:RuleParams>
+			<hb:RangeParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Range>LET_GT</hb:Range>
+				<hb:ValueMin>-5</hb:ValueMin>
+				<hb:ValueMax>150</hb:ValueMax>
+			</hb:RangeParam>
+		</hb:RuleParams>
+	</hb:Rule>
+	
+	<hb:Rule UID="STD_00006">
+		<hb:RuleUID>STD_00006</hb:RuleUID>
+		<hb:RuleGEN>STD_00006</hb:RuleGEN>
+		<hb:RuleParams>
+		   <hb:IntParam>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Relation>LET</hb:Relation>
+			   <hb:Value>1</hb:Value>
+		   </hb:IntParam>
+	   </hb:RuleParams>
+	</hb:Rule>
+	
+	<hb:Rule UID="CNE_00007">
+		<hb:RuleUID>CNE_00007</hb:RuleUID>
+		<hb:RuleGEN>GEN_00007</hb:RuleGEN>
+	</hb:Rule>					  
+	<hb:Rule UID="STD_00008">
+		<hb:RuleUID>STD_00008</hb:RuleUID>
+		<hb:RuleGEN>GEN_00008</hb:RuleGEN>	
+		<hb:RuleParams>
+			<hb:StringParam>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Position>Prefix</hb:Position>
+			   <hb:Value>p_</hb:Value>
+		   </hb:StringParam>
+	   </hb:RuleParams>
+	</hb:Rule>
+	
+</hb:handbook_parameters>

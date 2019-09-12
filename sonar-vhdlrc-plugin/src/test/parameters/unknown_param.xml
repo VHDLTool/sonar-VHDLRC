@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hb:RuleSet xmlns:hb="HANDBOOK" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="HANDBOOK ../XSD/handbook.xsd ">
+	<hb:RuleParams>
+		<hb:UnknownParam>
+			<hb:ParamID>P1</hb:ParamID>
+			<hb:Position>Contain</hb:Position>
+			<hb:Value>reset</hb:Value>
+		</hb:UnknownParam>
+	</hb:RuleParams>
+</hb:RuleSet>

@@ -27,11 +27,11 @@ import org.sonar.api.resources.AbstractLanguage;
 
 public class Vhdl extends AbstractLanguage {
 
-  public static final String KEY = "vhdl";
+  public static final String KEY = "vhdlrc";
 
   public static final String NAME = "VHDL";
   
-  public static final String VHDL_CATEGORY = "VHDL";
+  public static final String VHDLRC_CATEGORY = "VHDL-RC";
 
   public static final String FILE_SUFFIXES_KEY = "sonar.vhdlrc.file.suffixes";
 

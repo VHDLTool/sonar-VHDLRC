@@ -45,31 +45,39 @@ public class ZamiaRunner {
   
   public static class RunnerContext{
     private static final String ECLIPSE_DIR = "rc/App/eclipse";
+    //Arguments are passed into script in eclipse(_rv)|(.bat) 
+    //"-clean -nosplash -application org.zamia.plugin.Check"
     private static final String WIN_EXE = "eclipsec.bat"; 
     private static final String UNIX_EXE = "eclipse_rc";
-    private static final String ARGS = "-clean -nosplash -application org.zamia.plugin.Check";
     private static final String DOUBLE_QUOTE = "\"";
 
     protected ArrayList<String> buildCmd(String scannerHome) {
       ArrayList<String> cmd = new ArrayList<>();
-      boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
       Path programDir = Paths.get(scannerHome, ECLIPSE_DIR).normalize();
       Path target = Paths.get(scannerHome, PROJECT_DIR).normalize();
-      if (isWindows) {
+      if (isWindows()) {
         cmd.add(doubleQuote(programDir.resolve(WIN_EXE).normalize()));
         cmd.add(doubleQuote(target));
       } else {
         cmd.add(programDir.resolve(UNIX_EXE).normalize().toString());
         cmd.add(target.toString());
       }
-//      cmd.addAll(Arrays.asList(ARGS.split(" "))); //Arguments are passed through eclipsec.bat file in rc-scanner
       return cmd;
     }
-
+    
+    protected boolean isWindows() {
+      return System.getProperty("os.name").toLowerCase().startsWith("windows");
+    }
+    
     private String doubleQuote(Path p) {
       return DOUBLE_QUOTE + p.toString() + DOUBLE_QUOTE;
     }
   }
+  
+  //----------------------------------------------------------------------------------------------------
+  /*
+   * File structure of an rc directory containing the eclipse instance, a jre, and a configured project
+   */
   
   public static final String                  PROJECT_DIR = VhdlRcSensor.PROJECT_DIR;
   public static final String               BUILD_PATH_TXT = "BuildPath.txt";
@@ -84,12 +92,12 @@ public class ZamiaRunner {
   public static final String                CONFIGURATION = "configuration";
   public static final String                  VIRGIN_CONF = "virgin_conf";
   public static final String                 RULESET_PATH = "HANDBOOK/Rulesets/handbook.xml";
+  public static final String  RC_HANDBOOK_PARAMETERS_PATH = CONFIGURATION + "/" + RC_HANDBOOK_PARAMETERS; 
   
+  //------------------------------------------------------------------------------------------------------
   private final SensorContext context;
   private final RunnerContext runnerContext;
   private final String scannerHome;
-  
-  public static final int ZAMIACAD_LOG_SIZE = 10;
   
   private static final Logger LOG = Loggers.get(ZamiaRunner.class);
 
@@ -108,43 +116,60 @@ public class ZamiaRunner {
   @VisibleForTesting
   protected void run() {
     LOG.info("----------Vhdlrc Analysis---------");
-    Path tempBuildPath = BuildPathMaker.make(this.context.config());
-    uploadConfigToZamia(tempBuildPath);
-    clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
-    clean(Paths.get(this.scannerHome, PROJECT_DIR, REPORTING_RULE));
+    
+    LOG.info("--Generating configuration");
+    //Generating content for BuidlPath.txt
+    Path tempBuildPath = BuildPathMaker.make(this.context.config());  
+    //Parser for injected rc_handbook_parameters.xml
+    ActiveRuleLoader loader = new ActiveRuleLoader(this.context.activeRules(), "/" + RC_HANDBOOK_PARAMETERS_PATH);
+    //Generating content for rc_handbook_parameters.xml
+    Path rcHandbookParameters = loader.makeRcHandbookParameters();
+    //Generating content for rc_config_selected_rules.xml
+    Path rcConfigSelectedRules = SelectedRulesMaker.makeWith(loader.activeRuleKeys()); 
+    LOG.info("--Generating configuration");
+    
+    uploadConfigToZamia(tempBuildPath, rcHandbookParameters, rcConfigSelectedRules);
+    clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));    //Prepare clean /vhdl folder for sources
+    clean(Paths.get(this.scannerHome, PROJECT_DIR, REPORTING_RULE)); //Prepare clean /rule folder for reports
     uploadInputFilesToZamia();
     runZamia();
+    //After analysis
     if(!LOG.isDebugEnabled()) {
       clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
     }
     LOG.info("----------Vhdlrc Analysis---------(done)");
   }
 
+  /*
+   * BuidlPath.txt:                      Embedded default -> Custom of {sonar.vhdlrc.topEntities, sonar.vhdlrc.customCmd}
+   * rc_handbook_parameters.xml:   Injected at build time -> Custom of API:ActiveRules (Quality profile on project)
+   * rc_config_selected_rules.xml:       Embedded default -> Custom of API:ActiveRules && rc_handbook_parameters.xml
+   * handbook.xml:                 Injected at build time -> Untouched
+   */
 
   @VisibleForTesting
-  protected void uploadConfigToZamia(Path tempBuildPath) {
+  protected void uploadConfigToZamia(Path tempBuildPath, Path rcHbParam, Path rcSelectedRules ) {
     LOG.info("--Load configuration");
+    
     //Embedded resources configuration files 
     String configuration = "/" + CONFIGURATION + "/";
-    InputStream conf1 = ZamiaRunner.class.getResourceAsStream(configuration + RC_CONFIG_SELECTED_RULES);
-    InputStream conf2 = ZamiaRunner.class.getResourceAsStream(configuration + RC_HANDBOOK_PARAMETERS);
-    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + RULESET_PATH);
+    InputStream hb    = ZamiaRunner.class.getResourceAsStream(configuration + RULESET_PATH); //handbook.xml                 
+    
     //Configuration files destinations in scanner
-    Path projectDir = Paths.get(this.scannerHome, PROJECT_DIR);
-    Path targetConf1     = projectDir.resolve(CONFIG_DIR).resolve(RC_CONFIG_SELECTED_RULES);
-    Path targetConf2     = projectDir.resolve(CONFIG_DIR).resolve(RC_HANDBOOK_PARAMETERS);
-    Path hbTarget        = projectDir.resolve(CONFIG_DIR).resolve(HANDBOOK_XML);
-    Path buildPathTarget = projectDir.resolve(BUILD_PATH_TXT);
-    if(LOG.isDebugEnabled()) {
-      LOG.debug("Load configuration to" + buildPathTarget);
-    }
+    Path projectDir = Paths.get(this.scannerHome, PROJECT_DIR); // $SCANNER_HOME/rc/Data/workspace/project
+    Path buildPathTarget = projectDir.resolve(BUILD_PATH_TXT);       // rc/Data/workspace/project/ BuidlPath.txt
+    Path targetConf1     = projectDir.resolve(CONFIG_DIR).resolve(RC_CONFIG_SELECTED_RULES); // rc/Data/workspace/project/rule_checker/ rc_config_selected_rules.xml
+    Path targetConf2     = projectDir.resolve(CONFIG_DIR).resolve(RC_HANDBOOK_PARAMETERS);   // rc/Data/workspace/project/rule_checker/ rc_handbook_parameters.xml
+    Path hbTarget        = projectDir.resolve(CONFIG_DIR).resolve(HANDBOOK_XML);             // rc/Data/workspace/project/rule_checker/ handbook.xml
+    
+    LOG.debug("Loading configuration to " + buildPathTarget);
     try {
-      Files.copy(tempBuildPath, buildPathTarget, StandardCopyOption.REPLACE_EXISTING);
-      Files.copy(conf1, targetConf1, StandardCopyOption.REPLACE_EXISTING);
-      Files.copy(conf2, targetConf2, StandardCopyOption.REPLACE_EXISTING);
-      Files.copy(hb, hbTarget, StandardCopyOption.REPLACE_EXISTING);
+      Files.copy(tempBuildPath  , buildPathTarget, StandardCopyOption.REPLACE_EXISTING); // BuidlPath.txt 
+      Files.copy(rcSelectedRules, targetConf1    , StandardCopyOption.REPLACE_EXISTING); // rc_config_selected_rules.xml
+      Files.copy(rcHbParam      , targetConf2    , StandardCopyOption.REPLACE_EXISTING); // rc_handbook_parameters.xml
+      Files.copy(hb             , hbTarget       , StandardCopyOption.REPLACE_EXISTING); // handbook.xml
     } catch (IOException e) {
-      LOG.error("unable to upload configuration files to scanner",e);
+      LOG.error("unable to upload configuration files to scanner: \n{} \n{}",e.getClass(), e.getMessage());
     }
     LOG.info("--Load configuration (done)");
   }
@@ -158,16 +183,14 @@ public class ZamiaRunner {
       try {
         uploadInputFile(file);
       } catch (IOException e) {
-        LOG.error("Unable to upload vhdl sources to scanner",e);
+        LOG.error("Unable to upload this vhdl source to project: \n {} ", e.getMessage());
       }
     });
     LOG.info("--Load Vhdl files (done)"); 
   }
    
   private void uploadInputFile(InputFile file) throws IOException {
-    if(LOG.isDebugEnabled()) {
-      LOG.info("File name : " + file.filename());
-    }
+    LOG.debug("File name : " + file.filename());
     Path target = Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR, file.toString());
     FileUtils.copyFile(new File(file.uri()), target.toFile()); 
   }
@@ -180,23 +203,25 @@ public class ZamiaRunner {
     }
   }
 
+  
   @VisibleForTesting
   protected void runZamia() {
     LOG.info("--Running analysis");
-    Process process;
-    ProcessBuilder builder = new ProcessBuilder();
-    builder.command(runnerContext.buildCmd(scannerHome));
-    builder.redirectErrorStream(true);
-    if(LOG.isDebugEnabled()) {
-      LOG.info("Running " + Arrays.toString(builder.command().toArray()));
-    }
-  try {
-    process = builder.start();
-    consume(process.getInputStream());
-    process.waitFor(300, TimeUnit.SECONDS);
-    process.destroy();       
+
+    ProcessBuilder builder = new ProcessBuilder()
+      .command(this.runnerContext.buildCmd(scannerHome))
+      .redirectErrorStream(true);
+    Process process;  
+
+    LOG.debug("Running " + Arrays.toString(builder.command().toArray()));
+
+    try {
+      process = builder.start();
+      consume(process.getInputStream());
+      process.waitFor(300, TimeUnit.SECONDS);
+      process.destroy();       
     } catch (IOException e) {
-      LOG.error("Analysis has failed : {}", e.getMessage());
+      LOG.error("Analysis has failed : {} {}",e.getClass(), e.getMessage());
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       LOG.error("Analysis has failed : {}", e.getMessage());

@@ -19,6 +19,7 @@
 package com.linty.sonar.plugins.vhdlrc.a;
 
 
+
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +29,12 @@ import org.junit.Test;
 import org.sonar.api.utils.log.LogTester;
 import com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
+import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
@@ -45,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class VhdlRcSensorTest  {
 	
-	private static final SonarRuntime SQ67 = SonarRuntimeImpl.forSonarQube(VHDLRcPlugin.SQ_6_7, SonarQubeSide.SERVER);
+	private static final SonarRuntime SQ67 = SonarRuntimeImpl.forSonarQube(VHDLRcPlugin.SQ_6_7, SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
 	private static final String PROJECT_ID = "vhdlrc-test";
 	private VhdlRcSensor sensor = new VhdlRcSensor();
 	
@@ -81,12 +84,13 @@ public class VhdlRcSensorTest  {
 	  SensorContextTester Context = SensorContextTester.create(Paths.get("src/test/files"));
 	  sensor.execute(Context);
 	}
-	 
+	
+
 	@Test
   public void invalid_path_should_log_error() {
     SensorContextTester Context = createContext("src/test/files","src/invalid/path/");
     sensor.execute(Context);
-    List<Issue> issues = new ArrayList(Context.allIssues());
+    List<Issue> issues = new ArrayList<>(Context.allIssues());
     assertThat(issues).isEmpty();
     assertThat(logTester.logs()).isNotEmpty();
   }
@@ -94,10 +98,11 @@ public class VhdlRcSensorTest  {
 	@Test
 	public void test_two_good_issues_one_failure() {
 	  sensor.execute(context1);
-	  List<Issue> issues = new ArrayList(context1.allIssues());
+	  List<Issue> issues = new ArrayList<>(context1.allIssues());
 	  
 	  assertThat(issues).hasSize(4);
 	  assertNoIssueOnFile(context1,"file_no_issues.vhd");	 
+	  
 	  
 	  Issue issue1 = issues.get(2);
 	  assertThat(issue1.ruleKey().rule()).isEqualTo("STD_00400");
@@ -144,7 +149,12 @@ public class VhdlRcSensorTest  {
 	public static void addRules(SensorContextTester context, String...args) {
 	  ActiveRulesBuilder builder = new ActiveRulesBuilder();
 	  for(String ruleKey : args) {
-	    builder.create(RuleKey.of("vhdlrc-repository",ruleKey)).setLanguage("vhdl").activate();
+	    builder.addRule(
+	    		new NewActiveRule.Builder()
+	    		.setRuleKey(RuleKey.of("vhdlrc-repository",ruleKey))
+	    		.setLanguage("vhdl")
+	    		.build()
+	    		);
 	  }
     context.setActiveRules(builder.build());	  
 	}

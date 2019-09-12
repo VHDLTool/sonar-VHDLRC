@@ -17,10 +17,10 @@
  */
 package com.linty.sonar.zamia;
 
-
-import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.fest.util.VisibleForTesting;
@@ -34,10 +34,16 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class BuildPathMaker {
   
-  public static final String TOP_ENTITY_KEY = "sonar.vhdl.topEntities";
+  public static final String TOP_ENTITY_KEY = "sonar.vhdlrc.topEntities";
   public static final String DEFAULT_ENTITY = "WORK.TOP";
+  
+  public static final String CUSTOM_CMD_KEY = "sonar.vhdlrc.customCmd";
+  public static final String CUSTOM_CMD_DESCRIPTION_FILE = "/descritpions/CustomCmdDescription.html";
+  
   private static final String VIRGIN_FILE_PATH = "/virgin_conf/BuildPath.txt";
+  
   private final Configuration config;
+   
   
   private static final Logger LOG = Loggers.get(BuildPathMaker.class);
   
@@ -47,6 +53,7 @@ public class BuildPathMaker {
 
   public static Path make(Configuration config){
      try {
+      LOG.debug("Generating BuildPath.txt");
       return new BuildPathMaker(config).make();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to generate BuildPath.txt", e);
@@ -56,26 +63,54 @@ public class BuildPathMaker {
   protected Path make() throws IOException { 
       Path target = Files.createTempFile("BuildPath", ".txt");//Random name will be generated, ex:"BuildPath3100633746685270227.txt"
       target.toFile().deleteOnExit();
-      if(LOG.isDebugEnabled()) {
-        LOG.debug("TempFile created by buildPathMaker : " + target);
-      }
       InputStream source = BuildPathMaker.class.getResourceAsStream(VIRGIN_FILE_PATH);
       Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-      return appendTopEntities(target.toAbsolutePath());     
+      return appendParameters(target.toAbsolutePath());
   }
 
   @VisibleForTesting
-  protected Path appendTopEntities(Path target) throws IOException { 
+  protected Path appendParameters(Path target) throws IOException { 
     StringBuilder builder = new StringBuilder();
-    for(String entity : VhdlRcSensor.getTopEntities(this.config)) {
+    String topEntity = getTopEntities(this.config); 
+    builder
+    .append("toplevel ")
+    .append(topEntity.toUpperCase())
+    .append("\r\n");
+    if(config.get(CUSTOM_CMD_KEY).isPresent()) {
       builder
-      .append("toplevel ")
-      .append(entity.toUpperCase())
-      .append("\r\n");
+      .append(config.get(CUSTOM_CMD_KEY).get());
     }
+
     return Files.write(target, builder.toString().getBytes(UTF_8), StandardOpenOption.APPEND);
   }
   
+  public static String customCmdDescription() {
+    StringBuilder builder = new StringBuilder(); 
+    try (BufferedReader reader = new BufferedReader(getRessource(CUSTOM_CMD_DESCRIPTION_FILE))){      
+      String line;
+      while ((line = reader.readLine()) != null) {
+        builder
+        .append(line);
+      }
+      return String.valueOf(builder);
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to read " + CUSTOM_CMD_DESCRIPTION_FILE, e);
+    }    
+  }
+  
+
+  public static String getTopEntities(Configuration config ) {
+    return config.get(BuildPathMaker.TOP_ENTITY_KEY).orElse("");  
+  }
+
+  public static InputStreamReader getRessource(String ressourcePath) throws IOException {    
+    InputStream is = BuildPathMaker.class.getResourceAsStream(ressourcePath);
+    if(is == null) {
+      throw new IOException();
+    }
+    return new InputStreamReader(is);
+  }
+
   
  
 

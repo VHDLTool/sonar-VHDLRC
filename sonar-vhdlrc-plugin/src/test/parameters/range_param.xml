@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hb:RuleSet xmlns:hb="HANDBOOK" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="HANDBOOK ../XSD/handbook.xsd ">
+	<hb:RuleParams>
+		<hb:RangeParam>
+			<hb:ParamID>P1</hb:ParamID>
+			<hb:Range>LET_GT</hb:Range>
+			<hb:ValueMin>-5</hb:ValueMin>
+			<hb:ValueMax>150</hb:ValueMax>
+		</hb:RangeParam>
+	</hb:RuleParams>	
+</hb:RuleSet>
