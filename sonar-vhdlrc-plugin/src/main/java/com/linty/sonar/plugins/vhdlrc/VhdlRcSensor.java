@@ -46,6 +46,7 @@ public class VhdlRcSensor implements Sensor {
 	public static final String SCANNER_HOME_KEY ="sonar.vhdlrc.scanner.home";
 	public static final String      PROJECT_DIR = "rc/Data/workspace/project";
 	public static final String   REPORTING_PATH = PROJECT_DIR + "/rule_checker/reporting/rule";
+	public static final String RC_SYNTH_REPORT_PATH = ".\\report.xml";
 	private static final Logger LOG = Loggers.get(VhdlRcSensor.class);
 	private static List<String> unfoundFiles = new ArrayList<>();
 	
@@ -76,6 +77,8 @@ public class VhdlRcSensor implements Sensor {
 		    .orElseThrow(() -> new IllegalStateException("vhdlRcSensor should not execute without " + SCANNER_HOME_KEY)))
 		  .resolve(REPORTING_PATH);
 		List<Path> reportFiles = ExternalReportProvider.getReportFiles(reportsDir);
+		Path rcSynthReport = Paths.get("./report.xml");
+		reportFiles.add(rcSynthReport);
 		reportFiles.forEach(report -> importReport(report, context));
 		unfoundFiles.forEach(s -> LOG.warn("Input file not found : {}. No rc issues will be imported on this file.",s));
 	}
@@ -83,10 +86,11 @@ public class VhdlRcSensor implements Sensor {
 	@VisibleForTesting
 	protected void importReport(Path reportFile, SensorContext context) {
 	  try {
-	    LOG.info("Importing {}", reportFile.getFileName()); 
+	    LOG.info("Importing {}", reportFile.getFileName());
+	    boolean rcSynth=RC_SYNTH_REPORT_PATH.equals(reportFile.toString());
 	    for(Issue issue : ReportXmlParser.getIssues(reportFile)){
 	      try {
-	        importIssue(context, issue);
+	        importIssue(context, issue,rcSynth);
 	      } catch (RuntimeException e) {
 	        LOG.warn("Can't import an issue from report {} : {}", reportFile.getFileName(), e.getMessage());
 	      }  
@@ -96,12 +100,17 @@ public class VhdlRcSensor implements Sensor {
 	  }  
 	}
 
-	private void importIssue(SensorContext context, Issue i) {
+	private void importIssue(SensorContext context, Issue i, boolean reportFromRcsynth) {
 	  InputFile inputFile;
 	  NewIssueLocation issueLocation;
 	  Path p = i.file();
-	  Path root = Paths.get("./");
-	  Path filePath = root.resolve(p.subpath(2, p.getNameCount()));//Zamia adds "./vhdl" to inputFile path in reports
+	  Path filePath;
+	  if (reportFromRcsynth)
+		  filePath=p;
+	  else { 
+		  Path root = Paths.get("./");
+		  filePath = root.resolve(p.subpath(2, p.getNameCount()));//Zamia adds "./vhdl" to inputFile path in reports
+	  }
 	  FilePredicates predicates = context.fileSystem().predicates();
 	  inputFile = context.fileSystem().inputFile(predicates.hasPath(filePath.toString()));
 	  if(inputFile == null) {

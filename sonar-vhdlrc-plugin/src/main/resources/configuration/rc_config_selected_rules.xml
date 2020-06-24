@@ -27,6 +27,7 @@
   <hb:Rule UID="CNE_01000"/>
   <hb:Rule UID="CNE_01200"/>
   <hb:Rule UID="CNE_01600"/>
+  <hb:Rule ParameterSource="RULE_CHECKER" UID="CNE_02000"/>
   <hb:Rule UID="CNE_02100"/>
   <hb:Rule UID="CNE_02300"/>
   <hb:Rule UID="CNE_02400"/>

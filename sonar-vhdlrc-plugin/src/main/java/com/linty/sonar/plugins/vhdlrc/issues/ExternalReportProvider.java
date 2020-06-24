@@ -52,13 +52,13 @@ public class ExternalReportProvider {
 	}
 	
 	public List<Path> collectReportFiles() {
-
+			
 			try (Stream<Path> paths = Files.walk(reportsDir)
 					.filter(f -> ! f.toFile().isDirectory())
 					.filter(f -> FilenameUtils.getExtension(f.toString()).equals("xml"))
 					.filter(f -> f.toFile().length()!=0)
 					.filter(f -> !IGNORE.contains(f.getFileName().toString()))
-					){
+					){				
 				paths.forEach(reports::add);
 			} catch (IOException e) {
 				LOG.error("Unable to get xml reports, check path : {}",reportsDir);

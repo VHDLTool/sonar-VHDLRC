@@ -4017,7 +4017,7 @@ Thus, a signal that represents a falling edge of a signal named My_Sig is My_Sig
 	<hb:Rule UID="CNE_02000">
 		<hb:RuleUID>CNE_02000</hb:RuleUID>
 		<hb:RuleHist>
-			<hb:Status>Validated</hb:Status>
+			<hb:Status>Active</hb:Status>
 			<hb:Version>4</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
 			<hb:Modified>2015-07-16</hb:Modified>
@@ -4026,6 +4026,7 @@ Thus, a signal that represents a falling edge of a signal named My_Sig is My_Sig
 				V2 : 2014-12-01 : Status ; Rationale ; ShortDesc ; Severity  
 				V3 : 2015-02-17 : Technology ; ShortDesc
 				V4 : 2015-07-16 : GoodExample ; BadExample ; GoodExDesc ; BadExDesc
+				V5: : Status
 			</hb:Revision>
 		</hb:RuleHist>
 		<hb:RuleContent>
