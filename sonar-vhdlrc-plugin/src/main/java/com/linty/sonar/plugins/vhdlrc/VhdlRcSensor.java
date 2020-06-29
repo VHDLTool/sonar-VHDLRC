@@ -46,7 +46,7 @@ public class VhdlRcSensor implements Sensor {
 	public static final String SCANNER_HOME_KEY ="sonar.vhdlrc.scanner.home";
 	public static final String      PROJECT_DIR = "rc/Data/workspace/project";
 	public static final String   REPORTING_PATH = PROJECT_DIR + "/rule_checker/reporting/rule";
-	public static final String RC_SYNTH_REPORT_PATH = ".\\report.xml";
+	public static final String RC_SYNTH_REPORT_PATH = ".\\report_";
 	private static final Logger LOG = Loggers.get(VhdlRcSensor.class);
 	private static List<String> unfoundFiles = new ArrayList<>();
 	
@@ -77,8 +77,11 @@ public class VhdlRcSensor implements Sensor {
 		    .orElseThrow(() -> new IllegalStateException("vhdlRcSensor should not execute without " + SCANNER_HOME_KEY)))
 		  .resolve(REPORTING_PATH);
 		List<Path> reportFiles = ExternalReportProvider.getReportFiles(reportsDir);
-		Path rcSynthReport = Paths.get("./report.xml");
-		reportFiles.add(rcSynthReport);
+		Path rcSynthReport = Paths.get("./");
+		List<Path> rcReportFiles = ExternalReportProvider.getReportFiles(rcSynthReport);
+		rcReportFiles.removeIf(o->!o.toString().startsWith(RC_SYNTH_REPORT_PATH));
+		if(!rcReportFiles.isEmpty())
+			reportFiles.addAll(rcReportFiles);
 		reportFiles.forEach(report -> importReport(report, context));
 		unfoundFiles.forEach(s -> LOG.warn("Input file not found : {}. No rc issues will be imported on this file.",s));
 	}
@@ -87,7 +90,7 @@ public class VhdlRcSensor implements Sensor {
 	protected void importReport(Path reportFile, SensorContext context) {
 	  try {
 	    LOG.info("Importing {}", reportFile.getFileName());
-	    boolean rcSynth=RC_SYNTH_REPORT_PATH.equals(reportFile.toString());
+	    boolean rcSynth=reportFile.toString().startsWith(RC_SYNTH_REPORT_PATH);
 	    for(Issue issue : ReportXmlParser.getIssues(reportFile)){
 	      try {
 	        importIssue(context, issue,rcSynth);
