@@ -18,6 +18,7 @@
 
 package com.linty.sonar.plugins.vhdlrc;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -63,13 +64,22 @@ public class VhdlRcSensor implements Sensor {
 	public void execute(SensorContext context) {
 	 
 	  //ZamiaRunner-------------------------------------------------------
-	  if(BuildPathMaker.getTopEntities(context.config()).isEmpty()) {
+	  String top=BuildPathMaker.getTopEntities(context.config());
+	  if(top.isEmpty()) {
 	    LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See " + BuildPathMaker.TOP_ENTITY_KEY);
 	    LOG.warn("Zamia Issues will still be imported");
 	  } else {
 	    ZamiaRunner.run(context); 
 	  }
 	  //------------------------------------------------------------------
+	  if(BuildPathMaker.getAutoexec(context.config())) {
+		  try {
+			  	String fsmRegex = BuildPathMaker.getFsmRegex(context.config());
+			  	String rcSynth = BuildPathMaker.getRcSynthPath(context.config());
+			    Runtime.getRuntime().exec("cmd.exe /c cmd.exe /c ubuntu1804 run "+rcSynth+" "+top+" \""+fsmRegex+"\"").waitFor();
+			} catch (IOException | InterruptedException e) {
+			}
+	  }
 	  
 		Path reportsDir = Paths
 		  .get(context.config()

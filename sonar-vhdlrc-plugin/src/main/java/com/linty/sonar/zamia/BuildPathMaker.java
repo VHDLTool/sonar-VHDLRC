@@ -35,7 +35,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class BuildPathMaker {
   
   public static final String TOP_ENTITY_KEY = "sonar.vhdlrc.topEntities";
+  public static final String FSM_REGEX_KEY = "sonar.vhdlrc.fsmRegex";
+  public static final String RCSYNTH_PATH_KEY = "sonar.vhdlrc.rcsynth";
+  public static final String AUTOEXEC_KEY = "sonar.vhdlrc.auto";
   public static final String DEFAULT_ENTITY = "WORK.TOP";
+  public static final String DEFAULT_FSM = "^state_(.)*";
+  public static final String DEFAULT_RCSYNTH = "/mnt/c/fsmexample/vhdlrcsynth.sh";
+  public static final boolean DEFAULT_AUTOEXEC = false;
   
   public static final String CUSTOM_CMD_KEY = "sonar.vhdlrc.customCmd";
   public static final String CUSTOM_CMD_DESCRIPTION_FILE = "/descritpions/CustomCmdDescription.html";
@@ -102,7 +108,19 @@ public class BuildPathMaker {
   public static String getTopEntities(Configuration config ) {
     return config.get(BuildPathMaker.TOP_ENTITY_KEY).orElse("");  
   }
+  
+  public static String getFsmRegex(Configuration config ) {
+	    return config.get(BuildPathMaker.FSM_REGEX_KEY).orElse("");  
+	  }
 
+  public static String getRcSynthPath(Configuration config ) {
+	    return config.get(BuildPathMaker.RCSYNTH_PATH_KEY).orElse("");  
+	  }  
+  
+  public static boolean getAutoexec(Configuration config ) {
+	    return config.getBoolean(BuildPathMaker.AUTOEXEC_KEY).orElse(false);  
+	  }  
+  
   public static InputStreamReader getRessource(String ressourcePath) throws IOException {    
     InputStream is = BuildPathMaker.class.getResourceAsStream(ressourcePath);
     if(is == null) {
