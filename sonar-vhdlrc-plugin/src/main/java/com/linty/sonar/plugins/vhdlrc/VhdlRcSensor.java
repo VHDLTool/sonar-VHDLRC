@@ -86,15 +86,7 @@ public class VhdlRcSensor implements Sensor {
 				}
 			}
 			else {
-				try {
-					System.out.println("ubuntu shell");
-					String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+fsmRegex+"\""};
-					System.out.println(executeCommand(cmd));
-					//System.out.println("bash "+rcSynth+" "+top+" \""+fsmRegex+"\"");
-					//Runtime.getRuntime().exec("bash "+rcSynth+" "+top+" \""+fsmRegex+"\"").waitFor();
-				} catch (Exception e) {
-					System.out.println("error");
-				}
+				String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+fsmRegex+"\""};
 			}
 
 		}
@@ -107,7 +99,6 @@ public class VhdlRcSensor implements Sensor {
 		List<Path> reportFiles = ExternalReportProvider.getReportFiles(reportsDir);
 		Path rcSynthReport = Paths.get("./");
 		List<Path> rcReportFiles = ExternalReportProvider.getReportFiles(rcSynthReport);
-		rcReportFiles.forEach(o->System.out.println(o.toString()));
 		rcReportFiles.removeIf(o->!o.toString().startsWith(RC_SYNTH_REPORT_PATH));
 		if(!rcReportFiles.isEmpty())
 			reportFiles.addAll(rcReportFiles);
