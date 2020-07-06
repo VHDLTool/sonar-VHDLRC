@@ -1772,15 +1772,16 @@ Benefits of changing resets to synchronous :
 	<hb:Rule UID="STD_03900">
 		<hb:RuleUID>STD_03900</hb:RuleUID>
 		<hb:RuleHist>
-			<hb:Status>Validated</hb:Status>
-			<hb:Version>4</hb:Version>
+			<hb:Status>Active</hb:Status>
+			<hb:Version>5</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
-			<hb:Modified>2017-11-24</hb:Modified>
+			<hb:Modified>2020-07-06</hb:Modified>
 			<hb:Revision>
 				V1 : 2014-09-30 : Creation
 				V2 : 2014-12-01 : Technology ; LongDesc
 				V3 : 2015-07-16 : GoodExample ; BadExample ; GoodExDesc ; BadExDesc
 				V4 : 2017-11-24 : Sonarqube
+				V5 : 2020-07-06 : Status
 			</hb:Revision>
 		</hb:RuleHist>
 		<hb:RuleContent>
@@ -4018,15 +4019,15 @@ Thus, a signal that represents a falling edge of a signal named My_Sig is My_Sig
 		<hb:RuleUID>CNE_02000</hb:RuleUID>
 		<hb:RuleHist>
 			<hb:Status>Active</hb:Status>
-			<hb:Version>4</hb:Version>
+			<hb:Version>5</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
-			<hb:Modified>2015-07-16</hb:Modified>
+			<hb:Modified>2020-07-06</hb:Modified>
 			<hb:Revision>
 				V1 : 2014-09-30 : Creation
 				V2 : 2014-12-01 : Status ; Rationale ; ShortDesc ; Severity  
 				V3 : 2015-02-17 : Technology ; ShortDesc
 				V4 : 2015-07-16 : GoodExample ; BadExample ; GoodExDesc ; BadExDesc
-				V5: : Status
+				V5 : 2020-07-06 : Status
 			</hb:Revision>
 		</hb:RuleHist>
 		<hb:RuleContent>
