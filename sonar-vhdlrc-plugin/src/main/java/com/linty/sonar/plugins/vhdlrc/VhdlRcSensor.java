@@ -81,12 +81,14 @@ public class VhdlRcSensor implements Sensor {
 			String rcSynth = BuildPathMaker.getRcSynthPath(context.config());
 			if(IS_WINDOWS) {
 				try {
-					Runtime.getRuntime().exec("cmd.exe /c cmd.exe /c ubuntu1804 run "+rcSynth+" "+top+" \""+fsmRegex+"\"").waitFor();
-				} catch (IOException | InterruptedException e) {
+					System.out.println("cmd.exe /c cmd.exe /c ubuntu1804 run "+rcSynth+" "+top+" \""+fsmRegex+"\"");
+					Runtime.getRuntime().exec("cmd.exe /c start ubuntu1804 run "+rcSynth+" "+top+" \""+fsmRegex+"\"").waitFor();
+				} catch (IOException | InterruptedException e) {System.out.println("error");
 				}
 			}
 			else {
 				String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+fsmRegex+"\""};
+				System.out.println(executeCommand(cmd));
 			}
 
 		}

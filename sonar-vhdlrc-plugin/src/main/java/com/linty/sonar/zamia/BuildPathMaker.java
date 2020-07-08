@@ -39,7 +39,7 @@ public class BuildPathMaker {
   public static final String RCSYNTH_PATH_KEY = "sonar.vhdlrc.rcsynth";
   public static final String AUTOEXEC_KEY = "sonar.vhdlrc.auto";
   public static final String DEFAULT_ENTITY = "WORK.TOP";
-  public static final String DEFAULT_FSM = "^state_(.)*";
+  public static final String DEFAULT_FSM = "^fsm_\\(.\\)*";
   public static final String DEFAULT_RCSYNTH = "/mnt/c/fsmexample/vhdlrcsynth.sh";
   public static final boolean DEFAULT_AUTOEXEC = false;
   
