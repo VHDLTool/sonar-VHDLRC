@@ -4066,6 +4066,13 @@ Thus, a signal that represents a falling edge of a signal named My_Sig is My_Sig
 			<hb:FigureDesc></hb:FigureDesc>
 			<hb:Figure />
 		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:StringParam>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Position>Prefix</hb:Position>
+			   <hb:Value>sm_</hb:Value>
+		   </hb:StringParam>
+	   </hb:RuleParams>
 	</hb:Rule>
 	
 	<hb:Rule UID="CNE_01100">

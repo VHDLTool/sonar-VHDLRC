@@ -73,14 +73,6 @@ public class VHDLRcPlugin implements Plugin {
         .defaultValue(BuildPathMaker.DEFAULT_ENTITY)
         .onQualifiers(Qualifiers.PROJECT)
         .build());
-	    builder.add(PropertyDefinition.builder(BuildPathMaker.FSM_REGEX_KEY)
-	  	      .category(Vhdl.VHDLRC_CATEGORY)
-	          .subCategory("Rcsynth")
-	          .name("Fsm regex")
-	          .description("Regular expression for FSM signal names")
-	          .defaultValue(BuildPathMaker.DEFAULT_FSM)
-	          .onQualifiers(Qualifiers.PROJECT)
-	          .build());
 	    builder.add(PropertyDefinition.builder(BuildPathMaker.RCSYNTH_PATH_KEY)
 	  	      .category(Vhdl.VHDLRC_CATEGORY)
 	          .subCategory("Rcsynth")

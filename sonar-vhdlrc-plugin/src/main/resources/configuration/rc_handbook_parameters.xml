@@ -49,10 +49,11 @@
 	<hb:Rule UID="CNE_02000">
 		<hb:RuleUID>CNE_02000</hb:RuleUID>
 		<hb:RuleGEN>GEN_02000</hb:RuleGEN>	
-	   	<hb:RuleParams>
+		<hb:RuleParams>
 			<hb:StringParam>
-			   <hb:ParamID>Regex</hb:ParamID>
-			   <hb:Value></hb:Value>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Position>Prefix</hb:Position>
+			   <hb:Value>sm_</hb:Value>
 		   </hb:StringParam>
 	   </hb:RuleParams>
 	</hb:Rule>

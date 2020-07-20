@@ -31,6 +31,7 @@ import javax.xml.stream.XMLStreamException;
 import org.fest.util.VisibleForTesting;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
@@ -65,7 +66,7 @@ public class VhdlRcSensor implements Sensor {
 
 	@Override
 	public void execute(SensorContext context) {
-
+		
 		//ZamiaRunner-------------------------------------------------------
 		String top=BuildPathMaker.getTopEntities(context.config());
 		if(top.isEmpty()) {
@@ -77,18 +78,28 @@ public class VhdlRcSensor implements Sensor {
 		//------------------------------------------------------------------
 
 		if(BuildPathMaker.getAutoexec(context.config())) {			
-			String fsmRegex = BuildPathMaker.getFsmRegex(context.config());
-			String rcSynth = BuildPathMaker.getRcSynthPath(context.config());
-			if(IS_WINDOWS) {
-				try {
-					System.out.println("cmd.exe /c cmd.exe /c ubuntu1804 run "+rcSynth+" "+top+" \""+fsmRegex+"\"");
-					Runtime.getRuntime().exec("cmd.exe /c start ubuntu1804 run "+rcSynth+" "+top+" \""+fsmRegex+"\"").waitFor();
-				} catch (IOException | InterruptedException e) {System.out.println("error");
+			String fsmRegex = null;
+			ActiveRule cne_02000 = context.activeRules().findByInternalKey("vhdlrc-repository", "CNE_02000");
+			if (cne_02000!=null) {
+				String format = cne_02000.param("Format");
+				if(format!=null) {
+					if(!format.startsWith("*"))
+						format="^"+format;
+					fsmRegex=format.trim().replace("*", ".*");
 				}
-			}
-			else {
-				String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+fsmRegex+"\""};
-				System.out.println(executeCommand(cmd));
+				}
+			if(fsmRegex!=null) {
+				String rcSynth = BuildPathMaker.getRcSynthPath(context.config());
+				if(IS_WINDOWS) {
+					try {
+						Runtime.getRuntime().exec("cmd.exe /c start ubuntu1804 run "+rcSynth+" "+top+" \""+fsmRegex+"\"").waitFor();
+					} catch (IOException | InterruptedException e) {System.out.println("error");
+					}
+				}
+				else {
+					String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+fsmRegex+"\""};
+					System.out.println(executeCommand(cmd));
+				}
 			}
 
 		}
