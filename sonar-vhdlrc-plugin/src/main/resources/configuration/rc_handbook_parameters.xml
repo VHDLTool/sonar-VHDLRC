@@ -10,6 +10,18 @@
 		are hard coded.</hb:description>
 	<hb:version_revision>creation</hb:version_revision>
 
+	<hb:Rule UID="CNE_01000">
+		<hb:RuleUID>CNE_01000</hb:RuleUID>
+		<hb:RuleGEN>GEN_01000</hb:RuleGEN>	
+	   	<hb:RuleParams>
+			<hb:StringParam>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Position>Prefix</hb:Position>
+			   <hb:Value>v_</hb:Value>
+		   </hb:StringParam>
+	   </hb:RuleParams>
+	</hb:Rule>
+
 	<hb:Rule UID="CNE_01200">
 		<hb:RuleUID>CNE_01200</hb:RuleUID>
 		<hb:RuleGEN>GEN_01200</hb:RuleGEN>	
@@ -22,6 +34,18 @@
 	   </hb:RuleParams>
 	</hb:Rule>
 	
+	<hb:Rule UID="CNE_01600">
+		<hb:RuleUID>CNE_01600</hb:RuleUID>
+		<hb:RuleGEN>GEN_01600</hb:RuleGEN>	
+	   	<hb:RuleParams>
+			<hb:StringParam>
+			   <hb:ParamID>P1</hb:ParamID>
+			   <hb:Position>Prefix</hb:Position>
+			   <hb:Value>pkg_</hb:Value>
+		   </hb:StringParam>
+	   </hb:RuleParams>
+	 </hb:Rule>
+	
 	<hb:Rule UID="CNE_02000">
 		<hb:RuleUID>CNE_02000</hb:RuleUID>
 		<hb:RuleGEN>GEN_02000</hb:RuleGEN>	
@@ -31,6 +55,28 @@
 			   <hb:Value></hb:Value>
 		   </hb:StringParam>
 	   </hb:RuleParams>
+	</hb:Rule>
+	
+	<hb:Rule UID="CNE_02100">
+		<hb:RuleUID>CNE_02100</hb:RuleUID>
+		<hb:RuleGEN>GEN_02100</hb:RuleGEN>	
+	   	<hb:RuleParams>
+			<hb:StringParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Position>Equal</hb:Position>
+				<hb:Value>Behavioral</hb:Value>
+			</hb:StringParam>
+			<hb:StringParam>
+				<hb:ParamID>P2</hb:ParamID>
+				<hb:Position>Equal</hb:Position>
+				<hb:Value>RTL</hb:Value>
+			</hb:StringParam>
+			<hb:StringParam>
+				<hb:ParamID>P3</hb:ParamID>
+				<hb:Position>Equal</hb:Position>
+				<hb:Value>Simulation</hb:Value>
+			</hb:StringParam>
+		</hb:RuleParams>
 	</hb:Rule>
 	
 	<hb:Rule UID="CNE_02300">
