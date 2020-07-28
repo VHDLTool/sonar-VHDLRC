@@ -194,7 +194,7 @@ public class ZamiaRunnerTest {
   }
   
   @Test
-  public void test_no_cleaning_vhdl_source_when_debug() throws IOException {
+  public void test_cleaning_vhdl_source_when_debug() throws IOException {
     logTester.setLevel(LoggerLevel.DEBUG); 
     testProject.newFolder("home","project1","src");
     addTestFile2(context, testProject, "home/project1/src/Top.vhd");
@@ -202,7 +202,7 @@ public class ZamiaRunnerTest {
     new ZamiaRunner(context, runnerContext).run();
     
     Path vhdlTargetFolder = Paths.get(testScanner.getRoot().toURI()).resolve(PROJECT_DIRECTORY).resolve("vhdl");
-    assertThat(vhdlTargetFolder.resolve("home/project1/src/Top.vhd").toFile().exists()).isTrue();
+    assertThat(vhdlTargetFolder.resolve("home/project1/src/Top.vhd").toFile().exists()).isFalse();
     //walkin(testScanner.getRoot(),"+--"); 
   }
   

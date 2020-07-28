@@ -35,12 +35,19 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class BuildPathMaker {
   
   public static final String TOP_ENTITY_KEY = "sonar.vhdlrc.topEntities";
-  public static final String FSM_REGEX_KEY = "sonar.vhdlrc.fsmRegex";
   public static final String RCSYNTH_PATH_KEY = "sonar.vhdlrc.rcsynth";
   public static final String AUTOEXEC_KEY = "sonar.vhdlrc.auto";
+  public static final String KEEP_SOURCE_KEY = "sonar.vhdlrc.keepSource";
+  public static final String KEEP_REPORTS_KEY = "sonar.vhdlrc.keepReports";
+  public static final String PAUSE_EXEC_KEY = "sonar.vhdlrc.pauseExec";
   public static final String DEFAULT_ENTITY = "WORK.TOP";
   public static final String DEFAULT_RCSYNTH = "/mnt/c/fsmexample/vhdlrcsynth.sh";
   public static final boolean DEFAULT_AUTOEXEC = false;
+  public static final boolean DEFAULT_KEEP_SOURCE = false;
+  public static final boolean DEFAULT_KEEP_REPORTS = false;
+  public static final boolean DEFAULT_PAUSE_EXEC = false;
+
+
   
   public static final String CUSTOM_CMD_KEY = "sonar.vhdlrc.customCmd";
   public static final String CUSTOM_CMD_DESCRIPTION_FILE = "/descritpions/CustomCmdDescription.html";
@@ -107,10 +114,6 @@ public class BuildPathMaker {
   public static String getTopEntities(Configuration config ) {
     return config.get(BuildPathMaker.TOP_ENTITY_KEY).orElse("");  
   }
-  
-  public static String getFsmRegex(Configuration config ) {
-	    return config.get(BuildPathMaker.FSM_REGEX_KEY).orElse("");  
-	  }
 
   public static String getRcSynthPath(Configuration config ) {
 	    return config.get(BuildPathMaker.RCSYNTH_PATH_KEY).orElse("");  
@@ -118,6 +121,18 @@ public class BuildPathMaker {
   
   public static boolean getAutoexec(Configuration config ) {
 	    return config.getBoolean(BuildPathMaker.AUTOEXEC_KEY).orElse(false);  
+	  }  
+  
+  public static boolean getKeepSource(Configuration config ) {
+	    return config.getBoolean(BuildPathMaker.KEEP_SOURCE_KEY).orElse(false);  
+	  }  
+  
+  public static boolean getKeepReports(Configuration config ) {
+	    return config.getBoolean(BuildPathMaker.KEEP_REPORTS_KEY).orElse(false);  
+	  }  
+  
+  public static boolean getPauseExec(Configuration config ) {
+	    return config.getBoolean(BuildPathMaker.PAUSE_EXEC_KEY).orElse(false);  
 	  }  
   
   public static InputStreamReader getRessource(String ressourcePath) throws IOException {    
