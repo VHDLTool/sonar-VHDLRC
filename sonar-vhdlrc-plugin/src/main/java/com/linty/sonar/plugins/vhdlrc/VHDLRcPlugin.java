@@ -81,6 +81,14 @@ public class VHDLRcPlugin implements Plugin {
 	          .defaultValue(BuildPathMaker.DEFAULT_RCSYNTH)
 	          .onQualifiers(Qualifiers.PROJECT)
 	          .build());
+	    builder.add(PropertyDefinition.builder(BuildPathMaker.FILE_LIST_KEY)
+		  	      .category(Vhdl.VHDLRC_CATEGORY)
+		          .subCategory("Rcsynth")
+		          .name("File list")
+		          .description("List of files to analyse with ghdl, separated with spaces")
+		          .defaultValue(BuildPathMaker.DEFAULT_FILE_LIST)
+		          .onQualifiers(Qualifiers.PROJECT)
+		          .build());
 	    builder.add(PropertyDefinition.builder(BuildPathMaker.AUTOEXEC_KEY)
 		  	      .category(Vhdl.VHDLRC_CATEGORY)
 		          .subCategory("Rcsynth")

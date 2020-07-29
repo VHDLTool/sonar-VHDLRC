@@ -37,6 +37,7 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -66,9 +67,9 @@ public class VhdlRcSensor implements Sensor {
 
 	@Override
 	public void execute(SensorContext context) {
-		
+		Configuration config = context.config();
 		//ZamiaRunner-------------------------------------------------------
-		String top=BuildPathMaker.getTopEntities(context.config());
+		String top=BuildPathMaker.getTopEntities(config);
 		if(top.isEmpty()) {
 			LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See " + BuildPathMaker.TOP_ENTITY_KEY);
 			LOG.warn("Zamia Issues will still be imported");
@@ -76,9 +77,10 @@ public class VhdlRcSensor implements Sensor {
 			ZamiaRunner.run(context); 
 		}
 		//------------------------------------------------------------------
-
-		if(BuildPathMaker.getAutoexec(context.config())) {			
+		
+		if(BuildPathMaker.getAutoexec(config)) {			
 			String fsmRegex = null;
+			String fileList=BuildPathMaker.getFileList(config);
 			ActiveRule cne_02000 = context.activeRules().findByInternalKey("vhdlrc-repository", "CNE_02000");
 			if (cne_02000!=null) {
 				String format = cne_02000.param("Format");
@@ -89,15 +91,15 @@ public class VhdlRcSensor implements Sensor {
 				}
 				}
 			if(fsmRegex!=null) {
-				String rcSynth = BuildPathMaker.getRcSynthPath(context.config());
+				String rcSynth = BuildPathMaker.getRcSynthPath(config);
 				if(IS_WINDOWS) {
 					try {
-						Runtime.getRuntime().exec("cmd.exe /c start ubuntu1804 run "+rcSynth+" "+top+" \""+fsmRegex+"\"").waitFor();
-					} catch (IOException | InterruptedException e) {System.out.println("error");
+						Runtime.getRuntime().exec("cmd.exe /c start ubuntu1804 run "+rcSynth+" "+top+" \""+fsmRegex+"\""+" \""+fileList+"\"").waitFor();
+					} catch (IOException | InterruptedException e) {
 					}
 				}
 				else {
-					String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+fsmRegex+"\""};
+					String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+fsmRegex+"\""+" \""+fileList+"\""};
 					System.out.println(executeCommand(cmd));
 				}
 			}
@@ -105,7 +107,7 @@ public class VhdlRcSensor implements Sensor {
 		}
 
 		Path reportsDir = Paths
-				.get(context.config()
+				.get(config
 						.get(SCANNER_HOME_KEY)
 						.orElseThrow(() -> new IllegalStateException("vhdlRcSensor should not execute without " + SCANNER_HOME_KEY)))
 				.resolve(REPORTING_PATH);

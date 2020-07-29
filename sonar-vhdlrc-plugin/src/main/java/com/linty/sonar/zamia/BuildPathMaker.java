@@ -36,12 +36,14 @@ public class BuildPathMaker {
   
   public static final String TOP_ENTITY_KEY = "sonar.vhdlrc.topEntities";
   public static final String RCSYNTH_PATH_KEY = "sonar.vhdlrc.rcsynth";
+  public static final String FILE_LIST_KEY = "sonar.vhdlrc.fileList";
   public static final String AUTOEXEC_KEY = "sonar.vhdlrc.auto";
   public static final String KEEP_SOURCE_KEY = "sonar.vhdlrc.keepSource";
   public static final String KEEP_REPORTS_KEY = "sonar.vhdlrc.keepReports";
   public static final String PAUSE_EXEC_KEY = "sonar.vhdlrc.pauseExec";
   public static final String DEFAULT_ENTITY = "WORK.TOP";
   public static final String DEFAULT_RCSYNTH = "/mnt/c/fsmexample/vhdlrcsynth.sh";
+  public static final String DEFAULT_FILE_LIST = "";
   public static final boolean DEFAULT_AUTOEXEC = false;
   public static final boolean DEFAULT_KEEP_SOURCE = false;
   public static final boolean DEFAULT_KEEP_REPORTS = false;
@@ -119,6 +121,10 @@ public class BuildPathMaker {
 	    return config.get(BuildPathMaker.RCSYNTH_PATH_KEY).orElse("");  
 	  }  
   
+  public static String getFileList(Configuration config ) {
+	    return config.get(BuildPathMaker.FILE_LIST_KEY).orElse("");  
+	  }  
+
   public static boolean getAutoexec(Configuration config ) {
 	    return config.getBoolean(BuildPathMaker.AUTOEXEC_KEY).orElse(false);  
 	  }  
