@@ -34,7 +34,8 @@ public class Rule {
   String technology;
   String applicationFields;
   String category;
-  String subCategoty; 
+  String subCategory;
+  String status;
   String rationale;
   String shortDescription;
   String longDescription; 
@@ -73,7 +74,8 @@ public class Rule {
     this.sonarSeverity=    EMPTY_STRING;
     this.tag=              EMPTY_STRING;
     this.type=             EMPTY_STRING;  
-    this.subCategoty=      EMPTY_STRING;    
+    this.subCategory=      EMPTY_STRING;    
+    this.status=     	   EMPTY_STRING;    
     this.rationale=        EMPTY_STRING;
     this.shortDescription= EMPTY_STRING;
     this.longDescription=  EMPTY_STRING;         
@@ -107,9 +109,10 @@ public class Rule {
     	.append("<div>")
     	
     	.append("<b>Category : </b>").append(this.category).append(SPACE)
-    	.append("<b>SubCategory : </b>").append(this.subCategoty).append(SPACE)
+    	.append("<b>SubCategory : </b>").append(this.subCategory).append(SPACE)   	
     	.append("<b>Application Fields : </b>").append(this.applicationFields).append(SPACE)
-      .append("<b>Technology : </b>").append(this.technology).append(SPACE);
+        .append("<b>Technology : </b>").append(this.technology).append(SPACE)
+    	.append("<b>Status : </b>").append(this.status).append(SPACE);
     	if(!StringUtils.isEmpty(this.parentUid)) {
     	  text.append("<b>Parent Rule : </b>").append(this.parentUid).append(SPACE);
     	}

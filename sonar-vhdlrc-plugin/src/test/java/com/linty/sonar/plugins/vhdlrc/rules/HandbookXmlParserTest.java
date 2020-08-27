@@ -79,7 +79,7 @@ public class HandbookXmlParserTest {
     for(com.linty.sonar.plugins.vhdlrc.rules.Rule r : rl1) {
       assertThat(r.ruleKey).matches("[A-Z]{3}_[0-9]{5}");
       assertThat(r.category).isNotEmpty();
-      assertThat(r.subCategoty).isNotNull();
+      assertThat(r.subCategory).isNotNull();
       assertThat(r.rationale).isNotNull();
       assertThat(r.parentUid).isNotNull();
       assertThat(r.technology).isNotEmpty();

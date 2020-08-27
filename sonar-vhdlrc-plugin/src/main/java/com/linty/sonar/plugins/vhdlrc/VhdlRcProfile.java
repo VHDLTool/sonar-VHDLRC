@@ -19,9 +19,7 @@
 package com.linty.sonar.plugins.vhdlrc;
 
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -46,7 +44,7 @@ public class VhdlRcProfile implements BuiltInQualityProfilesDefinition{
 	        SMInputFactory inputFactory = initStax();
 	        SMHierarchicCursor rootCursor = inputFactory.rootElementCursor(handbook);
 	        while (rootCursor.getNext() != null) {
-	            addActiveRules(rootCursor.descendantElementCursor("hb:Rule"));
+	            addImplementedRules(rootCursor.descendantElementCursor("hb:Rule"));
 	          }	       
 	        rootCursor.getStreamReader().closeCompletely();
 	      }
@@ -57,13 +55,13 @@ public class VhdlRcProfile implements BuiltInQualityProfilesDefinition{
 		
 	}
 	
-	  private void addActiveRules(SMInputCursor rule) throws XMLStreamException {
+	  private void addImplementedRules(SMInputCursor rule) throws XMLStreamException {
 		    while (rule.getNext() != null) {
 		    	String ruleID = rule.getAttrValue("UID");
 		    	SMInputCursor ruleHist = rule.descendantElementCursor("hb:RuleHist");
 			      if (ruleHist.getNext()!=null) {
 			    	  SMInputCursor ruleStatus = ruleHist.descendantElementCursor("hb:Status");
-			    	  if (ruleStatus.getNext()!=null && ruleStatus.getElemStringValue().equalsIgnoreCase("Active"))
+			    	  if (ruleStatus.getNext()!=null && ruleStatus.getElemStringValue().equalsIgnoreCase("Implemented"))
 			    		  vhdlRcQP.activateRule(VhdlRulesDefinition.VHDLRC_REPOSITORY_KEY, ruleID);
 			      }
 		    }

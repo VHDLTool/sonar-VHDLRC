@@ -145,7 +145,10 @@ public class HandbookXmlParser {
 				r.category = cursor.getElemStringValue();
 				break;
 			case "SubCategory":
-				r.subCategoty = cursor.getElemStringValue();
+				r.subCategory = cursor.getElemStringValue();
+				break;
+			case "Status":
+				r.status = cursor.getElemStringValue();
 				break;
 			case "Rationale":
 				r.rationale = cursor.getElemStringValue();
