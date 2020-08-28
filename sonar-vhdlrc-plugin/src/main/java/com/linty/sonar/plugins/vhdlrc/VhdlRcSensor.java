@@ -77,7 +77,6 @@ public class VhdlRcSensor implements Sensor {
 			ZamiaRunner.run(context); 
 		}
 		//------------------------------------------------------------------
-		
 		if(BuildPathMaker.getAutoexec(config)) {			
 			String fsmRegex = null;
 			String fileList=BuildPathMaker.getFileList(config);
