@@ -137,12 +137,6 @@ public class ZamiaRunner {
     uploadInputFilesToZamia();
     runZamia();
     //After analysis
-    if(!LOG.isDebugEnabled()||!BuildPathMaker.getKeepSource(config)) {
-      clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
-    }
-    if(!LOG.isDebugEnabled()||!BuildPathMaker.getKeepReports(config)) {
-        clean(Paths.get(this.scannerHome, PROJECT_DIR, REPORTING_RULE));
-      }
     LOG.info("----------Vhdlrc Analysis---------(done)");
 	if(BuildPathMaker.getPauseExec(config)) {
 		System.out.println("Press any key to resume execution");
@@ -210,7 +204,7 @@ public class ZamiaRunner {
     FileUtils.copyFile(new File(file.uri()), target.toFile()); 
   }
   
-  private void clean(Path path) {
+  public static void clean(Path path) {
     try {
       FileUtils.cleanDirectory(path.toFile());
     } catch (IOException | IllegalArgumentException e) {

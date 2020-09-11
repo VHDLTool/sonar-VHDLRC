@@ -35,7 +35,6 @@ import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.measure.Measure;
-import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.measures.CoreMetrics;
 
@@ -65,6 +64,7 @@ public class MetricSensorTest {
   @Test
   public void test_line_metrics() {
     MetricSensor sensor = new MetricSensor();
+    context.addContextProperty("sonar.vhdlrc.scanner.home", "");
     sensor.execute(context);
 
     checkMetric("commented_out_file.vhd", COMMENT_LINE, 0);// Comments are a header

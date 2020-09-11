@@ -19,6 +19,8 @@
 package com.linty.sonar.plugins.vhdlrc;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import java.io.InputStreamReader;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.io.FileUtils;
 import org.fest.util.VisibleForTesting;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
@@ -53,6 +56,8 @@ public class VhdlRcSensor implements Sensor {
 	public static final String   REPORTING_PATH = PROJECT_DIR + "/rule_checker/reporting/rule";
 	public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().startsWith("windows");
 	public static final String RC_SYNTH_REPORT_PATH = IS_WINDOWS ? ".\\report_" : "./report_";
+	public static final String SOURCES_DIR = "vhdl";
+	public static final String REPORTING_RULE = "rule_checker/reporting/rule";
 	private static final Logger LOG = Loggers.get(VhdlRcSensor.class);
 	private static List<String> unfoundFiles = new ArrayList<>();
 
@@ -118,6 +123,25 @@ public class VhdlRcSensor implements Sensor {
 			reportFiles.addAll(rcReportFiles);
 		reportFiles.forEach(report -> importReport(report, context));
 		unfoundFiles.forEach(s -> LOG.warn("Input file not found : {}. No rc issues will be imported on this file.",s));
+		
+		String scannerHome= context.config()
+	      .get(VhdlRcSensor.SCANNER_HOME_KEY)
+	      .orElseThrow(() -> new IllegalStateException("vhdlRcSensor should not execute without " + VhdlRcSensor.SCANNER_HOME_KEY));
+	    if(!BuildPathMaker.getKeepSource(config)) {
+	        ZamiaRunner.clean(Paths.get(scannerHome, PROJECT_DIR, SOURCES_DIR));
+	    }
+	    if(!BuildPathMaker.getKeepReports(config)&&!context.fileSystem().baseDir().toString().equals("src\\test\\files")) { //Second condition is here to avoid deletion of test files
+	    	Path reportPath = Paths.get(scannerHome, PROJECT_DIR, REPORTING_RULE);
+	    	ZamiaRunner.clean(reportPath);
+	    	try {
+	    		DirectoryStream<Path> dstream = Files.newDirectoryStream(Paths.get(scannerHome, PROJECT_DIR, REPORTING_RULE));
+	    		if (dstream.iterator().hasNext() ) {  // Zamiarunner.clean, which uses FileUtils.cleanDirectory, doesn't always delete files in subfolders
+	    			FileUtils.forceDeleteOnExit(reportPath.toFile());
+	    		}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	    }
 	}
 
 	@VisibleForTesting

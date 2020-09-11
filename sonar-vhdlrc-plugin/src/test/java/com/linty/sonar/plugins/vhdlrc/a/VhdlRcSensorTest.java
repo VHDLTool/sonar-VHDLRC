@@ -29,6 +29,8 @@ import org.junit.Test;
 import org.sonar.api.utils.log.LogTester;
 import com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin;
 import com.linty.sonar.plugins.vhdlrc.VhdlRcSensor;
+import com.linty.sonar.zamia.BuildPathMaker;
+
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
@@ -82,6 +84,7 @@ public class VhdlRcSensorTest  {
 	@Test (expected = IllegalStateException.class)
 	public void Unset_parameter_should_never_occure() {
 	  SensorContextTester Context = SensorContextTester.create(Paths.get("src/test/files"));
+	  Context.addContextProperty(BuildPathMaker.KEEP_REPORTS_KEY, "true");
 	  sensor.execute(Context);
 	}
 	
@@ -89,6 +92,7 @@ public class VhdlRcSensorTest  {
 	@Test
   public void invalid_path_should_log_error() {
     SensorContextTester Context = createContext("src/test/files","src/invalid/path/");
+    Context.addContextProperty(BuildPathMaker.KEEP_REPORTS_KEY, "true");
     sensor.execute(Context);
     List<Issue> issues = new ArrayList<>(Context.allIssues());
     assertThat(issues).isEmpty();
@@ -97,6 +101,7 @@ public class VhdlRcSensorTest  {
   
 	@Test
 	public void test_two_good_issues_one_failure() {
+	  context1.addContextProperty(BuildPathMaker.KEEP_REPORTS_KEY, "true");
 	  sensor.execute(context1);
 	  List<Issue> issues = new ArrayList<>(context1.allIssues());
 	  

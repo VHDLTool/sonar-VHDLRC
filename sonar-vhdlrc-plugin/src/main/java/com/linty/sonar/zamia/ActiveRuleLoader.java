@@ -22,6 +22,7 @@ import com.linty.sonar.params.ParamTranslator;
 import com.linty.sonar.params.ZamiaIntParam;
 import com.linty.sonar.params.ZamiaRangeParam;
 import com.linty.sonar.params.ZamiaStringParam;
+import com.linty.sonar.plugins.vhdlrc.rules.HandbookYosysRulesXmlParser;
 import com.linty.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.xml.XMLConstants;
@@ -69,6 +71,7 @@ public class ActiveRuleLoader {
   
   private Collection<ActiveRule> sonarActiveRules;
   private List<String> selectedRuleKeys;
+  private Set<String> yosysRules;
   private final String ressource;
   private Document doc;
   
@@ -85,7 +88,7 @@ public class ActiveRuleLoader {
       if(sourceIs != null) {
         return writeParametersInXml(sourceIs);
       }
-      throw new FileNotFoundException("rc_handbook_paramters.xml not found");
+      throw new FileNotFoundException("rc_handbook_parameters.xml not found");
     } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
       throw new IllegalStateException(e);
     }
@@ -95,7 +98,7 @@ public class ActiveRuleLoader {
   protected Path writeParametersInXml(InputStream source) throws IOException, ParserConfigurationException, SAXException, TransformerException {
     //Initiates the list of active rules to put in rc_selected_rules.xml later
     selectedRuleKeys = new ArrayList<>();
-
+    yosysRules = new HandbookYosysRulesXmlParser().parseXML(getClass().getClassLoader().getResourceAsStream("configuration/HANDBOOK/Rulesets/handbook.xml"));
     //Create a Temporary xml file with a random name
     Path target = Files.createTempFile("target",".xml");
     target.toFile().deleteOnExit();
@@ -135,7 +138,7 @@ public class ActiveRuleLoader {
       .findFirst()
       .orElse(null);
     //If present
-    if(sonarRule != null) {
+    if(sonarRule != null&&!yosysRules.contains(nodeUid)) {
       selectedRuleKeys.add(nodeUid); //Add it to the list of selected rules
       if(!sonarRule.params().isEmpty() && ParamTranslator.hasZamiaParam(sonarRule)) {
         writeParam(ruleNode, sonarRule);
