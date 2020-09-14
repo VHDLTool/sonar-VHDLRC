@@ -24,8 +24,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import com.linty.sonar.params.ZamiaStringParam;
-import com.linty.sonar.plugins.vhdlrc.rules.HandbookXmlParser;
-
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
 import java.util.List;

@@ -100,6 +100,8 @@ public class VhdlRcSensor implements Sensor {
 					try {
 						Runtime.getRuntime().exec("cmd.exe /c start ubuntu1804 run "+rcSynth+" "+top+" \""+fsmRegex+"\""+" \""+fileList+"\"").waitFor();
 					} catch (IOException | InterruptedException e) {
+					    LOG.warn("Ubuntu thread interrupted");
+					    Thread.currentThread().interrupt();
 					}
 				}
 				else {
@@ -138,8 +140,9 @@ public class VhdlRcSensor implements Sensor {
 	    		if (dstream.iterator().hasNext() ) {  // Zamiarunner.clean, which uses FileUtils.cleanDirectory, doesn't always delete files in subfolders
 	    			FileUtils.forceDeleteOnExit(reportPath.toFile());
 	    		}
+	    		dstream.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOG.warn("Error while trying to clean reports directory");
 			}
 	    }
 	}
@@ -191,7 +194,7 @@ public class VhdlRcSensor implements Sensor {
 	}
 	
 	public String executeCommand(String[] cmd) {
-	    StringBuffer theRun = null;
+	    StringBuffer theRun = new StringBuffer();
 	    try {
 	        Process process = Runtime.getRuntime().exec(cmd);
 
@@ -209,6 +212,8 @@ public class VhdlRcSensor implements Sensor {
 	    } catch (IOException e) {
 	        throw new RuntimeException(e);
 	    } catch (InterruptedException e) {
+		    LOG.warn("Command thread interrupted");
+		    Thread.currentThread().interrupt();
 	        throw new RuntimeException(e);
 	    }
 	        return theRun.toString().trim();

@@ -21,15 +21,12 @@ package com.linty.sonar.plugins.vhdlrc.issues;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import com.linty.sonar.plugins.vhdlrc.issues.Issue;
 
 import org.junit.Rule;
 import org.junit.Test;

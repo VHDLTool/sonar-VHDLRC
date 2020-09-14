@@ -78,7 +78,7 @@ public class VhdlTest {
 
 		@Override
 		public Optional<String> get(String key) {
-			return null;
+			return Optional.empty();
 		}
 
 		@Override

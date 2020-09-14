@@ -139,12 +139,11 @@ public class ZamiaRunner {
     //After analysis
     LOG.info("----------Vhdlrc Analysis---------(done)");
 	if(BuildPathMaker.getPauseExec(config)) {
-		System.out.println("Press any key to resume execution");
+		System.out.println("Press ENTER to resume execution");
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.warn("Input exception");
 		}
 	}
   }

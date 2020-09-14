@@ -24,20 +24,28 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 import org.xmlunit.builder.Input;
 import org.xmlunit.matchers.CompareMatcher;
+
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThat;
 
 public class fileTestUtils {
-
+	
+  private static final Logger LOG = Loggers.get(fileTestUtils.class);
+	
   public void compareFileLines(Path f1, Path f2, boolean printLines) {
   
+	BufferedReader br1 = null;
+	BufferedReader br2 = null;
     try {
-      BufferedReader br1 = Files.newBufferedReader(f1,UTF_8);
-      BufferedReader br2 = Files.newBufferedReader(f2,UTF_8);
+      br1 = Files.newBufferedReader(f1,UTF_8);
+      br2 = Files.newBufferedReader(f2,UTF_8);
       String l1;
       String l2;
       int lineNum = 0;
@@ -50,6 +58,19 @@ public class fileTestUtils {
       } 
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read file", e);
+    }finally {
+    	try {
+    		if(br1!=null)
+    			br1.close();
+		} catch (IOException e) {
+			LOG.warn("Could not close stream");
+		}
+    	try {
+    		if(br2!=null)
+    			br2.close();
+		} catch (IOException e) {
+			LOG.warn("Could not close stream");
+		}
     }
   }
 
@@ -74,11 +95,10 @@ public class fileTestUtils {
         System.out.println(line);
       }
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+		LOG.warn("Could not find file");
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+		LOG.warn("Could not find file");
+
     }
   }
 

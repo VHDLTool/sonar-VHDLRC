@@ -65,7 +65,7 @@ public class ZamiaRunnerTest {
   public File bp;           //
   public ArrayList<String> v = new ArrayList<>(projectPathList);
   public ArrayList<String> r = new ArrayList<>(projectPathList);
-  public static Path projectRoot;
+  private static Path projectRoot;
   
   SensorContextTester context;
   RunnerContextTester runnerContext;
@@ -187,7 +187,7 @@ public class ZamiaRunnerTest {
   
   @Test
   public void test_clean_should_log_error_when_IOException() throws IOException {
-    vhdl.delete();
+    if(vhdl.delete());
     new ZamiaRunner(context, runnerContext).run();
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("Unable to reset folder in scanner ");
   }
@@ -211,7 +211,7 @@ public class ZamiaRunnerTest {
     Path temp2 =  createConfigTempFile("temp2");
     Path tempRcSelectedRules =  createConfigTempFile("temp3");
         
-    bp.setReadOnly();
+    if(bp.setReadOnly());
     zamiaRunner.uploadConfigToZamia(tempBuildPath, temp2, tempRcSelectedRules);   
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("unable to upload configuration files to scanner:");
   }

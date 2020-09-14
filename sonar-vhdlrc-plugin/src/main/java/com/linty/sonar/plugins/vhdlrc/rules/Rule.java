@@ -20,7 +20,6 @@ package com.linty.sonar.plugins.vhdlrc.rules;
 
 
 import com.linty.sonar.params.ZamiaParam;
-import com.linty.sonar.plugins.vhdlrc.rules.FigureSvg;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;

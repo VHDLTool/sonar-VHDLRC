@@ -106,6 +106,8 @@ public class ActiveRuleLoader {
     // write the content into xml file
     DocumentBuilderFactory dbf = DocumentBuilderFactory
       .newInstance();
+    dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+    dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
     dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
     this.doc = dbf
       .newDocumentBuilder()
@@ -120,6 +122,8 @@ public class ActiveRuleLoader {
     // write the content into xml file
     TransformerFactory tf = TransformerFactory
     .newInstance();
+    tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+    tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
     tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
     Transformer transfo = tf
     .newTransformer();
