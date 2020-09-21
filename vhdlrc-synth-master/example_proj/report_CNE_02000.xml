@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>RC-Synth-1.00</rc:RuleCheckerVersion>
+  <rc:RuleName>CNE_02000</rc:RuleName>
+  <rc:ExecutionDate>Wed Jul  8 18:36:14 CEST 2020</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./mealy_4s_badname.vhd</rc:File>
+    <rc:Line>27</rc:Line>
+    <rc:Entity>mealy_4s_badname</rc:Entity>
+    <rc:Architecture/>
+    <rc:CNE_02000>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>State machine state_mealy is miswritten.</rc:SonarError>
+        <rc:SonarRemediationMsg>Change signal name state_mealy to comply with ^fsm_(.)*</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:CNE_02000>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./moore_4s_badname.vhdl</rc:File>
+    <rc:Line>25</rc:Line>
+    <rc:Entity>moore_4s_badname</rc:Entity>
+    <rc:Architecture/>
+    <rc:CNE_02000>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>State machine state_moore is miswritten.</rc:SonarError>
+        <rc:SonarRemediationMsg>Change signal name state_moore to comply with ^fsm_(.)*</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:CNE_02000>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./safe_state_badname.vhd</rc:File>
+    <rc:Line>21</rc:Line>
+    <rc:Entity>safe_state_badname</rc:Entity>
+    <rc:Architecture/>
+    <rc:CNE_02000>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>State machine state is miswritten.</rc:SonarError>
+        <rc:SonarRemediationMsg>Change signal name state to comply with ^fsm_(.)*</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:CNE_02000>
+  </rc:RuleFailure>
+  <rc:RuleFailure>
+    <rc:File>./user_encod_badname.vhd</rc:File>
+    <rc:Line>24</rc:Line>
+    <rc:Entity>user_encod_badname</rc:Entity>
+    <rc:Architecture/>
+    <rc:CNE_02000>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>State machine present_state is miswritten.</rc:SonarError>
+        <rc:SonarRemediationMsg>Change signal name present_state to comply with ^fsm_(.)*</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:CNE_02000>
+  </rc:RuleFailure>
+</rc:ReportRule>
