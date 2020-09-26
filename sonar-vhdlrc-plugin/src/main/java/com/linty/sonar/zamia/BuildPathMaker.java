@@ -41,6 +41,9 @@ public class BuildPathMaker {
   public static final String KEEP_SOURCE_KEY = "sonar.vhdlrc.keepSource";
   public static final String KEEP_REPORTS_KEY = "sonar.vhdlrc.keepReports";
   public static final String PAUSE_EXEC_KEY = "sonar.vhdlrc.pauseExec";
+  public static final String FEXPLICIT_KEY = "sonar.vhdlrc.fexplicit";
+  public static final String FSYNOPSYS_KEY = "sonar.vhdlrc.fsynopsys";
+  public static final String WORKDIR_KEY = "sonar.vhdlrc.workdir";
   public static final String DEFAULT_ENTITY = "WORK.TOP";
   public static final String DEFAULT_RCSYNTH = "/mnt/c/fsmexample/vhdlrcsynth.sh";
   public static final String DEFAULT_FILE_LIST = "";
@@ -48,7 +51,9 @@ public class BuildPathMaker {
   public static final boolean DEFAULT_KEEP_SOURCE = false;
   public static final boolean DEFAULT_KEEP_REPORTS = false;
   public static final boolean DEFAULT_PAUSE_EXEC = false;
-
+  public static final boolean DEFAULT_FEXPLICIT = false;
+  public static final boolean DEFAULT_FSYNOPSYS = false;
+  public static final String DEFAULT_WORKDIR = "build_dir";
 
   
   public static final String CUSTOM_CMD_KEY = "sonar.vhdlrc.customCmd";
@@ -139,7 +144,16 @@ public class BuildPathMaker {
   
   public static boolean getPauseExec(Configuration config ) {
 	    return config.getBoolean(BuildPathMaker.PAUSE_EXEC_KEY).orElse(false);  
-	  }  
+	  } 
+  public static boolean getFexplicit(Configuration config ) {
+	    return config.getBoolean(BuildPathMaker.FEXPLICIT_KEY).orElse(false);  
+	  } 
+  public static boolean getFsynopsys(Configuration config ) {
+	    return config.getBoolean(BuildPathMaker.FSYNOPSYS_KEY).orElse(false);  
+	  } 
+  public static String getWorkdir(Configuration config ) {
+	    return config.get(BuildPathMaker.WORKDIR_KEY).orElse("");  
+	  } 
   
   public static InputStreamReader getRessource(String ressourcePath) throws IOException {    
     InputStream is = BuildPathMaker.class.getResourceAsStream(ressourcePath);

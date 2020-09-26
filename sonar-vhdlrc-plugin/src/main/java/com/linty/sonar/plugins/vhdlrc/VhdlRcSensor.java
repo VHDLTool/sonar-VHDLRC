@@ -62,6 +62,10 @@ public class VhdlRcSensor implements Sensor {
 	public static final String SOURCES_DIR = "vhdl";
 	public static final String REPORTING_RULE = "rule_checker/reporting/rule";
 	private static final String repo="vhdlrc-repository";
+	private static final String fexplicit=" -fexplicit";
+	private static final String fsynopsys=" -fsynopsys";
+	private static final String yosysFsmCmd1="yosys -m ghdl -p \"ghdl";
+	private static final String yosysFsmCmd2="; setattr -set fsm_encoding \\\"auto\\\"; fsm -norecode -nomap -export\"";
 	private static final Logger LOG = Loggers.get(VhdlRcSensor.class);
 	private static List<String> unfoundFiles = new ArrayList<>();
 	private String fsmRegex;
@@ -85,7 +89,7 @@ public class VhdlRcSensor implements Sensor {
 		//ZamiaRunner-------------------------------------------------------
 		String top=BuildPathMaker.getTopEntities(config);
 		if(top.isEmpty()) {
-			LOG.warn("Vhdlrc anaysis skipped : No defined Top Entity. See " + BuildPathMaker.TOP_ENTITY_KEY);
+			LOG.warn("Vhdlrc analysis skipped : No defined Top Entity. See " + BuildPathMaker.TOP_ENTITY_KEY);
 			LOG.warn("Zamia Issues will still be imported");
 		} else {
 			ZamiaRunner.run(context); 
@@ -94,17 +98,23 @@ public class VhdlRcSensor implements Sensor {
 		if(BuildPathMaker.getAutoexec(config)) {			
 			String fileList=BuildPathMaker.getFileList(config);
 			String rcSynth = BuildPathMaker.getRcSynthPath(config);
+			String ghdlParams=((BuildPathMaker.getFexplicit(config)) ? fexplicit : "")+((BuildPathMaker.getFsynopsys(config)) ? fsynopsys : "");	
+			String yosysFsmCmd = yosysFsmCmd1+ghdlParams+" "+top+" "+yosysFsmCmd2;
+			String workdir=BuildPathMaker.getWorkdir(config);
 			if(IS_WINDOWS) {
+				System.out.println(executeCommand(new String[] {"cmd.exe","/c","ubuntu1804 run "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+fileList+"\""})); // Still needs work
+				//System.out.println(executeCommand(new String[] {"cmd.exe","/c","cd "+BuildPathMaker.getWorkdir(config)+"; ubuntu1804 run "+yosysFsmCmd}));
 				try {
-					Runtime.getRuntime().exec("cmd.exe /c start ubuntu1804 run "+rcSynth+" "+top+" \""+fileList+"\"").waitFor();
+					Runtime.getRuntime().exec("cmd.exe /c cd "+workdir+"; ubuntu1804 run \"+yosysFsmCmd").waitFor();
 				} catch (IOException | InterruptedException e) {
 					LOG.warn("Ubuntu thread interrupted");
 					Thread.currentThread().interrupt();
 				}
 			}
 			else {
-				String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+fileList+"\""};
+				String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+fileList+"\""};
 				System.out.println(executeCommand(cmd));
+				System.out.println(executeCommand(new String[] {"sh","-c","cd "+workdir+"; "+yosysFsmCmd}));
 			}
 		}
 
