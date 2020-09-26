@@ -156,7 +156,7 @@ public class VHDLRcPlugin implements Plugin {
 	    builder.add(PropertyDefinition.builder(BuildPathMaker.WORKDIR_KEY)
 		  	      .category(Vhdl.VHDLRC_CATEGORY)
 		          .subCategory("Yosys")
-		          .name("workdir")
+		          .name("Ghdl working directory")
 		          .description("Ghdl working directory, relative to the project directory. Needed to execute yosys")
 		          .type(PropertyType.STRING)
 		          .defaultValue(BuildPathMaker.DEFAULT_WORKDIR)

@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.File;
@@ -71,6 +72,7 @@ public class VhdlRcSensor implements Sensor {
 	private String fsmRegex;
 	private SensorContext context;
 	private FilePredicates predicates;
+	private String baseProjDir;
 
 	@Override
 	public void describe(SensorDescriptor descriptor) {
@@ -86,6 +88,7 @@ public class VhdlRcSensor implements Sensor {
 		this.context=context;
 		this.predicates = context.fileSystem().predicates();
 		Configuration config = context.config();
+		baseProjDir=System.getProperty("user.dir");
 		//ZamiaRunner-------------------------------------------------------
 		String top=BuildPathMaker.getTopEntities(config);
 		if(top.isEmpty()) {
@@ -119,7 +122,7 @@ public class VhdlRcSensor implements Sensor {
 		}
 
 		try {
-			Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".kiss2")).forEach(o1->addYosysIssues(o1));
+			Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".kiss2")).forEach(o1->addYosysIssues(o1)); //Could be better optimized by using workdir property
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -177,18 +180,25 @@ public class VhdlRcSensor implements Sensor {
 
 		String[] kiss2FileName =kiss2Path.getFileName().toString().split("-\\$fsm\\$.");
 		String vhdlFilePath=kiss2Path.toString().split("-\\$fsm")[0];	
-		String path=vhdlFilePath+".vhd";
-		InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(path));
-		File file = new File(path);
-		if (inputFile==null) {
-			inputFile = context.fileSystem().inputFile(predicates.hasPath(path+"l"));
-			file = new File(path+"l");
+		String sourceFileName=vhdlFilePath.substring(vhdlFilePath.lastIndexOf("/"))+".vhd";
+		
+		Optional<Path> oPath = Optional.empty();
+		try {
+			oPath = Files.walk(Paths.get(baseProjDir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(sourceFileName)||o.toString().toLowerCase().endsWith(sourceFileName+"l")).findFirst();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
+		
+		InputFile inputFile=null;
+		File file=null;
+		if(oPath.isPresent()) {
+			inputFile = context.fileSystem().inputFile(predicates.hasPath(oPath.get().toString()));
+			file = new File(oPath.get().toString());
+		}
+		
 		if (inputFile!=null) {
-			//String vhdlFileName=kiss2FileName[0];
-			String stateName=kiss2FileName[1].split("\\$")[0];
-			
+			String stateName=kiss2FileName[1].split("\\$")[0];			
 			String stateType="";
 			int sigDecLine=1;
 			try (FileReader fReader = new FileReader(file)){
