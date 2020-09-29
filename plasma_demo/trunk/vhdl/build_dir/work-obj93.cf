@@ -1,0 +1,52 @@
+v 4
+file . "..//mlite_cpu.vhd" "548acd2da01297c25b8e222c2645641ff98e7122" "20200924093018.307":
+  entity mlite_cpu at 69( 3188) + 0 on 43;
+  architecture logic of mlite_cpu at 94( 4187) + 0 on 44;
+file . "..//shifter.vhd" "095c049bddb7b8dd1dcf8afb906c146ca5726d5f" "20200924093018.083":
+  entity shifter at 13( 510) + 0 on 39;
+  architecture logic of shifter at 25( 890) + 0 on 40;
+file . "..//pc_next.vhd" "bdc127c27bd3d8a4c513cb3ad484397b940f5a73" "20200924093018.045":
+  entity pc_next at 12( 489) + 0 on 35;
+  architecture logic of pc_next at 29( 1061) + 0 on 36;
+file . "..//mult.vhd" "e975c94be78fd1adb34eb7bd0b8d81090da5cd70" "20200924093018.009":
+  entity mult at 39( 1166) + 0 on 31;
+  architecture logic of mult at 55( 1635) + 0 on 32;
+file . "..//control.vhd" "03ff6c8924f6f3cd4113d573d794a84874f9249c" "20200924093017.969":
+  entity control at 23( 1095) + 0 on 27;
+  architecture logic of control at 46( 1995) + 0 on 28;
+file . "..//ram_xilinx.vhd" "3d951a118d5ee9f09c0a8017bc7b13254bfbc5e3" "20200924093017.932":
+  entity ram at 36( 1623) + 0 on 23;
+  architecture logic of ram at 56( 2314) + 0 on 24;
+file . "..//eth_dma.vhd" "0ad9be0e7f8d9752c4f6927254239eae66fa8132" "20200924093017.681":
+  entity eth_dma at 16( 753) + 0 on 19;
+  architecture logic of eth_dma at 49( 2124) + 0 on 20;
+file . "..//plasma.vhd" "e5571a1184fb16455a5b7fb432d332652b8a5604" "20200924093017.638":
+  entity plasma at 35( 1201) + 0 on 15;
+  architecture logic of plasma at 62( 2139) + 0 on 16;
+file . "..//mlite_pack.vhd" "4764fd7c4934ddf77ac8b84050340f257266531d" "20200924093017.600":
+  package mlite_pack at 12( 523) + 0 on 11 body;
+  package body mlite_pack at 493( 21383) + 0 on 12;
+file . "..//ddr_ctrl.vhd" "df9f03550d3580c2cee13f93c7c68e458b894a98" "20200924093017.619":
+  entity ddr_ctrl at 51( 2318) + 0 on 13;
+  architecture logic of ddr_ctrl at 90( 3720) + 0 on 14;
+file . "..//uart.vhd" "1337d170265647a42358f8b07c98bdb985da9eef" "20200924093017.661":
+  entity uart at 12( 454) + 0 on 17;
+  architecture logic of uart at 35( 1157) + 0 on 18;
+file . "..//alu.vhd" "512bf5af0a683694453030615195bcb4b9a0fd79" "20200924093017.699":
+  entity alu at 12( 468) + 0 on 21;
+  architecture logic of alu at 24( 829) + 0 on 22;
+file . "..//bus_mux.vhd" "3e350716738d8011398d0d1f41b2893296806123" "20200924093017.951":
+  entity bus_mux at 18( 783) + 0 on 25;
+  architecture logic of bus_mux at 43( 1690) + 0 on 26;
+file . "..//mem_ctrl.vhd" "c70823978442bfff8cfb888d138dee3f1c6852b9" "20200924093017.988":
+  entity mem_ctrl at 13( 530) + 0 on 29;
+  architecture logic of mem_ctrl at 40( 1515) + 0 on 30;
+file . "..//pipeline.vhd" "00fa6068c04ccd7e316ae612be5f2415a7b3430c" "20200924093018.027":
+  entity pipeline at 13( 567) + 0 on 33;
+  architecture logic of pipeline at 48( 2057) + 0 on 34;
+file . "..//reg_bank.vhd" "3477f7493003e2bd43af704545c821f7704e22d0" "20200924093018.065":
+  entity reg_bank at 13( 576) + 0 on 37;
+  architecture ram_block of reg_bank at 41( 1809) + 0 on 38;
+file . "..//cache.vhd" "35f9ecf75b143074a9b0c6f3d1b3cb9c53d98876" "20200924093018.286":
+  entity cache at 14( 605) + 0 on 41;
+  architecture logic of cache at 35( 1304) + 0 on 42;
