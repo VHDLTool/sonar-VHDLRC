@@ -18,9 +18,6 @@
 
 package com.linty.sonar.params;
 
-import com.linty.sonar.params.ParamXmlParser;
-import com.linty.sonar.params.ZamiaParam;
-import com.linty.sonar.params.ZamiaStringParam;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;

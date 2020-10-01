@@ -1,15 +1,15 @@
 # VHDL-RC  
 
-[SonarQube](https://www.sonarqube.org) plugin for VHDL using [CNES](https://cnes.fr/en) static analyzer [Zamiacad-Rulechecker](https://github.com/VHDLTool/Zamiacad-Rulechecker/wiki).  
+[SonarQube](https://www.sonarqube.org) plugin for VHDL using [CNES](https://cnes.fr/en) static analyzer [Zamiacad-Rulechecker](https://github.com/VHDLTool/Zamiacad-Rulechecker/wiki) and [Yosys-framework](http://www.clifford.at/yosys/) associated with [ghdl-yosys-plugin](https://github.com/ghdl/ghdl-yosys-plugin).  
   
 VHDL-RC is a ready to use SonarQube plugin  
 Call `rc-scanner` instead of `sonar-scanner`.  
 The external tool is wrapped in rc-scanner and is fully taken care of.  
 
 ## Features  
-* Automated analysis (no tool configuration required)  
+* Automated analysis  
 * Issues import from [Zamiacad-Rulechecker](https://github.com/VHDLTool/Zamiacad-Rulechecker/wiki) analysis  
-* 130 guidline rules with examples and diagrams, 18 implemented rules  
+* 130 guidline rules with examples and diagrams, 31 implemented rules  
 * Effective rule parameters  
 * Loc and comments metrics computation   
 * Library and Top entity configuration  
@@ -21,5 +21,5 @@ The external tool is wrapped in rc-scanner and is fully taken care of.
 4. [Run an analysis](https://github.com/Linty-Services/VHDL-RC/wiki/Run-Analysis)  
 
 ## License  
-Copyright 2018-2019 Maxime Facquet    
+Copyright 2018-2020 Linty Services   
 Licensed under the [GNU Lesser General Public License, Version 3.0](https://www.gnu.org/licenses/lgpl.txt)

@@ -134,7 +134,7 @@ public class VhdlRulesDefinition implements RulesDefinition {
 		;
 		addTags(nr,r.tag);
 		addTags(nr,r.category);
-		addTags(nr,r.subCategoty);
+		addTags(nr,r.subCategory);
 	}
 
 	private void addTags(NewRule nr, String tag) {

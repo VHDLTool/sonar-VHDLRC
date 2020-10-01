@@ -36,7 +36,7 @@ public class RuleTest {
         r.applicationFields="General";
         r.parentUid=        "STD_00800";
         r.category=         "Traceability";
-        r.subCategoty=      "Naming";    
+        r.subCategory=      "Naming";    
         r.rationale=        "Labels improve readability of simulations, VHDL source code and synthesis logs.";
         r.shortDescription= "Processes are identified by a label.";
         r.longDescription=  "A long description";         
@@ -83,7 +83,7 @@ public class RuleTest {
         r.sonarSeverity=    "Major";
         r.type=             "BUG";
         r.category=         "Traceability";
-        r.subCategoty=      "Naming";    
+        r.subCategory=      "Naming";    
         r.rationale=        "Labels improve readability of simulations, VHDL source code and synthesis logs.";
         r.shortDescription= "Processes are identified by a label.";
         r.longDescription=  "No additional information.";         

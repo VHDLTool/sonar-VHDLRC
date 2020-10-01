@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rc:ReportRule xmlns:rc="RULECHECKER" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rc:RuleCheckerVersion>RC-Synth-1.00</rc:RuleCheckerVersion>
+  <rc:RuleName>STD_03900</rc:RuleName>
+  <rc:ExecutionDate>Wed Jul  8 18:36:13 CEST 2020</rc:ExecutionDate>
+  <rc:RuleFailure>
+    <rc:File>./mealy_4s_std.vhd</rc:File>
+    <rc:Line>27</rc:Line>
+    <rc:Entity>mealy_4s_std</rc:Entity>
+    <rc:Architecture/>
+    <rc:STD_03900>
+      <rc:SonarQubeMsg>
+        <rc:SonarError>State machine signal fsm_state_mealy uses wrong type.</rc:SonarError>
+        <rc:SonarRemediationMsg>Use enumerated type instead.</rc:SonarRemediationMsg>
+      </rc:SonarQubeMsg>
+    </rc:STD_03900>
+  </rc:RuleFailure>
+</rc:ReportRule>

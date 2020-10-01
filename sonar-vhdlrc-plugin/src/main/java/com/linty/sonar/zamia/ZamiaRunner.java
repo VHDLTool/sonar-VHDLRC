@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.apache.commons.io.FileUtils;
@@ -115,11 +116,13 @@ public class ZamiaRunner {
 
   @VisibleForTesting
   protected void run() {
+	Configuration config =this.context.config();
+	
     LOG.info("----------Vhdlrc Analysis---------");
     
     LOG.info("--Generating configuration");
     //Generating content for BuidlPath.txt
-    Path tempBuildPath = BuildPathMaker.make(this.context.config());  
+    Path tempBuildPath = BuildPathMaker.make(config);  
     //Parser for injected rc_handbook_parameters.xml
     ActiveRuleLoader loader = new ActiveRuleLoader(this.context.activeRules(), "/" + RC_HANDBOOK_PARAMETERS_PATH);
     //Generating content for rc_handbook_parameters.xml
@@ -134,10 +137,15 @@ public class ZamiaRunner {
     uploadInputFilesToZamia();
     runZamia();
     //After analysis
-    if(!LOG.isDebugEnabled()) {
-      clean(Paths.get(this.scannerHome, PROJECT_DIR, SOURCES_DIR));
-    }
     LOG.info("----------Vhdlrc Analysis---------(done)");
+	if(BuildPathMaker.getPauseExec(config)) {
+		System.out.println("Press ENTER to resume execution");
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			LOG.warn("Input exception");
+		}
+	}
   }
 
   /*
@@ -195,7 +203,7 @@ public class ZamiaRunner {
     FileUtils.copyFile(new File(file.uri()), target.toFile()); 
   }
   
-  private void clean(Path path) {
+  public static void clean(Path path) {
     try {
       FileUtils.cleanDirectory(path.toFile());
     } catch (IOException | IllegalArgumentException e) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <config_selected_rules xmlns:rc="RULECHECKER">
-  <rc:ruleCheckerVersion>6.0.0.201812191131</rc:ruleCheckerVersion>
+  <rc:ruleCheckerVersion>7.0.0.201902271740</rc:ruleCheckerVersion>
   <rc:executionDate>Wed Jan 16 03:13:20 UTC 2019</rc:executionDate>
   <hb:Rule ParameterSource="RULE_CHECKER" UID="STD_00200"/>
   <hb:Rule ParameterSource="RULE_CHECKER" UID="STD_00300"/>

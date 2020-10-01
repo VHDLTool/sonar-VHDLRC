@@ -38,6 +38,7 @@ import java.util.List;
 
 public class HandbookXmlParser {
 	
+	private static final String RULE_HIST = "RuleHist"; 
 	private static final String RULE_CONTENT = "RuleContent"; 	
 	private static final String SONARQUBE = "Sonarqube"; 
 	private static final String RULE_DESC = "RuleDesc"; 
@@ -46,7 +47,11 @@ public class HandbookXmlParser {
 	
 	private static final ImmutableList<String> IGNORE = ImmutableList.of(
 			"RuleUID",
-			"RuleHist",
+			"Engine",
+			"Version",
+			"Creation",
+			"Modified",
+			"Revision",
 			"IsParent",
 			"IsSon",
 			"Severity"
@@ -102,7 +107,10 @@ public class HandbookXmlParser {
 		while(sectionCursor.asEvent() != null) {
 			switch(sectionCursor.getLocalName()) {
 			//Ignore <hb:RuleUID>
-			//Ignore <hb:RuleHist>
+			//<hb:RuleHist> section
+			case RULE_HIST:
+				collectRuleHist(r, sectionCursor.childCursor(filter).advance()); 
+				break;
 			//<hb:RuleContent> section
 			case RULE_CONTENT:
 				collectRuleContent(r, sectionCursor.childCursor(filter).advance()); 
@@ -145,7 +153,7 @@ public class HandbookXmlParser {
 				r.category = cursor.getElemStringValue();
 				break;
 			case "SubCategory":
-				r.subCategoty = cursor.getElemStringValue();
+				r.subCategory = cursor.getElemStringValue();
 				break;
 			case "Rationale":
 				r.rationale = cursor.getElemStringValue();
@@ -161,6 +169,16 @@ public class HandbookXmlParser {
 			}
 			cursor.advance();
 		}
+	}
+  
+  private void collectRuleHist(Rule r, SMInputCursor cursor) throws XMLStreamException {
+		while (cursor.asEvent() != null) {
+			if (cursor.getLocalName().equalsIgnoreCase("Status")) {
+				r.status = cursor.getElemStringValue();
+			}
+			cursor.advance();
+		}
+
 	}
 
 	private void collectRuleSQ(Rule r, SMInputCursor cursor) throws XMLStreamException {

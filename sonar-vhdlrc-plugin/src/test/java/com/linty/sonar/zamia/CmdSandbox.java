@@ -25,6 +25,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Test;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 public class CmdSandbox {
   
@@ -33,6 +35,8 @@ public class CmdSandbox {
   public String notePad = ".";
   public String arguments = "";
   public String fileDir = "dev/eclipse_test.bat";
+  
+  private static final Logger LOG = Loggers.get(CmdSandbox.class);
   
   public void execute(String program, String args, String target) throws IOException, InterruptedException {
     ProcessBuilder builder = new ProcessBuilder();
@@ -76,7 +80,8 @@ public class CmdSandbox {
     try {
       execute(programPath, arguments, targetPath );
     } catch (IOException | InterruptedException e) {
-      e.printStackTrace();
+      LOG.warn("Thread interruption");
+	  Thread.currentThread().interrupt();
     }
   }
   

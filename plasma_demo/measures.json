@@ -1,0 +1,27 @@
+{
+###### NanoXplore project log metrics ######
+"NX_Log_Remarks": 1,
+"NX_Log_Warnings": 2,
+"NX_Log_Errors": 3,
+###### NanoXplore Occupation metrics ######
+"NX_4LUT_PERCENT": [16636,129024],
+"NX_XLUT_PERCENT": [3561,129024],
+"NX_DFF_PERCENT":[ 0,8064],     
+"NX_Carry_PERCENT": [1181,32256],
+"NX_RFB_PERCENT": [0,672],
+"NX_CDC_PERCENT": [0,672],
+"NX_CB": 1,
+"NX_CS_PERCENT": [14,1344],
+"NX_DSP_PERCENT": [14,384],
+"NX_MB_PERCENT": [14,192],
+"NX_WFG_PERCENT":[5,40], 
+"NX_PLL_PERCENT": [1,4],
+###### NanoXplore Timing metrics ######
+## clock domain1 ##
+"NX_CLK1_Max_Delay": 54.385,
+"NX_CLK1_Max_Freq": 11.732,
+"NX_CLK1_Min_tco":80.32,
+"NX_CLK1_Max_tco":101.488 ,
+"NX_CLK1_Min_tci": 80.362,
+"NX_CLK1_Max_tci":64.44568
+}    
