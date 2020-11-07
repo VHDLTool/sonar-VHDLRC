@@ -35,6 +35,8 @@ import java.io.InputStreamReader;
 
 import javax.xml.stream.XMLStreamException;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import org.apache.commons.io.FileUtils;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
@@ -252,7 +254,7 @@ public class VhdlRcSensor implements Sensor {
     ni.save();
   }
 
-  // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected void importReport(Path reportFile, SensorContext context) {
     try {
       LOG.info("Importing {}", reportFile.getFileName());

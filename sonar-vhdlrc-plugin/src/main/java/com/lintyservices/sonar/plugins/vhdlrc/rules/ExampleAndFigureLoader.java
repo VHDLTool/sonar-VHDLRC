@@ -59,7 +59,7 @@ public class ExampleAndFigureLoader {
     }
   }
 
-  // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected String collectExample(String fileRef) {
     StringBuilder codeExample = new StringBuilder();
     String fileName = fileRef.concat(".vhd");

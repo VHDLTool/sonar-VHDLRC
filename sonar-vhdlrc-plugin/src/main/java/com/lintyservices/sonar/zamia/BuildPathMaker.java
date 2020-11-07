@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -90,7 +92,7 @@ public class BuildPathMaker {
     return appendParameters(target.toAbsolutePath());
   }
 
-  // FIXME: // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected Path appendParameters(Path target) throws IOException {
     StringBuilder builder = new StringBuilder();
     String topEntity = getTopEntities(this.config);

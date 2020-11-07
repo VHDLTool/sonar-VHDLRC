@@ -19,7 +19,6 @@
  */
 package com.lintyservices.sonar.plugins.vhdlrc.rules;
 
-
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,6 @@ import org.sonar.api.server.rule.RuleTagFormat;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-
 
 @ServerSide
 public class VhdlRulesDefinition implements RulesDefinition {
@@ -88,7 +86,7 @@ public class VhdlRulesDefinition implements RulesDefinition {
     defineFromRessources(context, new HbRessourceContext());
   }
 
-  // FIXME: @VisibleForTesting
+  @VisibleForTesting
   public void defineFromRessources(Context context, HbRessourceContext ressourceContext) {
     NewRepository repository = context
       .createRepository(VHDLRC_REPOSITORY_KEY, Vhdl.KEY)
@@ -110,7 +108,7 @@ public class VhdlRulesDefinition implements RulesDefinition {
     }
   }
 
-  // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected void newRule(com.lintyservices.sonar.plugins.vhdlrc.rules.Rule r, NewRepository repository) {
     NewRule nr = repository.createRule(r.ruleKey);
     nr.setHtmlDescription(r.buildHtmlDescritpion());

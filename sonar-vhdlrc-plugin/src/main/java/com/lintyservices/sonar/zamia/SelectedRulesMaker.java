@@ -27,6 +27,8 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -58,7 +60,7 @@ public class SelectedRulesMaker {
 
   }
 
-  // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected Path make(InputStream ressource) {
     try {
       Path target = Files.createTempFile("tempFile", ".xml");

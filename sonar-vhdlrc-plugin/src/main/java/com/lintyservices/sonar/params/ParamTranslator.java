@@ -19,8 +19,10 @@
  */
 package com.lintyservices.sonar.params;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
+
 import org.sonar.api.batch.rule.ActiveRule;
 
 public class ParamTranslator {
@@ -118,8 +120,7 @@ public class ParamTranslator {
     return RANGE_FIELDS_MAP.inverse().get(param);
   }
 
-
-  // FIXME: // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected ParamTranslator() {
     throw new IllegalStateException("Utility class");
   }

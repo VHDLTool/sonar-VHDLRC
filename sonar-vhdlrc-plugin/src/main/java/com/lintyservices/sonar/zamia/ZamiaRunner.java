@@ -118,7 +118,7 @@ public class ZamiaRunner {
     new ZamiaRunner(sensorContext, new RunnerContext()).run();
   }
 
-  // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected void run() {
     Configuration config = this.context.config();
 
@@ -159,7 +159,7 @@ public class ZamiaRunner {
    * handbook.xml:                 Injected at build time -> Untouched
    */
 
-  // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected void uploadConfigToZamia(Path tempBuildPath, Path rcHbParam, Path rcSelectedRules) {
     LOG.info("--Load configuration");
 
@@ -186,7 +186,7 @@ public class ZamiaRunner {
     LOG.info("--Load configuration (done)");
   }
 
-  // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected void uploadInputFilesToZamia() {
     LOG.info("--Load Vhdl files");
     FilePredicates p = context.fileSystem().predicates();
@@ -215,7 +215,7 @@ public class ZamiaRunner {
     }
   }
 
-  // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected void runZamia() {
     LOG.info("--Running analysis");
 
@@ -240,7 +240,7 @@ public class ZamiaRunner {
     LOG.info("--Running analysis (done)");
   }
 
-  // FIXME: @VisibleForTesting
+  @VisibleForTesting
   protected void consume(InputStream is) throws IOException {
     String line;
     int i = 0;
