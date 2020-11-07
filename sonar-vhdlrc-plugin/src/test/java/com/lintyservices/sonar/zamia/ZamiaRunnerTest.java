@@ -206,19 +206,19 @@ public class ZamiaRunnerTest {
     //walkin(testScanner.getRoot(),"+--"); 
   }
 
-  // FIXME
-//  @Test
-//  public void test_uploading_config_io_exeption_with_debug_on() throws IOException {
-//    logTester.setLevel(LoggerLevel.DEBUG);
-//    ZamiaRunner zamiaRunner = new ZamiaRunner(context, runnerContext);
-//    Path tempBuildPath = createConfigTempFile("temp");
-//    Path temp2 = createConfigTempFile("temp2");
-//    Path tempRcSelectedRules = createConfigTempFile("temp3");
-//
-//    if (bp.setReadOnly()) ;
-//    zamiaRunner.uploadConfigToZamia(tempBuildPath, temp2, tempRcSelectedRules);
-//    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("unable to upload configuration files to scanner:");
-//  }
+  // FIXME: Failing unit test
+  @Test
+  public void test_uploading_config_io_exeption_with_debug_on() throws IOException {
+    logTester.setLevel(LoggerLevel.DEBUG);
+    ZamiaRunner zamiaRunner = new ZamiaRunner(context, runnerContext);
+    Path tempBuildPath = createConfigTempFile("temp");
+    Path temp2 = createConfigTempFile("temp2");
+    Path tempRcSelectedRules = createConfigTempFile("temp3");
+
+    if (bp.setReadOnly()) ;
+    zamiaRunner.uploadConfigToZamia(tempBuildPath, temp2, tempRcSelectedRules);
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("unable to upload configuration files to scanner:");
+  }
 
   @Test
   public void test_cmd() {

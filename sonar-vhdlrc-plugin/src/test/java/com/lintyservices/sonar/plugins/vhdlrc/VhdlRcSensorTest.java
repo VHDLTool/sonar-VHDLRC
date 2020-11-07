@@ -98,43 +98,42 @@ public class VhdlRcSensorTest {
     assertThat(logTester.logs()).isNotEmpty();
   }
 
-  //FIXME
-//  @Test
-//  public void test_two_good_issues_one_failure() {
-//    context1.addContextProperty(BuildPathMaker.KEEP_REPORTS_KEY, "true");
-//    sensor.execute(context1);
-//    List<Issue> issues = new ArrayList<>(context1.allIssues());
-//
-//    assertThat(issues).hasSize(4);
-//    assertNoIssueOnFile(context1, "file_no_issues.vhd");
-//
-//
-//    Issue issue1 = issues.get(2);
-//    assertThat(issue1.ruleKey().rule()).isEqualTo("STD_00400");
-//    assertThat(issue1.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
-//    assertThat(issue1.primaryLocation().textRange().start().line()).isEqualTo(1);
-//    assertThat(issue1.primaryLocation().message()).isEqualTo("Label is missing");
-//
-//    Issue issue2 = issues.get(3);
-//    assertThat(issue2.ruleKey().rule()).isEqualTo("STD_00400");
-//    assertThat(issue2.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file3.vhd");
-//    assertThat(issue2.primaryLocation().textRange().start().line()).isEqualTo(2);
-//    assertThat(issue2.primaryLocation().message()).isEqualTo("Label is missing 2");
-//
-//    String no_file = FilenameUtils.separatorsToSystem("./I2C/Mux/no_file.vhd");
-//
-//    Issue issue3 = issues.get(1);
-//    assertThat(issue3.ruleKey().rule()).isEqualTo("STD_05000");
-//    assertThat(issue3.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
-//    assertThat(issue3.primaryLocation().textRange().start().line()).isEqualTo(1);
-//    assertThat(issue3.primaryLocation().message()).isEqualTo("Signal I_VZ_CMD should not be in the sensitivity list of the process");
-//
-//    //assertThat(logTester.logs(LoggerLevel.INFO).get(1)).contains("Importing rc_report_rule_STD_03800.xml");
-////    assertThat(logTester.logs(LoggerLevel.WARN).get(2)).contains("Can't import an issue from rc_report_rule_STD_05000.xml : 65 is not a valid line for pointer. File I2C/file3.vhd has 3 line(s)");
-////    assertThat(logTester.logs(LoggerLevel.WARN).get(3)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");
-////    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).isNotEmpty();
-//    //assertThat(logTester.logs(LoggerLevel.WARN).size()).isEqualTo(2);
-//  }
+  // FIXME: Failing unit test
+  @Test
+  public void test_two_good_issues_one_failure() {
+    context1.addContextProperty(BuildPathMaker.KEEP_REPORTS_KEY, "true");
+    sensor.execute(context1);
+    List<Issue> issues = new ArrayList<>(context1.allIssues());
+
+    assertThat(issues).hasSize(4);
+    assertNoIssueOnFile(context1, "file_no_issues.vhd");
+
+    Issue issue1 = issues.get(2);
+    assertThat(issue1.ruleKey().rule()).isEqualTo("STD_00400");
+    assertThat(issue1.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
+    assertThat(issue1.primaryLocation().textRange().start().line()).isEqualTo(1);
+    assertThat(issue1.primaryLocation().message()).isEqualTo("Label is missing");
+
+    Issue issue2 = issues.get(3);
+    assertThat(issue2.ruleKey().rule()).isEqualTo("STD_00400");
+    assertThat(issue2.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file3.vhd");
+    assertThat(issue2.primaryLocation().textRange().start().line()).isEqualTo(2);
+    assertThat(issue2.primaryLocation().message()).isEqualTo("Label is missing 2");
+
+    String no_file = FilenameUtils.separatorsToSystem("./I2C/Mux/no_file.vhd");
+
+    Issue issue3 = issues.get(1);
+    assertThat(issue3.ruleKey().rule()).isEqualTo("STD_05000");
+    assertThat(issue3.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
+    assertThat(issue3.primaryLocation().textRange().start().line()).isEqualTo(1);
+    assertThat(issue3.primaryLocation().message()).isEqualTo("Signal I_VZ_CMD should not be in the sensitivity list of the process");
+
+    //assertThat(logTester.logs(LoggerLevel.INFO).get(1)).contains("Importing rc_report_rule_STD_03800.xml");
+//    assertThat(logTester.logs(LoggerLevel.WARN).get(2)).contains("Can't import an issue from rc_report_rule_STD_05000.xml : 65 is not a valid line for pointer. File I2C/file3.vhd has 3 line(s)");
+//    assertThat(logTester.logs(LoggerLevel.WARN).get(3)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");
+//    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).isNotEmpty();
+    //assertThat(logTester.logs(LoggerLevel.WARN).size()).isEqualTo(2);
+  }
 
   public static void assertNoIssueOnFile(SensorContextTester context, String fileName) {
     for (Issue i : context.allIssues()) {
