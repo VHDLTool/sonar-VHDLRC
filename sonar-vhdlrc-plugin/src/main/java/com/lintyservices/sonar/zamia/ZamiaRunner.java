@@ -215,7 +215,6 @@ public class ZamiaRunner {
     }
   }
 
-
   // FIXME: @VisibleForTesting
   protected void runZamia() {
     LOG.info("--Running analysis");
