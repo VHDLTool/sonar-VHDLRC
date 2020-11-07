@@ -23,6 +23,7 @@ Desktop.ini
 
 # ---- SonarQube
 .sonar
+.scannerwork
 sonar-project.properties
 
 # ---- IntelliJ
