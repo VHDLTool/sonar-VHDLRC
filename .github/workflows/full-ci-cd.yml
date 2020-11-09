@@ -88,6 +88,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: plugin
+      - name: Rename JAR into latest
+        run: mv sonar-vhdlrc-plugin-*.jar sonar-vhdlrc-plugin-latest.jar
       - name: "GitHub Pre-release: latest"
         uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -95,7 +97,7 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: true
           title: Latest build from master
-          files: sonar-vhdlrc-plugin-*.jar
+          files: sonar-vhdlrc-plugin-latest.jar
 
   release:
     name: GitHub Release
