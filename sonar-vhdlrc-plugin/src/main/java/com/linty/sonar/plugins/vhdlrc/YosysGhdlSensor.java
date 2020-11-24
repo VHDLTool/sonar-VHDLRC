@@ -65,6 +65,7 @@ public class YosysGhdlSensor implements Sensor {
   private SensorContext context;
   private FilePredicates predicates;
   private String baseProjDir;
+  private String workdir;
   private String topFile="";
   private int topLineNumber=0;
 
@@ -85,7 +86,7 @@ public class YosysGhdlSensor implements Sensor {
     Configuration config = context.config();
     baseProjDir=System.getProperty("user.dir");
     String top=BuildPathMaker.getTopEntities(config);
-    String workdir = null;
+    workdir = null;
 
     if(BuildPathMaker.getAutoexec(config)) {			
       String fileList=BuildPathMaker.getFileList(config);
@@ -123,6 +124,12 @@ public class YosysGhdlSensor implements Sensor {
       Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".cf")).forEach(o1->getTopLocation(o1,top));    
     } catch (IOException e) {
       LOG.warn("Could not find any .cf file in build directory");
+    }
+    
+    try { // Parse files containing dumped "stat" command results. If "Number of cells"/=0 then an issue is created (rule STD_5200)
+      Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->parseStatLog(o1));    
+    } catch (IOException e) {
+      LOG.warn("Could not find any .statlog file in build directory");
     }
 
     System.out.println("Top : "+topFile+" "+topLineNumber);
@@ -254,7 +261,6 @@ public class YosysGhdlSensor implements Sensor {
     } catch (IOException e) {
       LOG.warn("Could not read source file");
     }
-
     return result;
   }
 
@@ -296,6 +302,33 @@ public class YosysGhdlSensor implements Sensor {
         }
         fileLine=false;
         entityLine=false;
+        input.close();
+      }
+    } catch (IOException e) {
+      LOG.warn("Could not read source file");
+    }
+  }
+  
+  private void parseStatLog(Path path){
+    File file=path.toFile();
+    try (FileReader fReader = new FileReader(file)){
+      BufferedReader bufRead = new BufferedReader(fReader);
+      String currentLine = null;
+      boolean foundNumberOfCells=false;
+      while ((currentLine = bufRead.readLine()) != null && !foundNumberOfCells) {                           
+        Scanner input = new Scanner(currentLine);
+        while(input.hasNext()&&!foundNumberOfCells) {
+          String currentToken = input.next();
+          if (currentToken.equalsIgnoreCase("Number") && input.hasNext() && input.next().equalsIgnoreCase("of") && input.hasNext() && input.next().startsWith("cells") && input.hasNext()) {
+              try {
+                InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
+                if(Integer.parseInt(input.next())!=0 && inputFile!=null)
+                  addNewIssue("STD_05200",inputFile,topLineNumber,"Combinational outputs at top level should be avoided "+path.getFileName().toString());
+                foundNumberOfCells=true;
+              }
+              catch(NumberFormatException e) {}               
+          } 
+        }
         input.close();
       }
     } catch (IOException e) {
