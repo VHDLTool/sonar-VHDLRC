@@ -21,6 +21,11 @@ Thumbs.db
 # Folder config file
 Desktop.ini
 
-# ---- Sonar
+# ---- SonarQube
 .sonar
+.scannerwork
 sonar-project.properties
+
+# ---- IntelliJ
+.idea
+*.iml
