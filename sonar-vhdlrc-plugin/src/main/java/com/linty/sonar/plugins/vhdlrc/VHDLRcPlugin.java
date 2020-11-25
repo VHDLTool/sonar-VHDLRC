@@ -78,8 +78,8 @@ public class VHDLRcPlugin implements Plugin {
 	    builder.add(PropertyDefinition.builder(BuildPathMaker.RCSYNTH_PATH_KEY)
 	  	      .category(Vhdl.VHDLRC_CATEGORY)
 	          .subCategory("Rcsynth")
-	          .name("Rcsynth path")
-	          .description("Path to vhdlrcsynth executable")
+	          .name("GhdlCompileScript")
+	          .description("Path to the project's ghdl compilation script")
 	          .defaultValue(BuildPathMaker.DEFAULT_RCSYNTH)
 	          .onQualifiers(Qualifiers.PROJECT)
 	          .build());

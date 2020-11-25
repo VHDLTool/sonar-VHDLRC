@@ -23,15 +23,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.Set;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 
-
+import org.apache.commons.io.FilenameUtils;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.ActiveRule;
@@ -126,13 +128,16 @@ public class YosysGhdlSensor implements Sensor {
       LOG.warn("Could not find any .cf file in build directory");
     }
     
+    Set<String> outputs=new HashSet<>();
+    
     try { // Parse files containing dumped "stat" command results. If "Number of cells"/=0 then an issue is created (rule STD_5200)
-      Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->parseStatLog(o1));    
+      Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->outputs.add(parseStatLog(o1)));    
     } catch (IOException e) {
       LOG.warn("Could not find any .statlog file in build directory");
     }
 
-    System.out.println("Top : "+topFile+" "+topLineNumber);
+    outputs.remove("");
+    findOutputs(Paths.get(workdir+"/"+topFile),topLineNumber,outputs); // Add issues on output ports declarations (rule STD_5200)
     
     try { // Parse generated .kiss2 files and add the corresponding issues
       Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".kiss2")).forEach(o1->addYosysIssues(o1)); //could use workdir
@@ -309,8 +314,9 @@ public class YosysGhdlSensor implements Sensor {
     }
   }
   
-  private void parseStatLog(Path path){
+  private String parseStatLog(Path path){
     File file=path.toFile();
+    String output="";
     try (FileReader fReader = new FileReader(file)){
       BufferedReader bufRead = new BufferedReader(fReader);
       String currentLine = null;
@@ -321,15 +327,46 @@ public class YosysGhdlSensor implements Sensor {
           String currentToken = input.next();
           if (currentToken.equalsIgnoreCase("Number") && input.hasNext() && input.next().equalsIgnoreCase("of") && input.hasNext() && input.next().startsWith("cells") && input.hasNext()) {
               try {
-                InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
-                if(Integer.parseInt(input.next())!=0 && inputFile!=null)
-                  addNewIssue("STD_05200",inputFile,topLineNumber,"Combinational outputs at top level should be avoided "+path.getFileName().toString());
+                if(Integer.parseInt(input.next())!=0)
+                  output=FilenameUtils.removeExtension(path.getFileName().toString().toLowerCase());
                 foundNumberOfCells=true;
               }
               catch(NumberFormatException e) {}               
           } 
         }
         input.close();
+      }
+    } catch (IOException e) {
+      LOG.warn("Could not read source file");
+    }
+    return output;
+  }
+  
+  private void findOutputs(Path path, int startLine, Set<String> outputs){
+    File file=path.toFile();
+    int currentLineNumber=0;
+    try (FileReader fReader = new FileReader(file)){
+      BufferedReader bufRead = new BufferedReader(fReader);
+      String currentLine = null;
+      boolean inPortDecl=false;
+      while ((currentLine = bufRead.readLine()) != null) {
+        currentLineNumber++;
+        if (currentLineNumber>=startLine) {
+          Scanner input = new Scanner(currentLine);
+          input.useDelimiter("((\\p{javaWhitespace})|;|,|:|\\.|\\(|\\))+");
+          while(input.hasNext()) {
+            String currentToken = input.next();
+            if (currentToken.toLowerCase().startsWith("port")) {
+              inPortDecl=true;
+            }
+            else if (inPortDecl && outputs.contains(currentToken.toLowerCase())) {
+              InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
+              if(inputFile!=null)
+                addNewIssue("STD_05200",inputFile,currentLineNumber,"Combinational outputs at top level should be avoided");
+            }
+          }
+          input.close();
+        }
       }
     } catch (IOException e) {
       LOG.warn("Could not read source file");
