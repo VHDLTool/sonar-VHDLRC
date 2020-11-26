@@ -163,14 +163,19 @@ public class YosysGhdlSensor implements Sensor {
 
     String[] kiss2FileName =kiss2Path.getFileName().toString().split("-\\$fsm\\$.");
     String vhdlFilePath=kiss2Path.toString().split("-\\$fsm")[0];	
-    String sourceFileName=vhdlFilePath.substring(vhdlFilePath.lastIndexOf("/"))+".vhd";
-
+    int  lastInd = vhdlFilePath.lastIndexOf("/");
+    String sourceFileName=null;
+    if (lastInd!=-1)
+       sourceFileName=vhdlFilePath.substring(lastInd)+".vhd";
+    final String innerSourceFileName=sourceFileName;
     Optional<Path> oPath = Optional.empty();
-    try {
-      oPath = Files.walk(Paths.get(baseProjDir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(sourceFileName)||o.toString().toLowerCase().endsWith(sourceFileName+"l")).findFirst();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    if(sourceFileName!=null) {
+      try {
+        oPath = Files.walk(Paths.get(baseProjDir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(innerSourceFileName)||o.toString().toLowerCase().endsWith(innerSourceFileName+"l")).findFirst();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
 
     InputFile inputFile=null;
