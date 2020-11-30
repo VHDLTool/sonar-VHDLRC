@@ -382,8 +382,8 @@ public class YosysGhdlSensor implements Sensor {
   private String executeCommand(String[] cmd) {
     StringBuffer theRun = new StringBuffer();
     try {
-      Process process = Runtime.getRuntime().exec(cmd);
-
+      ProcessBuilder pb = new ProcessBuilder(cmd).redirectErrorStream(true);
+      Process process = pb.start();
       BufferedReader reader = new BufferedReader(
           new InputStreamReader(process.getInputStream()));
       int read;
