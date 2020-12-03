@@ -46,6 +46,8 @@ import org.sonar.api.config.Configuration;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+
+import com.linty.sonar.zamia.ActiveRuleLoader;
 import com.linty.sonar.zamia.BuildPathMaker;
 
 public class YosysGhdlSensor implements Sensor {
@@ -90,14 +92,14 @@ public class YosysGhdlSensor implements Sensor {
     String top=BuildPathMaker.getTopEntities(config);
     workdir = null;
 
-    if(BuildPathMaker.getAutoexec(config)) {			
-      String fileList=BuildPathMaker.getFileList(config);
+    if(ActiveRuleLoader.getEnableYosys()) {			
+      String buildCmdParams=BuildPathMaker.getFileList(config);
       String rcSynth = BuildPathMaker.getRcSynthPath(config);
       String ghdlParams=((BuildPathMaker.getFexplicit(config)) ? fexplicit : "")+((BuildPathMaker.getFsynopsys(config)) ? fsynopsys : "");	
       String yosysFsmCmd = yosysFsmCmd1+ghdlParams+" "+top+" "+yosysFsmCmd2;
       workdir=BuildPathMaker.getWorkdir(config);
       if(IS_WINDOWS) {
-        System.out.println(executeCommand(new String[] {"cmd.exe","/c","ubuntu1804 run "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+fileList+"\""})); // Still needs work
+        System.out.println(executeCommand(new String[] {"cmd.exe","/c","ubuntu1804 run "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\""})); // Still needs work
         //System.out.println(executeCommand(new String[] {"cmd.exe","/c","cd "+BuildPathMaker.getWorkdir(config)+"; ubuntu1804 run "+yosysFsmCmd}));
         try {
           Runtime.getRuntime().exec("cmd.exe /c cd "+workdir+"; ubuntu1804 run \"+yosysFsmCmd").waitFor();
@@ -107,7 +109,7 @@ public class YosysGhdlSensor implements Sensor {
         }
       }
       else {
-        String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+fileList+"\""};
+        String[] cmd = new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\""};
         System.out.println(executeCommand(cmd));
         System.out.println(executeCommand(new String[] {"sh","-c","cd "+workdir+"; "+yosysFsmCmd}));
         System.out.println(executeCommand(new String[] {"sh","-c","cd "+workdir+"; "+yosysFsmCmd1+ghdlParams+" "+top+" ; select o:* -module "+top+"; dump -o outputlist;\""}));
