@@ -95,7 +95,7 @@ public class YosysGhdlSensor implements Sensor {
     if(ActiveRuleLoader.getEnableYosys()) {			
       String buildCmdParams=BuildPathMaker.getFileList(config);
       String rcSynth = BuildPathMaker.getRcSynthPath(config);
-      String ghdlParams=((BuildPathMaker.getFexplicit(config)) ? fexplicit : "")+((BuildPathMaker.getFsynopsys(config)) ? fsynopsys : "");	
+      String ghdlParams=" "+BuildPathMaker.getGhdlOptions(config);	
       String yosysFsmCmd = yosysFsmCmd1+ghdlParams+" "+top+" "+yosysFsmCmd2;
       workdir=BuildPathMaker.getWorkdir(config);
       if(IS_WINDOWS) {
@@ -129,9 +129,9 @@ public class YosysGhdlSensor implements Sensor {
     } catch (IOException e) {
       LOG.warn("Could not find any .cf file in build directory");
     }
-    
+
     Set<String> outputs=new HashSet<>();
-    
+
     try { // Parse files containing dumped "stat" command results. If "Number of cells"/=0 then an issue is created (rule STD_5200)
       Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->outputs.add(parseStatLog(o1)));    
     } catch (IOException e) {
@@ -140,7 +140,7 @@ public class YosysGhdlSensor implements Sensor {
 
     outputs.remove("");
     findOutputs(Paths.get(workdir+"/"+topFile),topLineNumber,outputs); // Add issues on output ports declarations (rule STD_5200)
-    
+
     try { // Parse generated .kiss2 files and add the corresponding issues
       Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".kiss2")).forEach(o1->addYosysIssues(o1)); //could use workdir
     } catch (IOException e) {
@@ -168,7 +168,7 @@ public class YosysGhdlSensor implements Sensor {
     int  lastInd = vhdlFilePath.lastIndexOf("/");
     String sourceFileName=null;
     if (lastInd!=-1)
-       sourceFileName=vhdlFilePath.substring(lastInd)+".vhd";
+      sourceFileName=vhdlFilePath.substring(lastInd)+".vhd";
     final String innerSourceFileName=sourceFileName;
     Optional<Path> oPath = Optional.empty();
     if(sourceFileName!=null) {
@@ -320,7 +320,7 @@ public class YosysGhdlSensor implements Sensor {
       LOG.warn("Could not read source file");
     }
   }
-  
+
   private String parseStatLog(Path path){
     File file=path.toFile();
     String output="";
@@ -333,12 +333,12 @@ public class YosysGhdlSensor implements Sensor {
         while(input.hasNext()&&!foundNumberOfCells) {
           String currentToken = input.next();
           if (currentToken.equalsIgnoreCase("Number") && input.hasNext() && input.next().equalsIgnoreCase("of") && input.hasNext() && input.next().startsWith("cells") && input.hasNext()) {
-              try {
-                if(Integer.parseInt(input.next())!=0)
-                  output=FilenameUtils.removeExtension(path.getFileName().toString().toLowerCase());
-                foundNumberOfCells=true;
-              }
-              catch(NumberFormatException e) {}               
+            try {
+              if(Integer.parseInt(input.next())!=0)
+                output=FilenameUtils.removeExtension(path.getFileName().toString().toLowerCase());
+              foundNumberOfCells=true;
+            }
+            catch(NumberFormatException e) {}               
           } 
         }
         input.close();
@@ -348,7 +348,7 @@ public class YosysGhdlSensor implements Sensor {
     }
     return output;
   }
-  
+
   private void findOutputs(Path path, int startLine, Set<String> outputs){
     File file=path.toFile();
     int currentLineNumber=0;
