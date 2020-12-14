@@ -118,6 +118,7 @@ public class YosysGhdlSensor implements Sensor {
         StringBuilder builder= new StringBuilder();
         for (String fsmName:ignoredFsmNames)
           builder.append("setattr -set fsm_encoding \\\"auto\\\" "+fsmName+"; ");
+        // Generate kiss2 files
         String yosysFsmExtractExport=builder.toString()+"fsm_extract ; fsm_export";
         System.out.println(executeCommand(new String[] {"sh","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysFsmExtractExport+"\""}));
 
@@ -129,7 +130,6 @@ public class YosysGhdlSensor implements Sensor {
         String yosysCheckOutputs=builder.toString();
         System.out.println(executeCommand(new String[] {"sh","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth; "+yosysCheckOutputs+"\""}));
 
-        //outputNames.forEach(o->System.out.println(o));
       }
     }
 
@@ -208,6 +208,7 @@ public class YosysGhdlSensor implements Sensor {
         while ((currentLine = bufRead.readLine()) != null && !foundStateType) {    												
           lineNumber++;
           Scanner input = new Scanner(currentLine);
+          input.useDelimiter("((\\p{javaWhitespace})|;|,|\\.|\\(|\\))+");
           boolean sigDec=false;
           boolean sigType=false;
           while(input.hasNext()&&!foundStateType) {
