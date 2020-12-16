@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.linty.sonar.plugins.vhdlrc;
+package com.lintyservices.sonar.plugins.vhdlrc;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,8 +47,8 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import com.linty.sonar.zamia.ActiveRuleLoader;
-import com.linty.sonar.zamia.BuildPathMaker;
+import com.lintyservices.sonar.zamia.ActiveRuleLoader;
+import com.lintyservices.sonar.zamia.BuildPathMaker;
 
 public class YosysGhdlSensor implements Sensor {
 

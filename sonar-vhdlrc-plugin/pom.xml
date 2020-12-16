@@ -8,7 +8,7 @@
     <version>44</version>
   </parent>
   
-  <groupId>com.linty.sonar</groupId>
+  <groupId>com.lintyservices.sonar</groupId>
   <artifactId>sonar-vhdlrc-plugin</artifactId>
   <version>1.8.044</version>
   <packaging>sonar-plugin</packaging>
@@ -133,7 +133,7 @@
         <extensions>true</extensions>
         <configuration>
           <pluginName>VHDL</pluginName>
-          <pluginClass>com.linty.sonar.plugins.vhdlrc.VHDLRcPlugin</pluginClass>
+          <pluginClass>com.lintyservices.sonar.plugins.vhdlrc.VhdlRcPlugin</pluginClass>
           <sonarQubeMinVersion>${sonar.version}</sonarQubeMinVersion>
         </configuration>
       </plugin>

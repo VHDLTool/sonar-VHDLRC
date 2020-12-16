@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.lintyservices.sonar.plugins.vhdlrc.a;
+package com.lintyservices.sonar.plugins.vhdlrc;
 
 import com.lintyservices.sonar.plugins.vhdlrc.VhdlRcPlugin;
 import org.sonar.api.Plugin;
@@ -41,7 +41,7 @@ public class VhdlRcPluginTest {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(SONARQUBE_LTS_VERSION, SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
     vhdlRcPlugin.define(context);
-    assertThat(context.getExtensions()).hasSize(18);
+    assertThat(context.getExtensions()).hasSize(17);
     runtime.getApiVersion().isGreaterThanOrEqual(Version.create(6, 5));
   }
 
