@@ -1,22 +1,22 @@
-
 /*
- * Vhdl RuleChecker (Vhdl-rc) plugin for Sonarqube & Zamiacad
- * Copyright (C) 2019 Maxime Facquet
+ * SonarQube Linty VHDLRC :: Plugin
+ * Copyright (C) 2018-2020 Linty Services
+ * mailto:contact@linty-services.com
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 package com.lintyservices.sonar.zamia;
 
 import com.lintyservices.sonar.params.ParamTranslator;
@@ -25,6 +25,7 @@ import com.lintyservices.sonar.params.ZamiaRangeParam;
 import com.lintyservices.sonar.params.ZamiaStringParam;
 import com.lintyservices.sonar.plugins.vhdlrc.rules.HandbookYosysRulesXmlParser;
 import com.lintyservices.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +46,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.apache.commons.lang3.StringUtils;
 import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.rule.ActiveRules;
@@ -56,17 +58,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 import static com.lintyservices.sonar.params.ParamTranslator.*;
 
 public class ActiveRuleLoader {
 
-  private static final String NAME_SPACE  = "hb:";
-  private static final String RULE        = "Rule";
+  private static final String NAME_SPACE = "hb:";
+  private static final String RULE = "Rule";
   private static final String RULE_PARAMS = "RuleParams";
-  private static final String PARAM_ID    = "ParamID";
-  private static final String VALUE       = "Value";
-  private static final String VALUE_MIN   = "ValueMin";
-  private static final String VALUE_MAX   = "ValueMax";
+  private static final String PARAM_ID = "ParamID";
+  private static final String VALUE = "Value";
+  private static final String VALUE_MIN = "ValueMin";
+  private static final String VALUE_MAX = "ValueMax";
   private static final String UID = "UID";
   private static final String REPO_KEY = VhdlRulesDefinition.VHDLRC_REPOSITORY_KEY;
   private static boolean enableYosys=false;
@@ -81,17 +84,17 @@ public class ActiveRuleLoader {
 
   public static boolean getEnableYosys() {
     return enableYosys;  
-  }  
+  }
 
   public ActiveRuleLoader(ActiveRules activeRules, String ressource) {
     this.sonarActiveRules = activeRules.findByRepository(REPO_KEY);
-    this.ressource = ressource; 
+    this.ressource = ressource;
   }
 
   public Path makeRcHandbookParameters() {
-    try { 
+    try {
       InputStream sourceIs = BuildPathMaker.class.getResourceAsStream(this.ressource);
-      if(sourceIs != null) {
+      if (sourceIs != null) {
         return writeParametersInXml(sourceIs);
       }
       throw new FileNotFoundException("rc_handbook_parameters.xml not found");
@@ -105,38 +108,38 @@ public class ActiveRuleLoader {
     //Initiates the list of active rules to put in rc_selected_rules.xml later
     selectedRuleKeys = new ArrayList<>();
     yosysRules = new HandbookYosysRulesXmlParser().parseXML(getClass().getClassLoader().getResourceAsStream("configuration/HANDBOOK/Rulesets/handbook.xml"));
-    if(!enableYosys) // Execute yosys if at least one rule using yosys-ghdl is activated
-      for(ActiveRule activeRule : sonarActiveRules)
-        if(yosysRules.contains(activeRule.ruleKey().toString().substring(activeRule.ruleKey().toString().lastIndexOf(":") + 1)))
+    if (!enableYosys) // Execute yosys if at least one rule using yosys-ghdl is activated
+      for (ActiveRule activeRule : sonarActiveRules)
+        if (yosysRules.contains(activeRule.ruleKey().toString().substring(activeRule.ruleKey().toString().lastIndexOf(":") + 1)))
           enableYosys=true;
     //Create a Temporary xml file with a random name
-    Path target = Files.createTempFile("target",".xml");
+    Path target = Files.createTempFile("target", ".xml");
     target.toFile().deleteOnExit();
 
     // write the content into xml file
     DocumentBuilderFactory dbf = DocumentBuilderFactory
-        .newInstance();
+      .newInstance();
     dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
     dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
     dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
     this.doc = dbf
-        .newDocumentBuilder()
-        .parse(source);
+      .newDocumentBuilder()
+      .parse(source);
 
     NodeList ruleNodes = doc.getElementsByTagName(hb(RULE));
 
-    for(int i = 0; i < ruleNodes.getLength(); i++) {
+    for (int i = 0; i < ruleNodes.getLength(); i++) {
       treatRuleNode(ruleNodes.item(i));
     }
 
     // write the content into xml file
     TransformerFactory tf = TransformerFactory
-        .newInstance();
+      .newInstance();
     tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
     tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
     tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
     Transformer transfo = tf
-        .newTransformer();
+      .newTransformer();
 
     transfo.setOutputProperty(OutputKeys.INDENT, "yes");
     transfo.transform(new DOMSource(this.doc), new StreamResult(target.toFile()));
@@ -148,13 +151,13 @@ public class ActiveRuleLoader {
     String nodeUid = ruleNode.getAttributes().getNamedItem(UID).getNodeValue();
     //Try to get the matching rule of UID in sonar activeRules
     ActiveRule sonarRule = sonarActiveRules.stream()
-        .filter(r -> r.ruleKey().equals(RuleKey.of(REPO_KEY, nodeUid)))
-        .findFirst()
-        .orElse(null);
+      .filter(r -> r.ruleKey().equals(RuleKey.of(REPO_KEY, nodeUid)))
+      .findFirst()
+      .orElse(null);
     //If present
-    if(sonarRule != null&&!yosysRules.contains(nodeUid)) {
+    if (sonarRule != null && !yosysRules.contains(nodeUid)) {
       selectedRuleKeys.add(nodeUid); //Add it to the list of selected rules
-      if(!sonarRule.params().isEmpty() && ParamTranslator.hasZamiaParam(sonarRule)) {
+      if (!sonarRule.params().isEmpty() && ParamTranslator.hasZamiaParam(sonarRule)) {
         writeParam(ruleNode, sonarRule);
       }
     }
@@ -168,7 +171,7 @@ public class ActiveRuleLoader {
     } else if (ParamTranslator.hasIntParam(sonarRule)) {
       writeIntParam(paramNode, sonarRule);
     } else {
-      writeRangeParam(paramNode, sonarRule);     
+      writeRangeParam(paramNode, sonarRule);
     }
     //Don't write anything if param is not type String, Int or Range
   }
@@ -178,11 +181,11 @@ public class ActiveRuleLoader {
 
     // "*a,*b*,c" -> List{"*a" , "*b*" , "c"} each one leads to a param 
     List<String> ls = Stream.of(StringUtils.split(sonarRule.param(ZamiaStringParam.PARAM_KEY), ","))
-        .collect(Collectors.toList());
+      .collect(Collectors.toList());
     String position;
     String value;
     int i = 1;
-    for(String s : ls) {
+    for (String s : ls) {
       //Translates the string expression "[?*][value][?*]
       position = ParamTranslator.positionOf(s);
       value = ParamTranslator.stringValueOf(s);
@@ -190,12 +193,12 @@ public class ActiveRuleLoader {
       Node strParamNode = paramNode.appendChild(this.doc.createElement(hb(STRING_PARAM)));
 
       //hb:ParamID : P1, P2, P3, ..., P[i]
-      strParamNode.appendChild(paramLine(hb(PARAM_ID), "P" + i++));    
+      strParamNode.appendChild(paramLine(hb(PARAM_ID), "P" + i++));
       //hb:Relation
-      strParamNode.appendChild(paramLine(hb(POSITION),position));    
+      strParamNode.appendChild(paramLine(hb(POSITION), position));
       //hb:Value
       strParamNode.appendChild(paramLine(hb(VALUE), value));
-    }  
+    }
   }
 
   //Receives <hb:RuleParams><> to fill
@@ -208,9 +211,9 @@ public class ActiveRuleLoader {
     Node intParamNode = paramNode.appendChild(this.doc.createElement(hb(INT_PARAM)));
 
     //hb:ParamID
-    intParamNode.appendChild(paramLine(hb(PARAM_ID), "P1"));    
+    intParamNode.appendChild(paramLine(hb(PARAM_ID), "P1"));
     //hb:Relation
-    intParamNode.appendChild(paramLine(hb(RELATION),relation));    
+    intParamNode.appendChild(paramLine(hb(RELATION), relation));
     //hb:Value
     intParamNode.appendChild(paramLine(hb(VALUE), value));
   }
@@ -251,18 +254,18 @@ public class ActiveRuleLoader {
   //If present deletes old <hb:RuleParams><> section
   private void clearOldParams(Node ruleNode) {
     NodeList nodes = ruleNode.getChildNodes();
-    for(int i = 0; i < nodes.getLength(); i++) {
+    for (int i = 0; i < nodes.getLength(); i++) {
       Node node = nodes.item(i);
-      if(hb(RULE_PARAMS).equals(node.getNodeName())) {
+      if (hb(RULE_PARAMS).equals(node.getNodeName())) {
         ruleNode.removeChild(node);
       }
-    }   
+    }
   }
 
   public List<String> activeRuleKeys() {
-    if(selectedRuleKeys != null) {
-      if(selectedRuleKeys.isEmpty()) {
-        LOG.warn("List of actives rules from rc_handbook_parameter.xml is empty" );
+    if (selectedRuleKeys != null) {
+      if (selectedRuleKeys.isEmpty()) {
+        LOG.warn("List of actives rules from rc_handbook_parameter.xml is empty");
       }
       return selectedRuleKeys;
     } else {

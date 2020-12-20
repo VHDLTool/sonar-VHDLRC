@@ -1,19 +1,21 @@
 /*
- * Vhdl RuleChecker (Vhdl-rc) plugin for Sonarqube & Zamiacad
- * Copyright (C) 2019 Maxime Facquet
+ * SonarQube Linty VHDLRC :: Plugin
+ * Copyright (C) 2018-2020 Linty Services
+ * mailto:contact@linty-services.com
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package com.lintyservices.sonar.zamia;
 
@@ -23,10 +25,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.fest.util.VisibleForTesting;
+
+import com.google.common.annotations.VisibleForTesting;
+
 import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 
@@ -65,9 +70,9 @@ public class BuildPathMaker {
 
   public BuildPathMaker(Configuration config) {
     this.config = config;
-  } 
+  }
 
-  public static Path make(Configuration config){
+  public static Path make(Configuration config) {
     try {
       LOG.debug("Generating BuildPath.txt");
       return new BuildPathMaker(config).make();
@@ -76,7 +81,7 @@ public class BuildPathMaker {
     }
   }
 
-  protected Path make() throws IOException { 
+  protected Path make() throws IOException {
     Path target = Files.createTempFile("BuildPath", ".txt");//Random name will be generated, ex:"BuildPath3100633746685270227.txt"
     target.toFile().deleteOnExit();
     InputStream source = BuildPathMaker.class.getResourceAsStream(VIRGIN_FILE_PATH);
@@ -85,77 +90,75 @@ public class BuildPathMaker {
   }
 
   @VisibleForTesting
-  protected Path appendParameters(Path target) throws IOException { 
+  protected Path appendParameters(Path target) throws IOException {
     StringBuilder builder = new StringBuilder();
-    String topEntity = getTopEntities(this.config); 
+    String topEntity = getTopEntities(this.config);
     builder
-    .append("toplevel ")
-    .append(topEntity.toUpperCase())
-    .append("\r\n");
-    if(config.get(CUSTOM_CMD_KEY).isPresent()) {
+      .append("toplevel ")
+      .append(topEntity.toUpperCase())
+      .append("\r\n");
+    if (config.get(CUSTOM_CMD_KEY).isPresent()) {
       builder
-      .append(config.get(CUSTOM_CMD_KEY).get());
+        .append(config.get(CUSTOM_CMD_KEY).get());
     }
 
     return Files.write(target, builder.toString().getBytes(UTF_8), StandardOpenOption.APPEND);
   }
 
   public static String customCmdDescription() {
-    StringBuilder builder = new StringBuilder(); 
-    try (BufferedReader reader = new BufferedReader(getRessource(CUSTOM_CMD_DESCRIPTION_FILE))){      
+    StringBuilder builder = new StringBuilder();
+    try (BufferedReader reader = new BufferedReader(getRessource(CUSTOM_CMD_DESCRIPTION_FILE))) {
       String line;
       while ((line = reader.readLine()) != null) {
         builder
-        .append(line);
+          .append(line);
       }
       return String.valueOf(builder);
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read " + CUSTOM_CMD_DESCRIPTION_FILE, e);
-    }    
+    }
   }
 
 
-  public static String getTopEntities(Configuration config ) {
-    return config.get(BuildPathMaker.TOP_ENTITY_KEY).orElse("");  
+  public static String getTopEntities(Configuration config) {
+    return config.get(BuildPathMaker.TOP_ENTITY_KEY).orElse("");
   }
 
-  public static String getRcSynthPath(Configuration config ) {
-    return config.get(BuildPathMaker.GHDLSCRIPT_KEY).orElse("");  
-  }  
+  public static String getRcSynthPath(Configuration config) {
+    return config.get(BuildPathMaker.GHDLSCRIPT_KEY).orElse("");
+  }
 
-  public static String getFileList(Configuration config ) {
-    return config.get(BuildPathMaker.SCRIPT_PARAMS_KEY).orElse("");  
-  }  
+  public static String getFileList(Configuration config) {
+    return config.get(BuildPathMaker.SCRIPT_PARAMS_KEY).orElse("");
+  }
 
-  public static boolean getKeepSource(Configuration config ) {
-    return config.getBoolean(BuildPathMaker.KEEP_SOURCE_KEY).orElse(false);  
-  }  
+  public static boolean getKeepSource(Configuration config) {
+    return config.getBoolean(BuildPathMaker.KEEP_SOURCE_KEY).orElse(false);
+  }
 
-  public static boolean getKeepReports(Configuration config ) {
-    return config.getBoolean(BuildPathMaker.KEEP_REPORTS_KEY).orElse(false);  
-  }  
+  public static boolean getKeepReports(Configuration config) {
+    return config.getBoolean(BuildPathMaker.KEEP_REPORTS_KEY).orElse(false);
+  }
 
-  public static boolean getPauseExec(Configuration config ) {
-    return config.getBoolean(BuildPathMaker.PAUSE_EXEC_KEY).orElse(false);  
-  } 
+  public static boolean getPauseExec(Configuration config) {
+    return config.getBoolean(BuildPathMaker.PAUSE_EXEC_KEY).orElse(false);
+  }
 
-  public static String getGhdlOptions(Configuration config ) {
-    return config.get(BuildPathMaker.GHDL_OPTIONS_KEY).orElse("");  
-  } 
+  public static String getGhdlOptions(Configuration config) {
+    return config.get(BuildPathMaker.GHDL_OPTIONS_KEY).orElse("");
+  }
 
-  public static String getWorkdir(Configuration config ) {
-    return config.get(BuildPathMaker.WORKDIR_KEY).orElse("");  
-  } 
+  public static String getWorkdir(Configuration config) {
+    return config.get(BuildPathMaker.WORKDIR_KEY).orElse("");
+  }
 
-  public static InputStreamReader getRessource(String ressourcePath) throws IOException {    
+  public static InputStreamReader getRessource(String ressourcePath) throws IOException {
     InputStream is = BuildPathMaker.class.getResourceAsStream(ressourcePath);
-    if(is == null) {
+    if (is == null) {
       throw new IOException();
     }
     return new InputStreamReader(is);
   }
-
-
 
 
 }
