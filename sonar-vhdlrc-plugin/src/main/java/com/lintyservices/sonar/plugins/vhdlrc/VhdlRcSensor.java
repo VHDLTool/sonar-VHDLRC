@@ -109,7 +109,8 @@ public class VhdlRcSensor implements Sensor {
     if (!BuildPathMaker.getKeepSource(config)) {
       ZamiaRunner.clean(Paths.get(scannerHome, PROJECT_DIR, SOURCES_DIR));
     }
-    if (!BuildPathMaker.getKeepReports(config) && !context.fileSystem().baseDir().toString().equals("src\\test\\files")) { //Second condition is here to avoid deletion of test files
+    String testDir = context.fileSystem().baseDir().toString().replace('/', '\\');
+    if (!BuildPathMaker.getKeepReports(config) && !testDir.endsWith("src\\test\\files")) { //Second condition is here to avoid deletion of test files
       Path reportPath = Paths.get(scannerHome, PROJECT_DIR, REPORTING_RULE);
       ZamiaRunner.clean(reportPath);
       try {
