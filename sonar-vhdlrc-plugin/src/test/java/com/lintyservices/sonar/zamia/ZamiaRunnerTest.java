@@ -27,9 +27,11 @@ import com.lintyservices.sonar.zamia.ZamiaRunner.RunnerContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -214,10 +216,22 @@ public class ZamiaRunnerTest {
     Path tempBuildPath = createConfigTempFile("temp");
     Path temp2 = createConfigTempFile("temp2");
     Path tempRcSelectedRules = createConfigTempFile("temp3");
-
-    if (bp.setReadOnly()) ;
-    zamiaRunner.uploadConfigToZamia(tempBuildPath, temp2, tempRcSelectedRules);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("unable to upload configuration files to scanner:");
+    boolean properReadOnly=false; // On some environments, the following test can't be done since readonly files can still be modified
+    File ftest = Files.createFile(Paths.get("test.txt")).toFile();
+    File ftest2 = Files.createFile(Paths.get("test2.txt")).toFile();
+    ftest.setReadOnly();
+    try {
+      Files.copy(Paths.get("test2.txt"), Paths.get("test.txt"), StandardCopyOption.REPLACE_EXISTING);
+    } catch (AccessDeniedException e) {
+      properReadOnly=true;
+    }
+    ftest.delete();
+    ftest2.delete();
+    if (properReadOnly) {
+      bp.setReadOnly();
+      zamiaRunner.uploadConfigToZamia(tempBuildPath, temp2, tempRcSelectedRules);
+      assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("unable to upload configuration files to scanner:");
+    }
   }
 
   @Test
