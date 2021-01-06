@@ -208,7 +208,6 @@ public class ZamiaRunnerTest {
     //walkin(testScanner.getRoot(),"+--"); 
   }
 
-  // FIXME: Failing unit test
   @Test
   public void test_uploading_config_io_exeption_with_debug_on() throws IOException {
     logTester.setLevel(LoggerLevel.DEBUG);

@@ -41,7 +41,11 @@ public class VhdlRcPluginTest {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(SONARQUBE_LTS_VERSION, SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
     vhdlRcPlugin.define(context);
-    assertThat(context.getExtensions()).hasSize(17);
+    int extensionsNumber=17;
+    if (System.getProperty("withoutVhdlLanguageSupport")!=null && System.getProperty("withoutVhdlLanguageSupport").equals("true")) {
+      extensionsNumber-=2;
+    }
+    assertThat(context.getExtensions()).hasSize(extensionsNumber);
     runtime.getApiVersion().isGreaterThanOrEqual(Version.create(6, 5));
   }
 

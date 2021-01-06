@@ -19,6 +19,10 @@
  */
 package com.lintyservices.sonar.plugins.vhdlrc;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.sonar.api.Plugin;
 import org.sonar.api.PropertyType;
 import org.sonar.api.config.PropertyDefinition;
@@ -43,13 +47,25 @@ public class VhdlRcPlugin implements Plugin {
       throw new IllegalStateException("SonarQube " + SONARQUBE_LTS_VERSION.major() + "." + SONARQUBE_LTS_VERSION.minor() + " is required for VHDLRC plugin");
     }
     builder.add(
-      Vhdl.class,
       VhdlRulesDefinition.class,
       VhdlRcProfile.class,
       VhdlRcSensor.class,
-      YosysGhdlSensor.class,
-      MetricSensor.class
+      YosysGhdlSensor.class
     );
+    InputStream is = VhdlRcPlugin.class.getClassLoader().getResourceAsStream("strings.properties");
+    Properties props = new Properties();
+    try {
+      props.load(is);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    if(!(props.get("withoutVhdl")!=null && props.get("withoutVhdl").equals("true"))) {
+      builder.add(
+        Vhdl.class,
+        MetricSensor.class
+      );
+    }
     builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
       .category(Vhdl.VHDLRC_CATEGORY)
       .subCategory("General")

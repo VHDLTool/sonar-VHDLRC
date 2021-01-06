@@ -171,6 +171,9 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.6</version>
         <configuration>
+        <excludes>
+    <exclude>**/*.ots</exclude>
+  </excludes>
           <append>true</append>
         </configuration>
         <executions>
