@@ -108,10 +108,13 @@ public class ActiveRuleLoader {
     //Initiates the list of active rules to put in rc_selected_rules.xml later
     selectedRuleKeys = new ArrayList<>();
     yosysRules = new HandbookYosysRulesXmlParser().parseXML(getClass().getClassLoader().getResourceAsStream("configuration/HANDBOOK/Rulesets/handbook.xml"));
-    if (!enableYosys) // Execute yosys if at least one rule using yosys-ghdl is activated
-      for (ActiveRule activeRule : sonarActiveRules)
-        if (yosysRules.contains(activeRule.ruleKey().toString().substring(activeRule.ruleKey().toString().lastIndexOf(":") + 1)))
+    if (!enableYosys) { // Execute yosys if at least one rule using yosys-ghdl is activated
+      for (ActiveRule activeRule : sonarActiveRules) {
+        if (yosysRules.contains(activeRule.ruleKey().toString().substring(activeRule.ruleKey().toString().lastIndexOf(":") + 1))) {
           enableYosys=true;
+        }
+      }
+    }
     //Create a Temporary xml file with a random name
     Path target = Files.createTempFile("target", ".xml");
     target.toFile().deleteOnExit();

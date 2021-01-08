@@ -51,7 +51,7 @@ public class VhdlRcProfile implements BuiltInQualityProfilesDefinition {
     } catch (XMLStreamException e) {
       throw new IllegalStateException("XML is not valid", e);
     }
-    vhdlRcQP.setDefault(false).done();
+    vhdlRcQP.setDefault(!VhdlRcPlugin.withoutVhdl).done();
 
   }
 

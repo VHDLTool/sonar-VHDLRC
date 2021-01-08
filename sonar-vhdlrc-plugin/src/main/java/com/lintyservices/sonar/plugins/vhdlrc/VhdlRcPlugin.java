@@ -38,6 +38,7 @@ public class VhdlRcPlugin implements Plugin {
 
   public static final Version SONARQUBE_LTS_VERSION = Version.create(7, 9);
   private static final String VHDL_RULECHEKER_SUBCATEGORY = "VHDL RuleChecker";
+  public static boolean withoutVhdl = false;
 
   @Override
   public void define(Context context) {
@@ -63,19 +64,23 @@ public class VhdlRcPlugin implements Plugin {
     if(!(props.get("withoutVhdl")!=null && props.get("withoutVhdl").equals("true"))) {
       builder.add(
         Vhdl.class,
-        MetricSensor.class
+        MetricSensor.class,
+        PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
+        .category(Vhdl.VHDLRC_CATEGORY)
+        .subCategory("General")
+        .defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
+        .name("File suffixes")
+        .index(1)
+        .multiValues(true)
+        .description("Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.")
+        .onQualifiers(Qualifiers.PROJECT)
+        .build()
       );
     }
-    builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
-      .category(Vhdl.VHDLRC_CATEGORY)
-      .subCategory("General")
-      .defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
-      .name("File suffixes")
-      .index(1)
-      .multiValues(true)
-      .description("Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.")
-      .onQualifiers(Qualifiers.PROJECT)
-      .build());
+    else
+    {
+      withoutVhdl = true;
+    }
     builder.add(PropertyDefinition.builder(VhdlRcSensor.SCANNER_HOME_KEY)
       .category(Vhdl.VHDLRC_CATEGORY)
       .subCategory(VHDL_RULECHEKER_SUBCATEGORY)
@@ -98,6 +103,7 @@ public class VhdlRcPlugin implements Plugin {
       .description("Path to the project's ghdl compilation script")
       .defaultValue(BuildPathMaker.DEFAULT_GHDLSCRIPT)
       .onQualifiers(Qualifiers.PROJECT)
+      .index(0)
       .build());
     builder.add(PropertyDefinition.builder(BuildPathMaker.SCRIPT_PARAMS_KEY)
       .category(Vhdl.VHDLRC_CATEGORY)

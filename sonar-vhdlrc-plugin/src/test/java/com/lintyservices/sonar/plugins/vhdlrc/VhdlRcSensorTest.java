@@ -99,7 +99,6 @@ public class VhdlRcSensorTest {
     assertThat(logTester.logs()).isNotEmpty();
   }
 
-  // FIXME: Failing unit test
   @Test
   public void test_two_good_issues_one_failure() {
     context1.addContextProperty(BuildPathMaker.KEEP_REPORTS_KEY, "true");
@@ -153,10 +152,10 @@ public class VhdlRcSensorTest {
 
     assertThat(logTester.logs(LoggerLevel.INFO).get(1)).contains("Importing rc_report_rule_STD_03800.xml");
     assertThat(logTester.logs(LoggerLevel.WARN).get(2)).contains("Can't import an issue from rc_report_rule_STD_05000.xml : 65 is not a valid line for pointer. File I2C/file3.vhd has 3 line(s)");
-   assertThat(logTester.logs(LoggerLevel.WARN).get(3)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");
-   assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).isNotEmpty();
+    assertThat(logTester.logs(LoggerLevel.WARN).get(3)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).isNotEmpty();
     assertThat(logTester.logs(LoggerLevel.WARN).size()).isEqualTo(2);*/
-    
+
   }
 
   public static void assertNoIssueOnFile(SensorContextTester context, String fileName) {
@@ -167,30 +166,28 @@ public class VhdlRcSensorTest {
 
   public static SensorContextTester createContext(String projectHomePath, String scannerHomePath) {
     return SensorContextTester.create(Paths.get(projectHomePath))
-        .setSettings(new MapSettings()
-            .setProperty(VhdlRcSensor.SCANNER_HOME_KEY, scannerHomePath)
-            )
-        .setRuntime(SQ67);
+      .setSettings(new MapSettings().setProperty(VhdlRcSensor.SCANNER_HOME_KEY, scannerHomePath))
+      .setRuntime(SQ67);
   }
 
   public static void addRules(SensorContextTester context, String... args) {
     ActiveRulesBuilder builder = new ActiveRulesBuilder();
     for (String ruleKey : args) {
-      builder.addRule(
-          new NewActiveRule.Builder()
-          .setRuleKey(RuleKey.of("vhdlrc-repository", ruleKey))
-          .setLanguage("vhdl")
-          .build()
-          );
+      builder.addRule (
+        new NewActiveRule.Builder()
+        .setRuleKey(RuleKey.of("vhdlrc-repository", ruleKey))
+        .setLanguage("vhdl")
+        .build()
+      );
     }
     context.setActiveRules(builder.build());
   }
 
   public static void addTestFile(SensorContextTester context, String filePath, String content) {
     context.fileSystem().add(TestInputFileBuilder.create(PROJECT_ID, filePath)
-        .setLanguage("vhdl")
-        .setCharset(UTF_8)
-        .setContents(content)
-        .build());
+      .setLanguage("vhdl")
+      .setCharset(UTF_8)
+      .setContents(content)
+      .build());
   }
 }

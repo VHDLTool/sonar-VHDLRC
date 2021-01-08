@@ -43,7 +43,7 @@ public class VhdlRcPluginTest {
     vhdlRcPlugin.define(context);
     int extensionsNumber=17;
     if (System.getProperty("withoutVhdlLanguageSupport")!=null && System.getProperty("withoutVhdlLanguageSupport").equals("true")) {
-      extensionsNumber-=2;
+      extensionsNumber-=3;
     }
     assertThat(context.getExtensions()).hasSize(extensionsNumber);
     runtime.getApiVersion().isGreaterThanOrEqual(Version.create(6, 5));
