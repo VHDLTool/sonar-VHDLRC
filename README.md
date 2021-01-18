@@ -19,7 +19,10 @@ Without integration tests:
 ```
 mvn clean package
 ```
-
+Without built-in vhdl language (allows compatibility with linty-vhdl plugin):
+```
+mvn clean package -DwithoutVhdlLanguageSupport
+```
 With integration tests on SonarQube 7.9.4 version:
 ```
 mvn clean verify -Pits -Dsonar.runtimeVersion=7.9.4
