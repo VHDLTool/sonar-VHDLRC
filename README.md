@@ -9,7 +9,7 @@ The external tool is wrapped in rc-scanner and is fully taken care of.
 ## Features  
 * Automated analysis  
 * Issues import from [Zamiacad-Rulechecker](https://github.com/VHDLTool/Zamiacad-Rulechecker/wiki) analysis  
-* 130 guidline rules with examples and diagrams, 31 implemented rules  
+* 130 guideline rules with examples and diagrams, 32 implemented rules (29 ZamiaCad rules, 3 Yosys-Ghdl rules)
 * Effective rule parameters  
 * Loc and comments metrics computation   
 * Library and Top entity configuration  
