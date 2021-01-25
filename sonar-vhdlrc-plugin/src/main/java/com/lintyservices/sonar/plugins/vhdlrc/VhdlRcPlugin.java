@@ -19,6 +19,10 @@
  */
 package com.lintyservices.sonar.plugins.vhdlrc;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.sonar.api.Plugin;
 import org.sonar.api.PropertyType;
 import org.sonar.api.config.PropertyDefinition;
@@ -34,6 +38,7 @@ public class VhdlRcPlugin implements Plugin {
 
   public static final Version SONARQUBE_LTS_VERSION = Version.create(7, 9);
   private static final String VHDL_RULECHEKER_SUBCATEGORY = "VHDL RuleChecker";
+  public static boolean withoutVhdl = false;
 
   @Override
   public void define(Context context) {
@@ -43,22 +48,39 @@ public class VhdlRcPlugin implements Plugin {
       throw new IllegalStateException("SonarQube " + SONARQUBE_LTS_VERSION.major() + "." + SONARQUBE_LTS_VERSION.minor() + " is required for VHDLRC plugin");
     }
     builder.add(
-      Vhdl.class,
       VhdlRulesDefinition.class,
       VhdlRcProfile.class,
       VhdlRcSensor.class,
-      MetricSensor.class
+      YosysGhdlSensor.class
     );
-    builder.add(PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
-      .category(Vhdl.VHDLRC_CATEGORY)
-      .subCategory("General")
-      .defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
-      .name("File suffixes")
-      .index(1)
-      .multiValues(true)
-      .description("Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.")
-      .onQualifiers(Qualifiers.PROJECT)
-      .build());
+    InputStream is = VhdlRcPlugin.class.getClassLoader().getResourceAsStream("strings.properties");
+    Properties props = new Properties();
+    try {
+      props.load(is);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    if(!(props.get("withoutVhdl")!=null && props.get("withoutVhdl").equals("true"))) {
+      builder.add(
+        Vhdl.class,
+        MetricSensor.class,
+        PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
+        .category(Vhdl.VHDLRC_CATEGORY)
+        .subCategory("General")
+        .defaultValue(Vhdl.DEFAULT_FILE_SUFFIXES)
+        .name("File suffixes")
+        .index(1)
+        .multiValues(true)
+        .description("Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.")
+        .onQualifiers(Qualifiers.PROJECT)
+        .build()
+      );
+    }
+    else
+    {
+      withoutVhdl = true;
+    }
     builder.add(PropertyDefinition.builder(VhdlRcSensor.SCANNER_HOME_KEY)
       .category(Vhdl.VHDLRC_CATEGORY)
       .subCategory(VHDL_RULECHEKER_SUBCATEGORY)
@@ -74,29 +96,21 @@ public class VhdlRcPlugin implements Plugin {
       .defaultValue(BuildPathMaker.DEFAULT_ENTITY)
       .onQualifiers(Qualifiers.PROJECT)
       .build());
-    builder.add(PropertyDefinition.builder(BuildPathMaker.RCSYNTH_PATH_KEY)
+    builder.add(PropertyDefinition.builder(BuildPathMaker.GHDLSCRIPT_KEY)
       .category(Vhdl.VHDLRC_CATEGORY)
       .subCategory("Rcsynth")
-      .name("Rcsynth path")
-      .description("Path to vhdlrcsynth executable")
-      .defaultValue(BuildPathMaker.DEFAULT_RCSYNTH)
+      .name("Ghdl compilation script")
+      .description("Path to the project's ghdl compilation script")
+      .defaultValue(BuildPathMaker.DEFAULT_GHDLSCRIPT)
       .onQualifiers(Qualifiers.PROJECT)
+      .index(0)
       .build());
-    builder.add(PropertyDefinition.builder(BuildPathMaker.FILE_LIST_KEY)
+    builder.add(PropertyDefinition.builder(BuildPathMaker.SCRIPT_PARAMS_KEY)
       .category(Vhdl.VHDLRC_CATEGORY)
       .subCategory("Rcsynth")
-      .name("File list")
-      .description("List of files to analyse with ghdl, separated with spaces")
-      .defaultValue(BuildPathMaker.DEFAULT_FILE_LIST)
-      .onQualifiers(Qualifiers.PROJECT)
-      .build());
-    builder.add(PropertyDefinition.builder(BuildPathMaker.AUTOEXEC_KEY)
-      .category(Vhdl.VHDLRC_CATEGORY)
-      .subCategory("Rcsynth")
-      .name("Autoexec")
-      .description("Automatically execute vhdlrcsynth when running scanner if true")
-      .type(PropertyType.BOOLEAN)
-      .defaultValue(String.valueOf(BuildPathMaker.DEFAULT_AUTOEXEC))
+      .name("Additional parameters")
+      .description("The project's ghdl compilation script will be called with these parameters")
+      .defaultValue(BuildPathMaker.DEFAULT_SCRIPT_PARAMS)
       .onQualifiers(Qualifiers.PROJECT)
       .build());
     builder.add(PropertyDefinition.builder(BuildPathMaker.KEEP_SOURCE_KEY)
@@ -136,22 +150,12 @@ public class VhdlRcPlugin implements Plugin {
       .onQualifiers(Qualifiers.PROJECT)
       .type(PropertyType.TEXT)
       .build());
-    builder.add(PropertyDefinition.builder(BuildPathMaker.FEXPLICIT_KEY)
+    builder.add(PropertyDefinition.builder(BuildPathMaker.GHDL_OPTIONS_KEY)
       .category(Vhdl.VHDLRC_CATEGORY)
       .subCategory("Yosys")
-      .name("fexplicit")
-      .description("Execute ghdl with -fexplicit parameter in yosys")
-      .type(PropertyType.BOOLEAN)
-      .defaultValue(String.valueOf(BuildPathMaker.DEFAULT_FEXPLICIT))
-      .onQualifiers(Qualifiers.PROJECT)
-      .build());
-    builder.add(PropertyDefinition.builder(BuildPathMaker.FSYNOPSYS_KEY)
-      .category(Vhdl.VHDLRC_CATEGORY)
-      .subCategory("Yosys")
-      .name("fsynopsys")
-      .description("Execute ghdl with -fsynopsys parameter in yosys")
-      .type(PropertyType.BOOLEAN)
-      .defaultValue(String.valueOf(BuildPathMaker.DEFAULT_FSYNOPSYS))
+      .name("Ghdl options")
+      .description("Execute ghdl with those options")
+      .defaultValue(BuildPathMaker.DEFAULT_GHDL_OPTIONS)
       .onQualifiers(Qualifiers.PROJECT)
       .build());
     builder.add(PropertyDefinition.builder(BuildPathMaker.WORKDIR_KEY)

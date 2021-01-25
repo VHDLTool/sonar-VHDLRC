@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.lintyservices.sonar.plugins.vhdlrc.a;
+package com.lintyservices.sonar.plugins.vhdlrc;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.utils.log.LogTester;
+
 import com.lintyservices.sonar.plugins.vhdlrc.VhdlRcPlugin;
 import com.lintyservices.sonar.plugins.vhdlrc.VhdlRcSensor;
 import com.lintyservices.sonar.zamia.BuildPathMaker;
@@ -42,11 +43,11 @@ import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.internal.SonarRuntimeImpl;
-import org.sonar.api.internal.apachecommons.io.FilenameUtils;
 import org.sonar.api.rule.RuleKey;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class VhdlRcSensorTest {
 
@@ -98,7 +99,6 @@ public class VhdlRcSensorTest {
     assertThat(logTester.logs()).isNotEmpty();
   }
 
-  // FIXME: Failing unit test
   @Test
   public void test_two_good_issues_one_failure() {
     context1.addContextProperty(BuildPathMaker.KEEP_REPORTS_KEY, "true");
@@ -106,33 +106,56 @@ public class VhdlRcSensorTest {
     List<Issue> issues = new ArrayList<>(context1.allIssues());
 
     assertThat(issues).hasSize(4);
+
+    boolean std400=false;
+    boolean std4002=false;
+    boolean std5000=false;
+    boolean std3800=false;
+    for (Issue issue : issues) {
+      String ruleKey = issue.ruleKey().rule();
+      if (ruleKey.equals("STD_00400") && !issue.primaryLocation().inputComponent().key().equals(PROJECT_ID + ":I2C/file3.vhd")) {
+        std400=true;
+        assertThat(issue.ruleKey().rule()).isEqualTo("STD_00400");
+        assertThat(issue.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
+        assertThat(issue.primaryLocation().textRange().start().line()).isEqualTo(1);
+        assertThat(issue.primaryLocation().message()).isEqualTo("Label is missing");
+      } 
+      else if (ruleKey.equals("STD_00400") && !issue.primaryLocation().inputComponent().key().equals(PROJECT_ID + ":I2C/file1.vhd")) {
+        std4002=true;
+        assertThat(issue.ruleKey().rule()).isEqualTo("STD_00400");
+        assertThat(issue.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file3.vhd");
+        assertThat(issue.primaryLocation().textRange().start().line()).isEqualTo(2);
+        assertThat(issue.primaryLocation().message()).isEqualTo("Label is missing 2");
+      } 
+      else if (ruleKey.equals("STD_05000")) {
+        std5000=true;
+        assertThat(issue.ruleKey().rule()).isEqualTo("STD_05000");
+        assertThat(issue.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
+        assertThat(issue.primaryLocation().textRange().start().line()).isEqualTo(1);
+        assertThat(issue.primaryLocation().message()).isEqualTo("Signal I_VZ_CMD should not be in the sensitivity list of the process");
+      } 
+      else if (ruleKey.equals("STD_03800")) {
+        std3800=true;
+        assertThat(issue.ruleKey().rule()).isEqualTo("STD_03800");
+        assertThat(issue.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file3.vhd");
+        assertThat(issue.primaryLocation().textRange().start().line()).isEqualTo(1);
+        assertThat(issue.primaryLocation().message()).isEqualTo("Synchronous DIR_SDA signal not asynchronously reset");
+      }
+    }
+
+    assertTrue(std400 && std4002 && std5000 && std3800);
+
     assertNoIssueOnFile(context1, "file_no_issues.vhd");
 
-    Issue issue1 = issues.get(2);
-    assertThat(issue1.ruleKey().rule()).isEqualTo("STD_00400");
-    assertThat(issue1.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
-    assertThat(issue1.primaryLocation().textRange().start().line()).isEqualTo(1);
-    assertThat(issue1.primaryLocation().message()).isEqualTo("Label is missing");
-
-    Issue issue2 = issues.get(3);
-    assertThat(issue2.ruleKey().rule()).isEqualTo("STD_00400");
-    assertThat(issue2.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file3.vhd");
-    assertThat(issue2.primaryLocation().textRange().start().line()).isEqualTo(2);
-    assertThat(issue2.primaryLocation().message()).isEqualTo("Label is missing 2");
-
+    /*
     String no_file = FilenameUtils.separatorsToSystem("./I2C/Mux/no_file.vhd");
 
-    Issue issue3 = issues.get(1);
-    assertThat(issue3.ruleKey().rule()).isEqualTo("STD_05000");
-    assertThat(issue3.primaryLocation().inputComponent().key()).isEqualTo(PROJECT_ID + ":I2C/file1.vhd");
-    assertThat(issue3.primaryLocation().textRange().start().line()).isEqualTo(1);
-    assertThat(issue3.primaryLocation().message()).isEqualTo("Signal I_VZ_CMD should not be in the sensitivity list of the process");
+    assertThat(logTester.logs(LoggerLevel.INFO).get(1)).contains("Importing rc_report_rule_STD_03800.xml");
+    assertThat(logTester.logs(LoggerLevel.WARN).get(2)).contains("Can't import an issue from rc_report_rule_STD_05000.xml : 65 is not a valid line for pointer. File I2C/file3.vhd has 3 line(s)");
+    assertThat(logTester.logs(LoggerLevel.WARN).get(3)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).isNotEmpty();
+    assertThat(logTester.logs(LoggerLevel.WARN).size()).isEqualTo(2);*/
 
-    //assertThat(logTester.logs(LoggerLevel.INFO).get(1)).contains("Importing rc_report_rule_STD_03800.xml");
-//    assertThat(logTester.logs(LoggerLevel.WARN).get(2)).contains("Can't import an issue from rc_report_rule_STD_05000.xml : 65 is not a valid line for pointer. File I2C/file3.vhd has 3 line(s)");
-//    assertThat(logTester.logs(LoggerLevel.WARN).get(3)).contains("Input file not found : "+ no_file + ". No rc issues will be imported on this file.");
-//    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).isNotEmpty();
-    //assertThat(logTester.logs(LoggerLevel.WARN).size()).isEqualTo(2);
   }
 
   public static void assertNoIssueOnFile(SensorContextTester context, String fileName) {
@@ -143,20 +166,18 @@ public class VhdlRcSensorTest {
 
   public static SensorContextTester createContext(String projectHomePath, String scannerHomePath) {
     return SensorContextTester.create(Paths.get(projectHomePath))
-      .setSettings(new MapSettings()
-        .setProperty(VhdlRcSensor.SCANNER_HOME_KEY, scannerHomePath)
-      )
+      .setSettings(new MapSettings().setProperty(VhdlRcSensor.SCANNER_HOME_KEY, scannerHomePath))
       .setRuntime(SQ67);
   }
 
   public static void addRules(SensorContextTester context, String... args) {
     ActiveRulesBuilder builder = new ActiveRulesBuilder();
     for (String ruleKey : args) {
-      builder.addRule(
+      builder.addRule (
         new NewActiveRule.Builder()
-          .setRuleKey(RuleKey.of("vhdlrc-repository", ruleKey))
-          .setLanguage("vhdl")
-          .build()
+        .setRuleKey(RuleKey.of("vhdlrc-repository", ruleKey))
+        .setLanguage("vhdl")
+        .build()
       );
     }
     context.setActiveRules(builder.build());

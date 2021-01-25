@@ -40,23 +40,20 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class BuildPathMaker {
 
   public static final String TOP_ENTITY_KEY = "sonar.vhdlrc.topEntities";
-  public static final String RCSYNTH_PATH_KEY = "sonar.vhdlrc.rcsynth";
-  public static final String FILE_LIST_KEY = "sonar.vhdlrc.fileList";
-  public static final String AUTOEXEC_KEY = "sonar.vhdlrc.auto";
+  public static final String GHDLSCRIPT_KEY = "sonar.vhdlrc.ghdlscript";
+  public static final String SCRIPT_PARAMS_KEY = "sonar.vhdlrc.params";
   public static final String KEEP_SOURCE_KEY = "sonar.vhdlrc.keepSource";
   public static final String KEEP_REPORTS_KEY = "sonar.vhdlrc.keepReports";
   public static final String PAUSE_EXEC_KEY = "sonar.vhdlrc.pauseExec";
-  public static final String FEXPLICIT_KEY = "sonar.vhdlrc.fexplicit";
-  public static final String FSYNOPSYS_KEY = "sonar.vhdlrc.fsynopsys";
+  public static final String GHDL_OPTIONS_KEY = "sonar.vhdlrc.ghdlOptions";
   public static final String WORKDIR_KEY = "sonar.vhdlrc.workdir";
   public static final String DEFAULT_ENTITY = "WORK.TOP";
-  public static final String DEFAULT_RCSYNTH = "/mnt/c/fsmexample/vhdlrcsynth.sh";
-  public static final String DEFAULT_FILE_LIST = "";
-  public static final boolean DEFAULT_AUTOEXEC = false;
+  public static final String DEFAULT_GHDLSCRIPT = "/mnt/c/fsmexample/vhdlrcsynth.sh";
+  public static final String DEFAULT_SCRIPT_PARAMS = "";
   public static final boolean DEFAULT_KEEP_SOURCE = false;
   public static final boolean DEFAULT_KEEP_REPORTS = false;
   public static final boolean DEFAULT_PAUSE_EXEC = false;
-  public static final boolean DEFAULT_FEXPLICIT = false;
+  public static final String DEFAULT_GHDL_OPTIONS = "-fexplicit -fsynopsys";
   public static final boolean DEFAULT_FSYNOPSYS = false;
   public static final String DEFAULT_WORKDIR = "build_dir";
 
@@ -128,15 +125,11 @@ public class BuildPathMaker {
   }
 
   public static String getRcSynthPath(Configuration config) {
-    return config.get(BuildPathMaker.RCSYNTH_PATH_KEY).orElse("");
+    return config.get(BuildPathMaker.GHDLSCRIPT_KEY).orElse("");
   }
 
   public static String getFileList(Configuration config) {
-    return config.get(BuildPathMaker.FILE_LIST_KEY).orElse("");
-  }
-
-  public static boolean getAutoexec(Configuration config) {
-    return config.getBoolean(BuildPathMaker.AUTOEXEC_KEY).orElse(false);
+    return config.get(BuildPathMaker.SCRIPT_PARAMS_KEY).orElse("");
   }
 
   public static boolean getKeepSource(Configuration config) {
@@ -151,12 +144,8 @@ public class BuildPathMaker {
     return config.getBoolean(BuildPathMaker.PAUSE_EXEC_KEY).orElse(false);
   }
 
-  public static boolean getFexplicit(Configuration config) {
-    return config.getBoolean(BuildPathMaker.FEXPLICIT_KEY).orElse(false);
-  }
-
-  public static boolean getFsynopsys(Configuration config) {
-    return config.getBoolean(BuildPathMaker.FSYNOPSYS_KEY).orElse(false);
+  public static String getGhdlOptions(Configuration config) {
+    return config.get(BuildPathMaker.GHDL_OPTIONS_KEY).orElse("");
   }
 
   public static String getWorkdir(Configuration config) {
