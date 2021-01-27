@@ -12,200 +12,151 @@
 
 	<hb:Rule UID="CNE_01000">
 		<hb:RuleUID>CNE_01000</hb:RuleUID>
-		<hb:RuleGEN>GEN_01000</hb:RuleGEN>	
-	   	<hb:RuleParams>
-			<hb:StringParam>
-			   <hb:ParamID>P1</hb:ParamID>
-			   <hb:Position>Prefix</hb:Position>
-			   <hb:Value>v_</hb:Value>
-		   </hb:StringParam>
-	   </hb:RuleParams>
+		<hb:RuleGEN>GEN_01000</hb:RuleGEN>
+	</hb:Rule>
+
+	<hb:Rule UID="NXE_01000">
+		<hb:RuleUID>NXE_01000</hb:RuleUID>
+		<hb:RuleGEN>GEN_01000</hb:RuleGEN>
 	</hb:Rule>
 
 	<hb:Rule UID="CNE_01200">
 		<hb:RuleUID>CNE_01200</hb:RuleUID>
-		<hb:RuleGEN>GEN_01200</hb:RuleGEN>	
-	   	<hb:RuleParams>
-			<hb:StringParam>
-			   <hb:ParamID>P1</hb:ParamID>
-			   <hb:Position>Prefix</hb:Position>
-			   <hb:Value>p_</hb:Value>
-		   </hb:StringParam>
-	   </hb:RuleParams>
+		<hb:RuleGEN>GEN_01200</hb:RuleGEN>
 	</hb:Rule>
-	
+
+	<hb:Rule UID="NXE_01200">
+		<hb:RuleUID>NXE_01200</hb:RuleUID>
+		<hb:RuleGEN>GEN_01200</hb:RuleGEN>
+	</hb:Rule>
+
 	<hb:Rule UID="CNE_01600">
 		<hb:RuleUID>CNE_01600</hb:RuleUID>
-		<hb:RuleGEN>GEN_01600</hb:RuleGEN>	
-	   	<hb:RuleParams>
-			<hb:StringParam>
-			   <hb:ParamID>P1</hb:ParamID>
-			   <hb:Position>Prefix</hb:Position>
-			   <hb:Value>pkg_</hb:Value>
-		   </hb:StringParam>
-	   </hb:RuleParams>
-	 </hb:Rule>
-	
+		<hb:RuleGEN>GEN_01600</hb:RuleGEN>
+	</hb:Rule>
+
+	<hb:Rule UID="NXE_01600">
+		<hb:RuleUID>NXE_01600</hb:RuleUID>
+		<hb:RuleGEN>GEN_01600</hb:RuleGEN>
+	</hb:Rule>
+
 	<hb:Rule UID="CNE_02000">
 		<hb:RuleUID>CNE_02000</hb:RuleUID>
-		<hb:RuleGEN>GEN_02000</hb:RuleGEN>	
-		<hb:RuleParams>
-			<hb:StringParam>
-			   <hb:ParamID>P1</hb:ParamID>
-			   <hb:Position>Prefix</hb:Position>
-			   <hb:Value>sm_</hb:Value>
-		   </hb:StringParam>
-	   </hb:RuleParams>
+		<hb:RuleGEN>GEN_02000</hb:RuleGEN>
 	</hb:Rule>
-	
+
+	<hb:Rule UID="NXE_02000">
+		<hb:RuleUID>NXE_02000</hb:RuleUID>
+		<hb:RuleGEN>GEN_02000</hb:RuleGEN>
+	</hb:Rule>
+
 	<hb:Rule UID="CNE_02100">
 		<hb:RuleUID>CNE_02100</hb:RuleUID>
-		<hb:RuleGEN>GEN_02100</hb:RuleGEN>	
-	   	<hb:RuleParams>
-			<hb:StringParam>
-				<hb:ParamID>P1</hb:ParamID>
-				<hb:Position>Equal</hb:Position>
-				<hb:Value>Behavioral</hb:Value>
-			</hb:StringParam>
-			<hb:StringParam>
-				<hb:ParamID>P2</hb:ParamID>
-				<hb:Position>Equal</hb:Position>
-				<hb:Value>RTL</hb:Value>
-			</hb:StringParam>
-			<hb:StringParam>
-				<hb:ParamID>P3</hb:ParamID>
-				<hb:Position>Equal</hb:Position>
-				<hb:Value>Simulation</hb:Value>
-			</hb:StringParam>
-		</hb:RuleParams>
+		<hb:RuleGEN>GEN_02100</hb:RuleGEN>
 	</hb:Rule>
-	
+
+	<hb:Rule UID="NXE_02100">
+		<hb:RuleUID>NXE_02100</hb:RuleUID>
+		<hb:RuleGEN>GEN_02100</hb:RuleGEN>
+	</hb:Rule>
+
 	<hb:Rule UID="CNE_02300">
 		<hb:RuleUID>CNE_02300</hb:RuleUID>
 		<hb:RuleGEN>GEN_02300</hb:RuleGEN>
 	</hb:Rule>
-	
+
+	<hb:Rule UID="NXE_02300">
+		<hb:RuleUID>NXE_02300</hb:RuleUID>
+		<hb:RuleGEN>GEN_02300</hb:RuleGEN>
+	</hb:Rule>
+
 	<hb:Rule UID="CNE_02400">
 		<hb:RuleUID>CNE_02400</hb:RuleUID>
 		<hb:RuleGEN>GEN_02400</hb:RuleGEN>
 	</hb:Rule>
-	
+
+	<hb:Rule UID="NXE_02400">
+		<hb:RuleUID>NXE_02400</hb:RuleUID>
+		<hb:RuleGEN>GEN_02400</hb:RuleGEN>
+	</hb:Rule>
+
 	<hb:Rule UID="CNE_04900">
 		<hb:RuleUID>CNE_04900</hb:RuleUID>
 		<hb:RuleGEN>GEN_04900</hb:RuleGEN>
 	</hb:Rule>
-	
+	<hb:Rule UID="NXE_04900">
+		<hb:RuleUID>NXE_04900</hb:RuleUID>
+		<hb:RuleGEN>GEN_04900</hb:RuleGEN>
+	</hb:Rule>
+
 	<hb:Rule UID="STD_00200">
 		<hb:RuleUID>STD_00200</hb:RuleUID>
-		<hb:RuleGEN>STD_00200</hb:RuleGEN>		
-		<hb:RuleParams>
-		   <hb:StringParam>
-			   <hb:ParamID>P1</hb:ParamID>
-			   <hb:Position>Contain</hb:Position>
-			   <hb:Value>clk</hb:Value>
-		   </hb:StringParam>
-		   <hb:StringParam>
-			   <hb:ParamID>P2</hb:ParamID>
-			   <hb:Position>Contain</hb:Position>
-			   <hb:Value>clock</hb:Value>
-		   </hb:StringParam>
-        	</hb:RuleParams>
+		<hb:RuleGEN>STD_00200</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_00300">
 		<hb:RuleUID>STD_00300</hb:RuleUID>
-		<hb:RuleGEN>STD_00300</hb:RuleGEN>	
-		<hb:RuleParams>
-		   <hb:StringParam>
-			   <hb:ParamID>P1</hb:ParamID>
-			   <hb:Position>Contain</hb:Position>
-			   <hb:Value>rst</hb:Value>
-		   </hb:StringParam>
-		   <hb:StringParam>
-			   <hb:ParamID>P2</hb:ParamID>
-			   <hb:Position>Contain</hb:Position>
-			   <hb:Value>reset</hb:Value>
-		   </hb:StringParam>
-		   <hb:StringParam>
-			   <hb:ParamID>P3</hb:ParamID>
-			   <hb:Position>Contain</hb:Position>
-			   <hb:Value>clr</hb:Value>
-		   </hb:StringParam>
-        	</hb:RuleParams>
+		<hb:RuleGEN>STD_00300</hb:RuleGEN>
 	</hb:Rule>
-		
+
 	<hb:Rule UID="STD_00400">
 		<hb:RuleUID>STD_00400</hb:RuleUID>
 		<hb:RuleGEN>STD_00400</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_01800">
 		<hb:RuleUID>STD_01800</hb:RuleUID>
 		<hb:RuleGEN>STD_01800</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_03600">
 		<hb:RuleUID>STD_03600</hb:RuleUID>
 		<hb:RuleGEN>STD_03600</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_03700">
 		<hb:RuleUID>STD_03700</hb:RuleUID>
 		<hb:RuleGEN>STD_03700</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_03800">
 		<hb:RuleUID>STD_03800</hb:RuleUID>
 		<hb:RuleGEN>STD_03800</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_04500">
 		<hb:RuleUID>STD_04500</hb:RuleUID>
 		<hb:RuleGEN>STD_04500</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_04600">
 		<hb:RuleUID>STD_04600</hb:RuleUID>
 		<hb:RuleGEN>STD_04600</hb:RuleGEN>
-		<hb:RuleParams>
-		   <hb:IntParam>
-			   <hb:ParamID>P1</hb:ParamID>
-			   <hb:Relation>LET</hb:Relation>
-			   <hb:Value>1</hb:Value>
-		   </hb:IntParam>
-        </hb:RuleParams>
-
 	</hb:Rule>
+
 	<hb:Rule UID="STD_04700">
 		<hb:RuleUID>STD_04700</hb:RuleUID>
-		<hb:RuleGEN>STD_04700</hb:RuleGEN>		
-		<hb:RuleParams>
-			<hb:IntParam>
-			   <hb:ParamID>P1</hb:ParamID>
-			   <hb:Relation>LT</hb:Relation>
-			   <hb:Value>2</hb:Value>
-		   </hb:IntParam>
-		</hb:RuleParams>
+		<hb:RuleGEN>STD_04700</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_04800">
 		<hb:RuleUID>STD_04800</hb:RuleUID>
 		<hb:RuleGEN>STD_04800</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_05000">
 		<hb:RuleUID>STD_05000</hb:RuleUID>
 		<hb:RuleGEN>STD_05000</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_05300">
 		<hb:RuleUID>STD_05300</hb:RuleUID>
 		<hb:RuleGEN>STD_05300</hb:RuleGEN>
 	</hb:Rule>
-	
+
 	<hb:Rule UID="STD_06800">
 		<hb:RuleUID>STD_06800</hb:RuleUID>
 		<hb:RuleGEN>STD_06800</hb:RuleGEN>
 	</hb:Rule>
-	
+
 </hb:handbook_parameters>
