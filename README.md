@@ -9,17 +9,27 @@ The external tool is wrapped in rc-scanner and is fully taken care of.
 ## Features  
 * Automated analysis  
 * Issues import from [Zamiacad-Rulechecker](https://github.com/VHDLTool/Zamiacad-Rulechecker/wiki) analysis  
-* 130 guidline rules with examples and diagrams, 31 implemented rules  
+* 130 guideline rules with examples and diagrams, 32 implemented rules (29 ZamiaCad rules, 3 Yosys-Ghdl rules)
 * Effective rule parameters  
 * Loc and comments metrics computation   
 * Library and Top entity configuration  
+
+## Build Plugin
+Without integration tests:
+```
+mvn clean package
+```
+Without built-in vhdl language (allows compatibility with linty-vhdl plugin):
+```
+mvn clean package -DwithoutVhdlLanguageSupport
+```
+With integration tests on SonarQube 7.9.4 version:
+```
+mvn clean verify -Pits -Dsonar.runtimeVersion=7.9.4
+```
 
 ## Quickstart
 1. Setup a SonarQube 7.9 LTS instance  
 2. [Install the plugin](https://github.com/Linty-Services/VHDL-RC/wiki/Try-it-in-3-clics)  
 3. [Install the rc-scanner](https://github.com/Linty-Services/VHDL-RC/wiki/Install-The-Scanner) 
 4. [Run an analysis](https://github.com/Linty-Services/VHDL-RC/wiki/Run-Analysis)  
-
-## License  
-Copyright 2018-2020 Linty Services   
-Licensed under the [GNU Lesser General Public License, Version 3.0](https://www.gnu.org/licenses/lgpl.txt)

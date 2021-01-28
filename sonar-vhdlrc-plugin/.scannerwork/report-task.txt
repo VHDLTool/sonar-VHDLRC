@@ -1,6 +1,0 @@
-projectKey=vhdlrc
-serverUrl=http://localhost:9000
-serverVersion=7.9.3.33349
-dashboardUrl=http://localhost:9000/dashboard?id=vhdlrc
-ceTaskId=AXSNGFT2-XVvnM71PDtR
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AXSNGFT2-XVvnM71PDtR
