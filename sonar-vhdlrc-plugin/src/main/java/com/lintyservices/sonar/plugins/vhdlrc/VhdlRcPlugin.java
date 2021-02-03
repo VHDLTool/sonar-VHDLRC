@@ -50,9 +50,8 @@ public class VhdlRcPlugin implements Plugin {
     builder.add(
       VhdlRulesDefinition.class,
       VhdlRcProfile.class,
-      VhdlRcSensor.class,
-      YosysGhdlSensor.class
-    );
+      VhdlRcSensor.class
+      );
     InputStream is = VhdlRcPlugin.class.getClassLoader().getResourceAsStream("strings.properties");
     Properties props = new Properties();
     try {
@@ -75,18 +74,61 @@ public class VhdlRcPlugin implements Plugin {
         .description("Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.")
         .onQualifiers(Qualifiers.PROJECT)
         .build()
-      );
+        );
     }
     else
     {
       withoutVhdl = true;
     }
-    builder.add(PropertyDefinition.builder(VhdlRcSensor.SCANNER_HOME_KEY)
-      .category(Vhdl.VHDLRC_CATEGORY)
-      .subCategory(VHDL_RULECHEKER_SUBCATEGORY)
-      .name("RuleChecker Path")
-      .hidden()
-      .build());
+
+    if(!(props.get("withoutYosys")!=null && props.get("withoutYosys").equals("true"))) {
+      builder.add(YosysGhdlSensor.class);
+      builder.add(PropertyDefinition.builder(BuildPathMaker.GHDLSCRIPT_KEY)
+        .category(Vhdl.VHDLRC_CATEGORY)
+        .subCategory("Rcsynth")
+        .name("Ghdl compilation script")
+        .description("Path to the project's ghdl compilation script")
+        .defaultValue(BuildPathMaker.DEFAULT_GHDLSCRIPT)
+        .onQualifiers(Qualifiers.PROJECT)
+        .index(0)
+        .build());
+      builder.add(PropertyDefinition.builder(BuildPathMaker.SCRIPT_PARAMS_KEY)
+        .category(Vhdl.VHDLRC_CATEGORY)
+        .subCategory("Rcsynth")
+        .name("Additional parameters")
+        .description("The project's ghdl compilation script will be called with these parameters")
+        .defaultValue(BuildPathMaker.DEFAULT_SCRIPT_PARAMS)
+        .onQualifiers(Qualifiers.PROJECT)
+        .build());
+      builder.add(PropertyDefinition.builder(BuildPathMaker.CUSTOM_CMD_KEY)
+        .category(Vhdl.VHDLRC_CATEGORY)
+        .subCategory("BuildPath")
+        .name("Custom Commands")
+        .description(BuildPathMaker.customCmdDescription())
+        .index(3)
+        .multiValues(false)
+        .onQualifiers(Qualifiers.PROJECT)
+        .type(PropertyType.TEXT)
+        .build());
+      builder.add(PropertyDefinition.builder(BuildPathMaker.GHDL_OPTIONS_KEY)
+        .category(Vhdl.VHDLRC_CATEGORY)
+        .subCategory("Yosys")
+        .name("Ghdl options")
+        .description("Execute ghdl with those options")
+        .defaultValue(BuildPathMaker.DEFAULT_GHDL_OPTIONS)
+        .onQualifiers(Qualifiers.PROJECT)
+        .build());
+      builder.add(PropertyDefinition.builder(BuildPathMaker.WORKDIR_KEY)
+        .category(Vhdl.VHDLRC_CATEGORY)
+        .subCategory("Yosys")
+        .name("Ghdl working directory")
+        .description("Ghdl working directory, relative to the project directory. Needed to execute yosys")
+        .type(PropertyType.STRING)
+        .defaultValue(BuildPathMaker.DEFAULT_WORKDIR)
+        .onQualifiers(Qualifiers.PROJECT)
+        .build());
+    }
+    
     builder.add(PropertyDefinition.builder(BuildPathMaker.TOP_ENTITY_KEY)
       .category(Vhdl.VHDLRC_CATEGORY)
       .subCategory("BuildPath")
@@ -96,23 +138,12 @@ public class VhdlRcPlugin implements Plugin {
       .defaultValue(BuildPathMaker.DEFAULT_ENTITY)
       .onQualifiers(Qualifiers.PROJECT)
       .build());
-    builder.add(PropertyDefinition.builder(BuildPathMaker.GHDLSCRIPT_KEY)
+    builder.add(PropertyDefinition.builder(VhdlRcSensor.SCANNER_HOME_KEY)
       .category(Vhdl.VHDLRC_CATEGORY)
-      .subCategory("Rcsynth")
-      .name("Ghdl compilation script")
-      .description("Path to the project's ghdl compilation script")
-      .defaultValue(BuildPathMaker.DEFAULT_GHDLSCRIPT)
-      .onQualifiers(Qualifiers.PROJECT)
-      .index(0)
-      .build());
-    builder.add(PropertyDefinition.builder(BuildPathMaker.SCRIPT_PARAMS_KEY)
-      .category(Vhdl.VHDLRC_CATEGORY)
-      .subCategory("Rcsynth")
-      .name("Additional parameters")
-      .description("The project's ghdl compilation script will be called with these parameters")
-      .defaultValue(BuildPathMaker.DEFAULT_SCRIPT_PARAMS)
-      .onQualifiers(Qualifiers.PROJECT)
-      .build());
+      .subCategory(VHDL_RULECHEKER_SUBCATEGORY)
+      .name("RuleChecker Path")
+      .hidden()
+      .build());   
     builder.add(PropertyDefinition.builder(BuildPathMaker.KEEP_SOURCE_KEY)
       .category(Vhdl.VHDLRC_CATEGORY)
       .subCategory("Rcsynth")
@@ -138,33 +169,6 @@ public class VhdlRcPlugin implements Plugin {
       .description("Pause execution after executing all rules and before importing logs if true")
       .type(PropertyType.BOOLEAN)
       .defaultValue(String.valueOf(BuildPathMaker.DEFAULT_PAUSE_EXEC))
-      .onQualifiers(Qualifiers.PROJECT)
-      .build());
-    builder.add(PropertyDefinition.builder(BuildPathMaker.CUSTOM_CMD_KEY)
-      .category(Vhdl.VHDLRC_CATEGORY)
-      .subCategory("BuildPath")
-      .name("Custom Commands")
-      .description(BuildPathMaker.customCmdDescription())
-      .index(3)
-      .multiValues(false)
-      .onQualifiers(Qualifiers.PROJECT)
-      .type(PropertyType.TEXT)
-      .build());
-    builder.add(PropertyDefinition.builder(BuildPathMaker.GHDL_OPTIONS_KEY)
-      .category(Vhdl.VHDLRC_CATEGORY)
-      .subCategory("Yosys")
-      .name("Ghdl options")
-      .description("Execute ghdl with those options")
-      .defaultValue(BuildPathMaker.DEFAULT_GHDL_OPTIONS)
-      .onQualifiers(Qualifiers.PROJECT)
-      .build());
-    builder.add(PropertyDefinition.builder(BuildPathMaker.WORKDIR_KEY)
-      .category(Vhdl.VHDLRC_CATEGORY)
-      .subCategory("Yosys")
-      .name("Ghdl working directory")
-      .description("Ghdl working directory, relative to the project directory. Needed to execute yosys")
-      .type(PropertyType.STRING)
-      .defaultValue(BuildPathMaker.DEFAULT_WORKDIR)
       .onQualifiers(Qualifiers.PROJECT)
       .build());
     context.addExtensions(builder.build());
