@@ -45,6 +45,9 @@ public class VhdlRcPluginTest {
     if (System.getProperty("withoutVhdlLanguageSupport")!=null && System.getProperty("withoutVhdlLanguageSupport").equals("true")) {
       extensionsNumber-=3;
     }
+    if (System.getProperty("withoutYosys")!=null && System.getProperty("withoutYosys").equals("true")) {
+      extensionsNumber-=6;
+    }
     assertThat(context.getExtensions()).hasSize(extensionsNumber);
     runtime.getApiVersion().isGreaterThanOrEqual(Version.create(6, 5));
   }
