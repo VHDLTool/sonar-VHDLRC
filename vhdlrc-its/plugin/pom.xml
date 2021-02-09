@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.lintyservices.sonar.plugins.vhdlrc</groupId>
     <artifactId>vhdlrc-its</artifactId>
-    <version>2.1.0</version>
+    <version>3.3</version>
   </parent>
 
   <artifactId>vhdlrc-its-plugin</artifactId>
