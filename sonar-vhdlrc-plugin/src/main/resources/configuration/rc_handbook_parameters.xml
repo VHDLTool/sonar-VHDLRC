@@ -40,16 +40,6 @@
 		<hb:RuleGEN>GEN_01600</hb:RuleGEN>
 	</hb:Rule>
 
-	<hb:Rule UID="CNE_02000">
-		<hb:RuleUID>CNE_02000</hb:RuleUID>
-		<hb:RuleGEN>GEN_02000</hb:RuleGEN>
-	</hb:Rule>
-
-	<hb:Rule UID="NXE_02000">
-		<hb:RuleUID>NXE_02000</hb:RuleUID>
-		<hb:RuleGEN>GEN_02000</hb:RuleGEN>
-	</hb:Rule>
-
 	<hb:Rule UID="CNE_02100">
 		<hb:RuleUID>CNE_02100</hb:RuleUID>
 		<hb:RuleGEN>GEN_02100</hb:RuleGEN>
