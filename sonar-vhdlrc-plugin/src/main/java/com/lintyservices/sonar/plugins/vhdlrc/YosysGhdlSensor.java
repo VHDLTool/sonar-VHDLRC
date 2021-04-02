@@ -143,7 +143,7 @@ public class YosysGhdlSensor implements Sensor {
       }
 
       try { // Get top entity information (file path and line number) from cf file (ie work-obj93.cf) generated with ghdl -a
-        Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".cf")).forEach(o1->getTopLocation(o1,top));    
+        Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".cf")).forEach(o1->getTopLocation(o1,top));    
       } catch (IOException e) {
         LOG.warn("Could not find any .cf file in build directory");
       }
@@ -151,7 +151,7 @@ public class YosysGhdlSensor implements Sensor {
       Set<String> outputs=new HashSet<>();
 
       try { // Parse files containing dumped "stat" command results. If "Number of cells"/=0 then an issue is created (rule STD_05200)
-        Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->outputs.add(parseStatLog(o1)));    
+        Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->outputs.add(parseStatLog(o1)));    
       } catch (IOException e) {
         LOG.warn("Could not find any .statlog file in build directory");
       }
@@ -160,7 +160,7 @@ public class YosysGhdlSensor implements Sensor {
       findOutputs(Paths.get(workdir+"/"+topFile),topLineNumber,outputs); // Add issues on output ports declarations (rule STD_05200)
 
       try { // Parse generated .kiss2 files and add the corresponding issues
-        Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".kiss2")).forEach(o1->addYosysIssues(o1)); //could use workdir
+        Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".kiss2")).forEach(o1->addYosysIssues(o1)); //could use workdir
       } catch (IOException e) {
         LOG.warn("Could not find any .kiss2 file in build directory");
       }
