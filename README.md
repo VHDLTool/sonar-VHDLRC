@@ -28,6 +28,13 @@ With integration tests on SonarQube 7.9.4 version:
 mvn clean verify -Pits -Dsonar.runtimeVersion=7.9.4
 ```
 
+## Debugg Mode
+Debugg mode is activated when '-X' option is passed with rc-scanner command:
+```
+rc-scanner -X
+```
+To keep files and reports, two options can be activated directly in the SonarQube UI. It's independent of -X debugg option. Options could be forced with these sonar-project.properties: Dsonar.vhdlrc.keepReports=true and Dsonar.vhdlrc.keepSource=true
+
 ## Quickstart
 1. Setup a SonarQube 7.9 LTS instance  
 2. [Install the plugin](https://github.com/Linty-Services/VHDL-RC/wiki/Try-it-in-3-clics)  
