@@ -61,9 +61,9 @@ public class YosysGhdlSensor implements Sensor {
   public static final String SOURCES_DIR = "vhdl";
   public static final String REPORTING_RULE = "rule_checker/reporting/rule";
   private static final String repo="vhdlrc-repository";
-  private static final String yosysGhdlCmd="yosys -m ghdl -p \"ghdl";
   private static final String yosysFsmDetectCmd="; tee -q -o fsmdetect fsm_detect\"";
   private static final Logger LOG = Loggers.get(YosysGhdlSensor.class);
+  private static String yosysGhdlCmd;
   private String fsmRegex;
   private SensorContext context;
   private FilePredicates predicates;
@@ -71,6 +71,10 @@ public class YosysGhdlSensor implements Sensor {
   private String workdir;
   private String topFile="";
   private int topLineNumber=0;
+  
+  private ActiveRule cne2000;
+  private ActiveRule std3900;
+  private ActiveRule std5200;
 
 
   @Override
@@ -90,6 +94,13 @@ public class YosysGhdlSensor implements Sensor {
     baseProjDir=System.getProperty("user.dir");
     String top=BuildPathMaker.getTopEntities(config);
     workdir = null;
+    
+    if(executeCommand(new String[] {"bash","-c","yosys -H | grep -c ghdl"}).equals("1")) { // Check if ghdl module has been included in yosys at build time 
+      yosysGhdlCmd="yosys -p \"ghdl";
+    }
+    else {
+      yosysGhdlCmd="yosys -m ghdl -p \"ghdl";
+    }
 
     if(ActiveRuleLoader.getEnableYosys()) {			
       String buildCmdParams=BuildPathMaker.getFileList(config);
@@ -97,74 +108,70 @@ public class YosysGhdlSensor implements Sensor {
       String ghdlParams=" "+BuildPathMaker.getGhdlOptions(config);	
       String yosysFsmCmd = yosysGhdlCmd+ghdlParams+" "+top+" "+yosysFsmDetectCmd;
       workdir=BuildPathMaker.getWorkdir(config);
-      if(IS_WINDOWS) {
-        System.out.println(executeCommand(new String[] {"cmd.exe","/c","ubuntu1804 run "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\""})); // Still needs work
-        //System.out.println(executeCommand(new String[] {"cmd.exe","/c","cd "+BuildPathMaker.getWorkdir(config)+"; ubuntu1804 run "+yosysFsmCmd}));
-        try {
-          Runtime.getRuntime().exec("cmd.exe /c cd "+workdir+"; ubuntu1804 run \"+yosysFsmCmd").waitFor();
-        } catch (IOException | InterruptedException e) {
-          LOG.warn("Ubuntu thread interrupted");
-          Thread.currentThread().interrupt();
-        }
-      }
-      else {
-        // Execute ghdl
-        System.out.println("bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\"");
-        System.out.println(executeCommand(new String[] {"sh","-c","bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\""}));
+      
+      cne2000 = context.activeRules().findByInternalKey(repo, "CNE_02000");
+      std3900 = context.activeRules().findByInternalKey(repo, "STD_03900");
+      std5200 = context.activeRules().findByInternalKey(repo, "STD_05200");
+      
+      if(!IS_WINDOWS && (cne2000!=null || std3900!=null || std5200!=null)) {
         
+        // Execute ghdl
+        //System.out.println("bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\"");
+        System.out.println(executeCommand(new String[] {"bash","-c","bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\""}));
+
         // Detect fsm with yosys and dump results in fsmdetect file
-        System.out.println(executeCommand(new String[] {"sh","-c","cd "+workdir+"; "+yosysFsmCmd}));
+        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysFsmCmd}));
+        
         // Get the names of ignored fsms from fsmdetect file
         List<String> ignoredFsmNames=getIgnoredFsms();
         StringBuilder builder= new StringBuilder();
         for (String fsmName:ignoredFsmNames)
           builder.append("setattr -set fsm_encoding \\\"auto\\\" "+fsmName+"; ");
+        
         // Generate kiss2 files
         String yosysFsmExtractExport=builder.toString()+"fsm_extract ; fsm_export";
-        System.out.println(executeCommand(new String[] {"sh","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysFsmExtractExport+"\""}));
+        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysFsmExtractExport+"\""}));
 
-        System.out.println(executeCommand(new String[] {"sh","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; select o:* -module "+top+"; dump -o outputlist;\""}));
+        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; select o:* -module "+top+"; dump -o outputlist;\""}));
         List<String> outputNames = getOutputs(workdir+"/outputlist");
         builder= new StringBuilder();
         for (String outputName:outputNames)
           builder.append("select "+top+"/"+outputName+" %xe5; tee -q -o "+outputName+".statlog stat; select -clear; ");
         String yosysCheckOutputs=builder.toString();
-        System.out.println(executeCommand(new String[] {"sh","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth; "+yosysCheckOutputs+"\""}));
+        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth; "+yosysCheckOutputs+"\""}));
 
       }
+
+      try { // Get top entity information (file path and line number) from cf file (ie work-obj93.cf) generated with ghdl -a
+        Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".cf")).forEach(o1->getTopLocation(o1,top));    
+      } catch (IOException e) {
+        LOG.warn("Could not find any .cf file in build directory");
+      }
+
+      Set<String> outputs=new HashSet<>();
+
+      try { // Parse files containing dumped "stat" command results. If "Number of cells"/=0 then an issue is created (rule STD_05200)
+        Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->outputs.add(parseStatLog(o1)));    
+      } catch (IOException e) {
+        LOG.warn("Could not find any .statlog file in build directory");
+      }
+
+      outputs.remove("");
+      findOutputs(Paths.get(workdir+"/"+topFile),topLineNumber,outputs); // Add issues on output ports declarations (rule STD_05200)
+
+      try { // Parse generated .kiss2 files and add the corresponding issues
+        Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".kiss2")).forEach(o1->addYosysIssues(o1)); //could use workdir
+      } catch (IOException e) {
+        LOG.warn("Could not find any .kiss2 file in build directory");
+      }
     }
-
-    try { // Get top entity information (file path and line number) from cf file (ie work-obj93.cf) generated with ghdl -a
-      Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".cf")).forEach(o1->getTopLocation(o1,top));    
-    } catch (IOException e) {
-      LOG.warn("Could not find any .cf file in build directory");
-    }
-
-    Set<String> outputs=new HashSet<>();
-
-    try { // Parse files containing dumped "stat" command results. If "Number of cells"/=0 then an issue is created (rule STD_05200)
-      Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->outputs.add(parseStatLog(o1)));    
-    } catch (IOException e) {
-      LOG.warn("Could not find any .statlog file in build directory");
-    }
-
-    outputs.remove("");
-    findOutputs(Paths.get(workdir+"/"+topFile),topLineNumber,outputs); // Add issues on output ports declarations (rule STD_05200)
-
-    try { // Parse generated .kiss2 files and add the corresponding issues
-      Files.walk(Paths.get(context.fileSystem().baseDir().getAbsolutePath())).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".kiss2")).forEach(o1->addYosysIssues(o1)); //could use workdir
-    } catch (IOException e) {
-      LOG.warn("Could not find any .kiss2 file in build directory");
-    }
-
   }
 
 
   private void addYosysIssues(Path kiss2Path) {
     fsmRegex = null;
-    ActiveRule cne_02000 = context.activeRules().findByInternalKey(repo, "CNE_02000");
-    if (cne_02000!=null) {
-      String format = cne_02000.param("Format");
+    if (cne2000!=null) {
+      String format = cne2000.param("Format");
       if(format!=null) {
         if(!format.startsWith("*"))
           format="^"+format;
@@ -234,9 +241,9 @@ public class YosysGhdlSensor implements Sensor {
       }
 
 
-      if(fsmRegex!=null && !stateName.matches(fsmRegex)) 
+      if(cne2000!=null && fsmRegex!=null && !stateName.matches(fsmRegex)) 
         addNewIssue("CNE_02000",inputFile,sigDecLine,"State machine signal "+stateName+" is miswritten.");				
-      if(context.activeRules().findByInternalKey(repo, "STD_03900")!=null && (stateType.startsWith("std_")||(stateType.startsWith("ieee_"))))
+      if(std3900!=null && (stateType.startsWith("std_")||(stateType.startsWith("ieee_"))))
         addNewIssue("STD_03900",inputFile,sigDecLine,"State machine signal "+stateName+" uses wrong type.");
 
     }
@@ -246,11 +253,11 @@ public class YosysGhdlSensor implements Sensor {
 
   private void addNewIssue(String ruleId, InputFile inputFile, int line, String msg) {
     NewIssue ni = context.newIssue()
-        .forRule(RuleKey.of(repo,ruleId));
+      .forRule(RuleKey.of(repo,ruleId));
     NewIssueLocation issueLocation = ni.newLocation()
-        .on(inputFile)
-        .at(inputFile.selectLine(line))
-        .message(msg);
+      .on(inputFile)
+      .at(inputFile.selectLine(line))
+      .message(msg);
     ni.at(issueLocation);
     ni.save(); 
   }
@@ -415,7 +422,7 @@ public class YosysGhdlSensor implements Sensor {
             }
             else if (inPortDecl && outputs.contains(currentToken.toLowerCase())) {
               InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
-              if(inputFile!=null)
+              if(inputFile!=null && std5200!=null)
                 addNewIssue("STD_05200",inputFile,currentLineNumber,"Output signal "+currentToken+" includes combinatorial elements in its output path.");
             }
           }
@@ -434,7 +441,7 @@ public class YosysGhdlSensor implements Sensor {
       ProcessBuilder pb = new ProcessBuilder(cmd).redirectErrorStream(true);
       Process process = pb.start();
       BufferedReader reader = new BufferedReader(
-          new InputStreamReader(process.getInputStream()));
+        new InputStreamReader(process.getInputStream()));
       int read;
       char[] buffer = new char[4096];
       StringBuffer output = new StringBuffer();
