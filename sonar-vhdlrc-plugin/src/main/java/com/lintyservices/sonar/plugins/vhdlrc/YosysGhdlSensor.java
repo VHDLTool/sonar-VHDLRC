@@ -136,7 +136,7 @@ public class YosysGhdlSensor implements Sensor {
         List<String> outputNames = getOutputs(workdir+"/outputlist");
         builder= new StringBuilder();
         for (String outputName:outputNames)
-          builder.append("select "+top+"/"+outputName+" %xe5; tee -q -o "+outputName+".statlog stat; select -clear; ");
+          builder.append("select "+top+"/"+outputName+" %cie*; tee -q -o "+outputName+".statlog stat; select -clear; ");
         String yosysCheckOutputs=builder.toString();
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth; "+yosysCheckOutputs+"\""}));
 
@@ -420,7 +420,7 @@ public class YosysGhdlSensor implements Sensor {
             if (currentToken.toLowerCase().startsWith("port")) {
               inPortDecl=true;
             }
-            else if (inPortDecl && outputs.contains(currentToken.toLowerCase())) {
+            else if (inPortDecl && outputs.remove(currentToken.toLowerCase())) {
               InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
               if(inputFile!=null && std5200!=null)
                 addNewIssue("STD_05200",inputFile,currentLineNumber,"Output signal "+currentToken+" includes combinatorial elements in its output path.");
@@ -439,6 +439,7 @@ public class YosysGhdlSensor implements Sensor {
     StringBuffer theRun = new StringBuffer();
     try {
       ProcessBuilder pb = new ProcessBuilder(cmd).redirectErrorStream(true);
+      //LOG.info("Executing: "+pb.command().toString());
       Process process = pb.start();
       BufferedReader reader = new BufferedReader(
         new InputStreamReader(process.getInputStream()));
