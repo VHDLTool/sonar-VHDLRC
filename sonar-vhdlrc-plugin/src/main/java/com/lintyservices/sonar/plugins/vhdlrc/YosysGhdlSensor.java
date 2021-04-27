@@ -415,10 +415,14 @@ public class YosysGhdlSensor implements Sensor {
         if (currentLineNumber>=startLine) {
           Scanner input = new Scanner(currentLine);
           input.useDelimiter("((\\p{javaWhitespace})|;|,|:|\\.|\\(|\\))+");
-          while(input.hasNext()) {
+          boolean inComment = false;
+          while(!inComment && input.hasNext()) {
             String currentToken = input.next();
-            if (currentToken.toLowerCase().startsWith("port")) {
-              inPortDecl=true;
+            if (currentToken.toLowerCase().startsWith("--")) {
+              inComment = true;
+            }
+            else if (currentToken.toLowerCase().startsWith("port")) {
+              inPortDecl = true;
             }
             else if (inPortDecl && outputs.remove(currentToken.toLowerCase())) {
               InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
