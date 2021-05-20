@@ -66,6 +66,11 @@
       <groupId>org.xmlunit</groupId>
       <artifactId>xmlunit-matchers</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.sonarsource.sonarqube</groupId>
+      <artifactId>sonar-plugin-api-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
