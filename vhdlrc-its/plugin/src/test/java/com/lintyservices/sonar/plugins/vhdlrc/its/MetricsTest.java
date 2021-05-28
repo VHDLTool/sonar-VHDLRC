@@ -1,6 +1,6 @@
 /*
  * SonarQube Linty VHDLRC :: Integration Tests :: Plugin
- * Copyright (C) 2018-2020 Linty Services
+ * Copyright (C) 2018-2021 Linty Services
  * mailto:contact@linty-services.com
  *
  * This program is free software; you can redistribute it and/or

@@ -18,7 +18,8 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        sonarqube: [ 8.9.0.43852, 8.9.0.43852 ]
+        sonarqube: [ 8.9.0.43852 ]
+        # sonarqube: [ 8.9.0.43852, 8.8.0.42792 ] # TODO: Move back to matrix when LTS != LATEST
 
     steps:
       - name: Git Checkout
