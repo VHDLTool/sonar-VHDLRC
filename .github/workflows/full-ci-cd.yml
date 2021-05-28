@@ -40,7 +40,7 @@ jobs:
 
       - name: Run SonarQube Analysis
         if: contains(github.ref, 'master') && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '8.9.0.43852'
-        run: mvn -B sonar:sonar -Dsonar.login=bdeecb6f70858e66230e3582d74f9503fe38c1ac
+        run: mvn -B sonar:sonar -Dsonar.login=${{ secrets.SONARQUBE_SCANNER_FOR_PRIVATE_REPOSITORIES_TOKEN }}
 
       - name: Upload Plugin JAR
         if: matrix.os == 'ubuntu-latest' && matrix.sonarqube == '8.9.0.43852'
