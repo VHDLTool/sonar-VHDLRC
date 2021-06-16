@@ -50,7 +50,8 @@ public class VhdlRcPlugin implements Plugin {
     builder.add(
       VhdlRulesDefinition.class,
       VhdlRcProfile.class,
-      VhdlRcSensor.class
+      VhdlRcSensor.class,
+      PureJavaSensor.class
       );
     InputStream is = VhdlRcPlugin.class.getClassLoader().getResourceAsStream("strings.properties");
     Properties props = new Properties();
