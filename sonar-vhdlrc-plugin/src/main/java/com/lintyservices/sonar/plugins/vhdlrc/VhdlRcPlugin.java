@@ -30,6 +30,7 @@ import org.sonar.api.resources.Qualifiers;
 import org.sonar.api.utils.Version;
 
 import com.google.common.collect.ImmutableList;
+import com.lintyservices.sonar.plugins.vhdlrc.metrics.CustomMetrics;
 import com.lintyservices.sonar.plugins.vhdlrc.metrics.MetricSensor;
 import com.lintyservices.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
 import com.lintyservices.sonar.zamia.BuildPathMaker;
@@ -50,6 +51,7 @@ public class VhdlRcPlugin implements Plugin {
     builder.add(
       VhdlRulesDefinition.class,
       VhdlRcProfile.class,
+      CustomMetrics.class,
       VhdlRcSensor.class,
       PureJavaSensor.class
       );
