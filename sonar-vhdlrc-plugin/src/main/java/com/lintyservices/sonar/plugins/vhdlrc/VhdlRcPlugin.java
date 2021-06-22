@@ -37,7 +37,7 @@ import com.lintyservices.sonar.zamia.BuildPathMaker;
 
 public class VhdlRcPlugin implements Plugin {
 
-  public static final Version SONARQUBE_LTS_VERSION = Version.create(7, 9);
+  public static final Version SONARQUBE_LTS_VERSION = Version.create(8,9,0);
   private static final String VHDL_RULECHEKER_SUBCATEGORY = "VHDL RuleChecker";
   public static boolean withoutVhdl = false;
 

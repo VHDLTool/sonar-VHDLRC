@@ -32,12 +32,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class VhdlRcPluginTest {
 
-  private static final Version SONARQUBE_LTS_VERSION = Version.create(7, 9);
+  private static final Version SONARQUBE_LTS_VERSION = Version.create(8, 9, 0);
   private VhdlRcPlugin vhdlRcPlugin = new VhdlRcPlugin();
 
   @SuppressWarnings("unchecked")
   @Test
-  public void test_plugin_extensions_compatible_with_7_9() {
+  public void test_plugin_extensions_compatible_with_8_9() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(SONARQUBE_LTS_VERSION, SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
     vhdlRcPlugin.define(context);

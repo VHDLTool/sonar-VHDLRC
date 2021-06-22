@@ -66,17 +66,17 @@ public class PureJavaSensor implements Sensor {
   }
 
   @Override
-  public void execute(SensorContext context) {    
+  public void execute(SensorContext context) {
 
     this.context=context;
     this.predicates = context.fileSystem().predicates();
     totalComments=0;
 
-    std6900 = context.activeRules().findByInternalKey(repo, "STD_06900");
-    std3300 = context.activeRules().findByInternalKey(repo, "STD_03300");
-    std6700 = context.activeRules().findByInternalKey(repo, "STD_06700");
-    std2600 = context.activeRules().findByInternalKey(repo, "STD_02600");
-    
+    std6900 = context.activeRules().find(RuleKey.of(repo, "STD_06900"));
+    std3300 = context.activeRules().find(RuleKey.of(repo, "STD_03300"));
+    std6700 = context.activeRules().find(RuleKey.of(repo, "STD_06700"));
+    std2600 = context.activeRules().find(RuleKey.of(repo, "STD_02600"));
+        
     Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
     files.forEach(file->checkJavaRules(file));
     context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(context.project()).withValue(totalComments).save();
@@ -123,7 +123,7 @@ public class PureJavaSensor implements Sensor {
               else if (std6700!=null && (currentToken.equalsIgnoreCase("wait"))) {
                 addNewIssue("STD_06700", inputFile, lineNumber, "Wait instruction is not synthesizable");   
               }
-              else if (std2600!=null && (currentToken.equalsIgnoreCase("std_logic_arith") || currentToken.equalsIgnoreCase("std_logic_signed") || currentToken.equalsIgnoreCase("std_logic_signed"))) {
+              else if (std2600!=null && (currentToken.equalsIgnoreCase("std_logic_arith") || currentToken.equalsIgnoreCase("std_logic_signed") || currentToken.equalsIgnoreCase("std_logic_unsigned"))) {
                 addNewIssue("STD_02600", inputFile, lineNumber, "\"std_logic_arith\", \"std_logic_signed\" and \"std_logic_unsigned\" libraries are not standardized and should not be used");   
               }
             }
