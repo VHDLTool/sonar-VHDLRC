@@ -53,10 +53,10 @@ public class PureJavaSensorTest {
   private static final String PROJECT_ID = "vhdlrc-test";
   private PureJavaSensor sensor = new PureJavaSensor();
 
-  private SensorContextTester context1 = createContext("src/test/files/javasensor");
+  private SensorContextTester context = createContext("src/test/files/javasensor");
 
   private void init() {    
-    context1 = createContext("src/test/files/javasensor");
+    context = createContext("src/test/files/javasensor");
   }
 
   @Rule
@@ -65,10 +65,10 @@ public class PureJavaSensorTest {
   @Test
   public void test_6900() {
     init();
-    addTestFile(context1,"src/test/files/javasensor/test6900.vhd");
-    addRules(context1, "STD_06900");
-    sensor.execute(context1);
-    List<Issue> issues = new ArrayList<>(context1.allIssues());
+    addTestFile(context,"src/test/files/javasensor/test6900.vhd");
+    addRules(context, "STD_06900");
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
     assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(3);
   }
@@ -76,10 +76,10 @@ public class PureJavaSensorTest {
   @Test
   public void test_3300() {
     init();
-    addTestFile(context1,"src/test/files/javasensor/test3300.vhd");
-    addRules(context1, "STD_03300");
-    sensor.execute(context1);
-    List<Issue> issues = new ArrayList<>(context1.allIssues());
+    addTestFile(context,"src/test/files/javasensor/test3300.vhd");
+    addRules(context, "STD_03300");
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
     assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(4);
   }
@@ -87,10 +87,10 @@ public class PureJavaSensorTest {
   @Test
   public void test_6700() {
     init();
-    addTestFile(context1,"src/test/files/javasensor/test6700.vhd");
-    addRules(context1, "STD_06700");
-    sensor.execute(context1);
-    List<Issue> issues = new ArrayList<>(context1.allIssues());
+    addTestFile(context,"src/test/files/javasensor/test6700.vhd");
+    addRules(context, "STD_06700");
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
     assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(8);
   }
@@ -98,10 +98,10 @@ public class PureJavaSensorTest {
   @Test
   public void test_2600() {
     init();
-    addTestFile(context1,"src/test/files/javasensor/test2600.vhd");
-    addRules(context1, "STD_02600");
-    sensor.execute(context1);
-    List<Issue> issues = new ArrayList<>(context1.allIssues());
+    addTestFile(context,"src/test/files/javasensor/test2600.vhd");
+    addRules(context, "STD_02600");
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(2);
     assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(3);
     assertThat(issues.get(1).primaryLocation().textRange().start().line()).isEqualTo(4);
@@ -110,9 +110,29 @@ public class PureJavaSensorTest {
   @Test
   public void test_2800() {
     init();
-    addTestFile(context1,"src/test/files/javasensor/test2800.vhd");
-    sensor.execute(context1);
-    assertThat(context1.measure(context1.module().key(), CustomMetrics.COMMENT_LINES_STD_02800).value()).isEqualTo(6);
+    addTestFile(context,"src/test/files/javasensor/test2800.vhd");
+    addRules(context, "STD_02800");
+    sensor.execute(context);
+    assertThat(context.measure(context.module().key(), CustomMetrics.COMMENT_LINES_STD_02800).value()).isEqualTo(6);
+  }
+  
+  @Test
+  public void test_2000() {
+    init();
+    addTestFile(context,"src/test/files/javasensor/test2000.vhd");
+    ActiveRulesBuilder builder = new ActiveRulesBuilder();
+    builder.addRule (
+      new NewActiveRule.Builder()
+      .setRuleKey(RuleKey.of("vhdlrc-repository", "STD_02000"))
+      .setLanguage("vhdl")
+      .setParam("Format", " ")
+      .build()
+    );
+    context.setActiveRules(builder.build());    
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(1);
+    assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(4);
   }
 
   public static SensorContextTester createContext(String projectHomePath) {
@@ -127,6 +147,7 @@ public class PureJavaSensorTest {
         new NewActiveRule.Builder()
         .setRuleKey(RuleKey.of("vhdlrc-repository", ruleKey))
         .setLanguage("vhdl")
+        .setParam("P1", " ")
         .build()
       );
     }

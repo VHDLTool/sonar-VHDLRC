@@ -53,6 +53,8 @@ public class PureJavaSensor implements Sensor {
   private ActiveRule std3300;
   private ActiveRule std6700;
   private ActiveRule std2600;
+  private ActiveRule std2000;
+  private ActiveRule std2800;
 
 
 
@@ -76,16 +78,21 @@ public class PureJavaSensor implements Sensor {
     std3300 = context.activeRules().find(RuleKey.of(repo, "STD_03300"));
     std6700 = context.activeRules().find(RuleKey.of(repo, "STD_06700"));
     std2600 = context.activeRules().find(RuleKey.of(repo, "STD_02600"));
+    std2000 = context.activeRules().find(RuleKey.of(repo, "STD_02000"));
+    std2800 = context.activeRules().find(RuleKey.of(repo, "STD_02800"));
+    
         
     Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
     files.forEach(file->checkJavaRules(file));
-    context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(context.project()).withValue(totalComments).save();
+    if (std2800!=null) {
+      context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(context.project()).withValue(totalComments).save();
+    }
 
   }
 
   private void checkJavaRules(InputFile inputFile) {
     if (inputFile!=null) {
-      File sourceFile = inputFile.file();
+      File sourceFile = new File(inputFile.uri());
       try (FileReader fReader = new FileReader(sourceFile)) {
         BufferedReader bufRead = new BufferedReader(fReader);
         String currentLine = null;
@@ -100,7 +107,9 @@ public class PureJavaSensor implements Sensor {
           boolean inComment=false;
           Scanner input = new Scanner(currentLine);
           input.useDelimiter("((\\p{javaWhitespace})|;|,|\\.|\\(|\\))+");
+          boolean emptyLine = true;
           while(input.hasNext() && !inComment) {
+            emptyLine=false;
             String currentToken = input.next();
             if (currentToken.startsWith("--")) {
               inComment=true;
@@ -128,10 +137,15 @@ public class PureJavaSensor implements Sensor {
               }
             }
           }
+          if (!emptyLine && std2000!=null && !currentLine.startsWith(std2000.param("Format"))) {
+            addNewIssue("STD_02000", inputFile, lineNumber, "Text should be indented according to the defined pattern");
+          }
           input.close();
         }
         totalComments+=commentedLines;
-        context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(inputFile).withValue(commentedLines).save();
+        if (std2800!=null) {
+          context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(inputFile).withValue(commentedLines).save();
+        }
       } catch (IOException e) {
         LOG.warn("Could not read source file");
       }
