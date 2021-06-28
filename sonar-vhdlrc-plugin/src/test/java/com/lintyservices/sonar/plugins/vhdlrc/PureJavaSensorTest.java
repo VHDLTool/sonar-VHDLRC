@@ -134,6 +134,28 @@ public class PureJavaSensorTest {
     assertThat(issues).hasSize(1);
     assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(4);
   }
+  
+  @Test
+  public void test_2200() {
+    init();
+    addTestFile(context,"src/test/files/javasensor/STD_02200_good.vhd");
+    ActiveRulesBuilder builder = new ActiveRulesBuilder();
+    builder.addRule (
+      new NewActiveRule.Builder()
+      .setRuleKey(RuleKey.of("vhdlrc-repository", "STD_02200"))
+      .setLanguage("vhdl")
+      .setParam("Format", "Version")
+      .build()
+    );
+    context.setActiveRules(builder.build());    
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(0);
+    addTestFile(context,"src/test/files/javasensor/STD_02200_bad.vhd");
+    sensor.execute(context);
+    issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(1);
+  }
 
   public static SensorContextTester createContext(String projectHomePath) {
     return SensorContextTester.create(Paths.get(projectHomePath))

@@ -55,6 +55,7 @@ public class PureJavaSensor implements Sensor {
   private ActiveRule std2600;
   private ActiveRule std2000;
   private ActiveRule std2800;
+  private ActiveRule std2200;
 
 
 
@@ -80,8 +81,9 @@ public class PureJavaSensor implements Sensor {
     std2600 = context.activeRules().find(RuleKey.of(repo, "STD_02600"));
     std2000 = context.activeRules().find(RuleKey.of(repo, "STD_02000"));
     std2800 = context.activeRules().find(RuleKey.of(repo, "STD_02800"));
-    
-        
+    std2200 = context.activeRules().find(RuleKey.of(repo, "STD_02200"));
+
+
     Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
     files.forEach(file->checkJavaRules(file));
     if (std2800!=null) {
@@ -99,7 +101,17 @@ public class PureJavaSensor implements Sensor {
         int lineNumber=0;
         int commentedLines = 0;
         boolean inBlockComment=false;
-        while ((currentLine = bufRead.readLine()) != null) {                           
+        boolean inHeader=true;
+
+        boolean std2200issue = true;
+        String std2200Regex = null;
+        if (std2200!=null) {
+          String format = std2200.param("Format");
+          std2200Regex = YosysGhdlSensor.stringParamToRegex(format);
+        }
+
+        while ((currentLine = bufRead.readLine()) != null) { // Browse file line by line
+
           lineNumber++;
           if (inBlockComment) {
             commentedLines++;
@@ -108,44 +120,67 @@ public class PureJavaSensor implements Sensor {
           Scanner input = new Scanner(currentLine);
           input.useDelimiter("((\\p{javaWhitespace})|;|,|\\.|\\(|\\))+");
           boolean emptyLine = true;
-          while(input.hasNext() && !inComment) {
-            emptyLine=false;
+
+          while (input.hasNext()) {
+            
             String currentToken = input.next();
-            if (currentToken.startsWith("--")) {
-              inComment=true;
-              commentedLines++;
+
+            if (inHeader && inComment) { // Browse header
+              if (std2200!=null && (currentToken.matches(std2200Regex))) {
+                std2200issue = false;   
+              }
             }
-            else if (currentToken.startsWith("/*")) {
-              inBlockComment=true;
-              commentedLines++;
-            }
-            else if (currentToken.endsWith("*/")) {
-              inBlockComment=false;
-            }
-            else if (!inBlockComment) {
-              if (std6900!=null && (currentToken.equalsIgnoreCase("procedure") || currentToken.equalsIgnoreCase("function"))) {
-                addNewIssue("STD_06900", inputFile, lineNumber, "Procedures and functions should not be used in RTL design");   
+            
+            else if (!inComment) { // Browse uncommented line
+              emptyLine=false;
+              if (inHeader && currentToken.equalsIgnoreCase("library")) {
+                inHeader = false;
               }
-              else if (std3300!=null && (currentToken.equalsIgnoreCase("buffer"))) {
-                addNewIssue("STD_03300", inputFile, lineNumber, "Buffer port type is not recommended for synthesis");   
+              if (currentToken.startsWith("--")) {
+                inComment=true;
+                commentedLines++;
               }
-              else if (std6700!=null && (currentToken.equalsIgnoreCase("wait"))) {
-                addNewIssue("STD_06700", inputFile, lineNumber, "Wait instruction is not synthesizable");   
+              else if (currentToken.startsWith("/*")) {
+                inBlockComment=true;
+                commentedLines++;
               }
-              else if (std2600!=null && (currentToken.equalsIgnoreCase("std_logic_arith") || currentToken.equalsIgnoreCase("std_logic_signed") || currentToken.equalsIgnoreCase("std_logic_unsigned"))) {
-                addNewIssue("STD_02600", inputFile, lineNumber, "\"std_logic_arith\", \"std_logic_signed\" and \"std_logic_unsigned\" libraries are not standardized and should not be used");   
+              else if (currentToken.endsWith("*/")) {
+                inBlockComment=false;
               }
+              else if (!inBlockComment) {
+                if (std6900!=null && (currentToken.equalsIgnoreCase("procedure") || currentToken.equalsIgnoreCase("function"))) {
+                  addNewIssue("STD_06900", inputFile, lineNumber, "Procedures and functions should not be used in RTL design");   
+                }
+                else if (std3300!=null && (currentToken.equalsIgnoreCase("buffer"))) {
+                  addNewIssue("STD_03300", inputFile, lineNumber, "Buffer port type is not recommended for synthesis");   
+                }
+                else if (std6700!=null && (currentToken.equalsIgnoreCase("wait"))) {
+                  addNewIssue("STD_06700", inputFile, lineNumber, "Wait instruction is not synthesizable");   
+                }
+                else if (std2600!=null && (currentToken.equalsIgnoreCase("std_logic_arith") || currentToken.equalsIgnoreCase("std_logic_signed") || currentToken.equalsIgnoreCase("std_logic_unsigned"))) {
+                  addNewIssue("STD_02600", inputFile, lineNumber, "\"std_logic_arith\", \"std_logic_signed\" and \"std_logic_unsigned\" libraries are not standardized and should not be used");   
+                }
+              }             
             }
           }
-          if (!emptyLine && std2000!=null && !currentLine.startsWith(std2000.param("Format"))) {
+
+          if (!emptyLine && std2000!=null && !currentLine.startsWith(std2000.param("Format"))) { // Check indentation
             addNewIssue("STD_02000", inputFile, lineNumber, "Text should be indented according to the defined pattern");
           }
+
           input.close();
         }
+
         totalComments+=commentedLines;
-        if (std2800!=null) {
+        if (std2800!=null) { // Count comments
           context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(inputFile).withValue(commentedLines).save();
         }
+
+        // Add issues related to missing info in header
+        if (std2200!=null && std2200issue) {
+          addNewIssue("STD_02200", inputFile, 1, "File header should include version control informations");
+        }
+
       } catch (IOException e) {
         LOG.warn("Could not read source file");
       }

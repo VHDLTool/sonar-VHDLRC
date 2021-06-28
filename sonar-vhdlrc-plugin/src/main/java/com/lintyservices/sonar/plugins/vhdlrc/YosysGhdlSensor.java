@@ -172,13 +172,8 @@ public class YosysGhdlSensor implements Sensor {
     fsmRegex = null;
     if (cne2000!=null) {
       String format = cne2000.param("Format");
-      if(format!=null) {
-        if(!format.startsWith("*"))
-          format="^"+format;
-        fsmRegex=format.trim().replace("*", ".*");
-      }
+      fsmRegex = stringParamToRegex(format);
     }
-
 
     String[] kiss2FileName =kiss2Path.getFileName().toString().split("-\\$fsm\\$.");
     String vhdlFilePath=kiss2Path.toString().split("-\\$fsm")[0];	
@@ -464,6 +459,16 @@ public class YosysGhdlSensor implements Sensor {
       throw new RuntimeException(e);
     }
     return theRun.toString().trim();
+  }
+  
+  public static String stringParamToRegex (String param) {
+    String regex = null;
+    if(param!=null) {
+      if(!param.startsWith("*"))
+        param="^"+param;
+      regex = param.trim().replace("*", ".*");
+    }
+    return regex;
   }
 
 }
