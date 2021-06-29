@@ -31,7 +31,6 @@ import org.sonar.api.utils.Version;
 
 import com.google.common.collect.ImmutableList;
 import com.lintyservices.sonar.plugins.vhdlrc.metrics.CustomMetrics;
-import com.lintyservices.sonar.plugins.vhdlrc.metrics.MetricSensor;
 import com.lintyservices.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
 import com.lintyservices.sonar.zamia.BuildPathMaker;
 
@@ -66,7 +65,6 @@ public class VhdlRcPlugin implements Plugin {
     if(!(props.get("withoutVhdl")!=null && props.get("withoutVhdl").equals("true"))) {
       builder.add(
         Vhdl.class,
-        MetricSensor.class,
         PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
         .category(Vhdl.VHDLRC_CATEGORY)
         .subCategory("General")

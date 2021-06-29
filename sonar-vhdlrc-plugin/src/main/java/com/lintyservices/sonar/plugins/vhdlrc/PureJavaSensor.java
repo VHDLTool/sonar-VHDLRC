@@ -41,7 +41,6 @@ import com.lintyservices.sonar.plugins.vhdlrc.metrics.CustomMetrics;
 
 public class PureJavaSensor implements Sensor {
 
-  public static final String SCANNER_HOME_KEY ="sonar.vhdlrc.scanner.home";
   private static final String repo="vhdlrc-repository";
   private static final Logger LOG = Loggers.get(PureJavaSensor.class);
 
@@ -56,6 +55,7 @@ public class PureJavaSensor implements Sensor {
   private ActiveRule std2000;
   private ActiveRule std2800;
   private ActiveRule std2200;
+  private ActiveRule cne2700;
 
 
 
@@ -64,8 +64,7 @@ public class PureJavaSensor implements Sensor {
     descriptor
     .name("Import of issues using java analysis")
     .onlyOnLanguage(Vhdl.KEY)
-    .name("pureJavaSensor")
-    .onlyWhenConfiguration(conf -> conf.hasKey(SCANNER_HOME_KEY));
+    .name("pureJavaSensor");
   }
 
   @Override
@@ -82,6 +81,8 @@ public class PureJavaSensor implements Sensor {
     std2000 = context.activeRules().find(RuleKey.of(repo, "STD_02000"));
     std2800 = context.activeRules().find(RuleKey.of(repo, "STD_02800"));
     std2200 = context.activeRules().find(RuleKey.of(repo, "STD_02200"));
+    cne2700 = context.activeRules().find(RuleKey.of(repo, "CNE_02700"));
+    
 
 
     Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
@@ -109,6 +110,11 @@ public class PureJavaSensor implements Sensor {
           String format = std2200.param("Format");
           std2200Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
+        
+        Integer cne2700Limit = null;
+        if (cne2700!=null) {
+           cne2700Limit = Integer.parseInt(cne2700.param("Limit"));
+        }
 
         while ((currentLine = bufRead.readLine()) != null) { // Browse file line by line
 
@@ -122,15 +128,15 @@ public class PureJavaSensor implements Sensor {
           boolean emptyLine = true;
 
           while (input.hasNext()) {
-            
+
             String currentToken = input.next();
 
             if (inHeader && inComment) { // Browse header
-              if (std2200!=null && (currentToken.matches(std2200Regex))) {
+              if (std2200Regex!=null && (currentToken.matches(std2200Regex))) {
                 std2200issue = false;   
               }
             }
-            
+
             else if (!inComment) { // Browse uncommented line
               emptyLine=false;
               if (inHeader && currentToken.equalsIgnoreCase("library")) {
@@ -175,10 +181,14 @@ public class PureJavaSensor implements Sensor {
         if (std2800!=null) { // Count comments
           context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(inputFile).withValue(commentedLines).save();
         }
+        
+        if (cne2700Limit!=null && lineNumber>cne2700Limit) { // Check number of lines in file
+          addNewIssue("CNE_02700", inputFile, "Too many lines in file");
+        }
 
         // Add issues related to missing info in header
-        if (std2200!=null && std2200issue) {
-          addNewIssue("STD_02200", inputFile, 1, "File header should include version control informations");
+        if (std2200Regex!=null && std2200issue) {
+          addNewIssue("STD_02200", inputFile, "File header should include version control informations");
         }
 
       } catch (IOException e) {
@@ -197,6 +207,16 @@ public class PureJavaSensor implements Sensor {
     NewIssueLocation issueLocation = ni.newLocation()
       .on(inputFile)
       .at(inputFile.selectLine(line))
+      .message(msg);
+    ni.at(issueLocation);
+    ni.save(); 
+  }
+  
+  private void addNewIssue(String ruleId, InputFile inputFile, String msg) {
+    NewIssue ni = context.newIssue()
+      .forRule(RuleKey.of(repo,ruleId));
+    NewIssueLocation issueLocation = ni.newLocation()
+      .on(inputFile)
       .message(msg);
     ni.at(issueLocation);
     ni.save(); 
