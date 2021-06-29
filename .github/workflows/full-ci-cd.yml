@@ -110,7 +110,7 @@ jobs:
         with:
           name: plugin-with-linty-compatibility
       - name: Rename JAR into latest
-        run: mv sonar-vhdlrc-plugin-*.jar sonar-vhdlrc-plugin-with-linty-compatibility-latest.jar
+        run: mv sonar-vhdlrc-plugin-*-SNAPSHOT.jar sonar-vhdlrc-plugin-with-linty-compatibility-latest.jar
 
       - name: "GitHub Pre-release: latest"
         uses: marvinpinto/action-automatic-releases@latest
