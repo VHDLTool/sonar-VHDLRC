@@ -87,9 +87,7 @@ public class PureJavaSensor implements Sensor {
 
     Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
     files.forEach(file->checkJavaRules(file));
-    if (std2800!=null) {
-      context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(context.project()).withValue(totalComments).save();
-    }
+    context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(context.project()).withValue(totalComments).save();
 
   }
 
@@ -178,8 +176,13 @@ public class PureJavaSensor implements Sensor {
         }
 
         totalComments+=commentedLines;
-        if (std2800!=null) { // Count comments
-          context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(inputFile).withValue(commentedLines).save();
+        context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(inputFile).withValue(commentedLines).save(); // Count comments
+        Integer std2800Limit = null;
+        if (std2800!=null) {
+          std2800Limit = Integer.parseInt(std2800.param("Limit"));    
+        }
+        if (std2800Limit!=null && (commentedLines*100)/lineNumber>std2800Limit) { // Check if maximum percent of commented lines is exceeded
+          addNewIssue("STD_02800", inputFile, "Comment proportion should not exceed defined percentage");
         }
         
         if (cne2700Limit!=null && lineNumber>cne2700Limit) { // Check number of lines in file

@@ -3456,6 +3456,13 @@ Nevertheless, never mix these two library families.</hb:LongDesc>
 			<hb:FigureDesc />
 			<hb:Figure />
 		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:IntParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Relation>LET</hb:Relation>
+				<hb:Value>40</hb:Value>
+			</hb:IntParam>
+		</hb:RuleParams>
 	</hb:Rule>
 	
 	<hb:Rule UID="STD_02900">

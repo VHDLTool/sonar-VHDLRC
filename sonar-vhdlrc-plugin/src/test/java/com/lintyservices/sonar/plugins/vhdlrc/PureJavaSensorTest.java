@@ -51,6 +51,7 @@ public class PureJavaSensorTest {
 
   private static final SonarRuntime SQ67 = SonarRuntimeImpl.forSonarQube(VhdlRcPlugin.SONARQUBE_LTS_VERSION, SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
   private static final String PROJECT_ID = "vhdlrc-test";
+  private static final String repo="vhdlrc-repository";
   private PureJavaSensor sensor = new PureJavaSensor();
 
   private SensorContextTester context = createContext("src/test/files/javasensor");
@@ -111,9 +112,18 @@ public class PureJavaSensorTest {
   public void test_2800() {
     init();
     addTestFile(context,"src/test/files/javasensor/test2800.vhd");
-    addRule(context, "STD_02800");
+    addRule(context, "STD_02800", "Limit", "60");
     sensor.execute(context);
     assertThat(context.measure(context.module().key(), CustomMetrics.COMMENT_LINES_STD_02800).value()).isEqualTo(6);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(0);
+    init();
+    addTestFile(context,"src/test/files/javasensor/test2800.vhd");
+    addRule(context, "STD_02800", "Limit", "40");
+    sensor.execute(context);
+    assertThat(context.measure(context.module().key(), CustomMetrics.COMMENT_LINES_STD_02800).value()).isEqualTo(6);
+    issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(1);
   }
 
   @Test
@@ -135,7 +145,9 @@ public class PureJavaSensorTest {
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(0);
+    init();
     addTestFile(context,"src/test/files/javasensor/STD_02200_bad.vhd");
+    addRule(context, "STD_02200", "Format", "Version");
     sensor.execute(context);
     issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
@@ -149,7 +161,9 @@ public class PureJavaSensorTest {
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(0);
+    init();
     addTestFile(context,"src/test/files/javasensor/CNE_02700_bad.vhd");
+    addRule(context, "CNE_02700", "Limit", "10"); 
     sensor.execute(context);
     issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
@@ -165,7 +179,7 @@ public class PureJavaSensorTest {
     for (String ruleKey : args) {
       builder.addRule (
         new NewActiveRule.Builder()
-        .setRuleKey(RuleKey.of("vhdlrc-repository", ruleKey))
+        .setRuleKey(RuleKey.of(repo, ruleKey))
         .setLanguage("vhdl")
         .build()
         );
@@ -177,7 +191,7 @@ public class PureJavaSensorTest {
     ActiveRulesBuilder builder = new ActiveRulesBuilder();
     builder.addRule (
       new NewActiveRule.Builder()
-      .setRuleKey(RuleKey.of("vhdlrc-repository", ruleKey))
+      .setRuleKey(RuleKey.of(repo, ruleKey))
       .setLanguage("vhdl")
       .build()
       );
@@ -188,7 +202,7 @@ public class PureJavaSensorTest {
     ActiveRulesBuilder builder = new ActiveRulesBuilder();
     builder.addRule (
       new NewActiveRule.Builder()
-      .setRuleKey(RuleKey.of("vhdlrc-repository", ruleKey))
+      .setRuleKey(RuleKey.of(repo, ruleKey))
       .setLanguage("vhdl")
       .setParam(paramKey, paramValue)
       .build()
