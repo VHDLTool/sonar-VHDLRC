@@ -2459,11 +2459,11 @@ For example a control signal (chip-select, write enable, read/output enable), an
 	<hb:Rule UID="STD_00600">
 		<hb:RuleUID>STD_00600</hb:RuleUID>
 		<hb:RuleHist>
-			<hb:Status>Validated</hb:Status>
-			<hb:Engine>None</hb:Engine>
-			<hb:Version>5</hb:Version>
+			<hb:Status>Implemented</hb:Status>
+			<hb:Engine>Java</hb:Engine>
+			<hb:Version>6</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
-			<hb:Modified>2020-04-23</hb:Modified>
+			<hb:Modified>2021-07-01</hb:Modified>
 			<hb:Revision>Not used anymore.See Git logs.</hb:Revision>
 		</hb:RuleHist>
 		<hb:RuleContent>
@@ -2495,6 +2495,13 @@ The extension ".vhdl" is not permitted.</hb:LongDesc>
 			<hb:FigureDesc />
 			<hb:Figure />
 		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:StringParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Position>Equal</hb:Position>
+				<hb:Value>vhd</hb:Value>
+			</hb:StringParam>
+		</hb:RuleParams>
 	</hb:Rule>
 	
 	<hb:Rule UID="STD_00700">

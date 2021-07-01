@@ -168,6 +168,22 @@ public class PureJavaSensorTest {
     issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
   }
+  
+  @Test
+  public void test_600() {
+    init();
+    addTestFile(context,"src/test/files/javasensor/STD_00600.vhd");
+    addRule(context, "STD_00600", "Format", "vhd"); 
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(0);
+    init();
+    addTestFile(context,"src/test/files/javasensor/STD_00600.vhdl");
+    addRule(context, "STD_00600", "Format", "vhd"); 
+    sensor.execute(context);
+    issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(1);
+  }
 
   public static SensorContextTester createContext(String projectHomePath) {
     return SensorContextTester.create(Paths.get(projectHomePath))

@@ -56,6 +56,7 @@ public class PureJavaSensor implements Sensor {
   private ActiveRule std2800;
   private ActiveRule std2200;
   private ActiveRule cne2700;
+  private ActiveRule std600;
 
 
 
@@ -82,17 +83,25 @@ public class PureJavaSensor implements Sensor {
     std2800 = context.activeRules().find(RuleKey.of(repo, "STD_02800"));
     std2200 = context.activeRules().find(RuleKey.of(repo, "STD_02200"));
     cne2700 = context.activeRules().find(RuleKey.of(repo, "CNE_02700"));
+    std600 = context.activeRules().find(RuleKey.of(repo, "STD_00600"));
     
 
 
     Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
     files.forEach(file->checkJavaRules(file));
     context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(context.project()).withValue(totalComments).save();
-
+    
   }
 
   private void checkJavaRules(InputFile inputFile) {
     if (inputFile!=null) {
+      String std600Regex = null;
+      if (std600!=null) {
+        std600Regex = std600.param("Format");
+      }
+      if (std600Regex!=null && !inputFile.filename().endsWith(std600Regex)) {
+        addNewIssue("STD_00600", inputFile, "All source files should have the same extension");
+      }
       File sourceFile = new File(inputFile.uri());
       try (FileReader fReader = new FileReader(sourceFile)) {
         BufferedReader bufRead = new BufferedReader(fReader);

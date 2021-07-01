@@ -28,7 +28,7 @@ import static java.util.Arrays.asList;
 
 public class CustomMetrics implements Metrics {
 
-  public static final Metric<Integer> COMMENT_LINES_STD_02800 = new Metric.Builder("comment_02800", "Commented lines STD_02800", Metric.ValueType.INT)
+  public static final Metric<Integer> COMMENT_LINES_STD_02800 = new Metric.Builder("comment_02800", "Commented lines", Metric.ValueType.INT)
     .setDescription("Number of lines including a commented part")
     .setDirection(Metric.DIRECTION_WORST)
     .setQualitative(false)
