@@ -32,6 +32,7 @@ import org.sonar.api.utils.log.LogTester;
 
 import com.lintyservices.sonar.plugins.vhdlrc.VhdlRcPlugin;
 import com.lintyservices.sonar.plugins.vhdlrc.metrics.CustomMetrics;
+import com.lintyservices.sonar.zamia.BuildPathMaker;
 
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
@@ -41,11 +42,13 @@ import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
+import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rule.RuleKey;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class PureJavaSensorTest {
 
@@ -183,6 +186,22 @@ public class PureJavaSensorTest {
     sensor.execute(context);
     issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
+  }
+  
+  @Test
+  public void test_300() {
+    init();
+    addTestFile(context,"src/test/files/javasensor/test300top.vhd");
+    addTestFile(context,"src/test/files/javasensor/test300notTop.vhd");
+    addRule(context, "CNE_00300"); 
+    MapSettings settings = new MapSettings();
+    settings.setProperty(BuildPathMaker.TOP_ENTITY_KEY, "test300top.vhd");
+    context.setSettings(settings);
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(1);
+    assertTrue(issues.get(0).primaryLocation().inputComponent().key().endsWith("test300top.vhd"));
+    assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(6);
   }
 
   public static SensorContextTester createContext(String projectHomePath) {

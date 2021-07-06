@@ -38,6 +38,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import com.lintyservices.sonar.plugins.vhdlrc.metrics.CustomMetrics;
+import com.lintyservices.sonar.zamia.BuildPathMaker;
 
 public class PureJavaSensor implements Sensor {
 
@@ -47,6 +48,7 @@ public class PureJavaSensor implements Sensor {
   private SensorContext context;
   private FilePredicates predicates;
   private int totalComments;
+  private String top;
 
   private ActiveRule std6900;
   private ActiveRule std3300;
@@ -57,6 +59,7 @@ public class PureJavaSensor implements Sensor {
   private ActiveRule std2200;
   private ActiveRule cne2700;
   private ActiveRule std600;
+  private ActiveRule cne300;
 
 
 
@@ -74,6 +77,7 @@ public class PureJavaSensor implements Sensor {
     this.context=context;
     this.predicates = context.fileSystem().predicates();
     totalComments=0;
+    top = BuildPathMaker.getTopEntities(context.config());
 
     std6900 = context.activeRules().find(RuleKey.of(repo, "STD_06900"));
     std3300 = context.activeRules().find(RuleKey.of(repo, "STD_03300"));
@@ -84,6 +88,7 @@ public class PureJavaSensor implements Sensor {
     std2200 = context.activeRules().find(RuleKey.of(repo, "STD_02200"));
     cne2700 = context.activeRules().find(RuleKey.of(repo, "CNE_02700"));
     std600 = context.activeRules().find(RuleKey.of(repo, "STD_00600"));
+    cne300 = context.activeRules().find(RuleKey.of(repo, "CNE_00300"));
     
 
 
@@ -95,12 +100,18 @@ public class PureJavaSensor implements Sensor {
 
   private void checkJavaRules(InputFile inputFile) {
     if (inputFile!=null) {
+      String fileName = inputFile.filename();
+      boolean inTopFile = false;
+      boolean cne300Issue = false;
       String std600Regex = null;
       if (std600!=null) {
         std600Regex = std600.param("Format");
-      }
-      if (std600Regex!=null && !inputFile.filename().endsWith(std600Regex)) {
+      }     
+      if (std600Regex!=null && !fileName.endsWith(std600Regex)) {
         addNewIssue("STD_00600", inputFile, "All source files should have the same extension");
+      }
+      if (fileName.startsWith(top)) {
+        inTopFile = true;
       }
       File sourceFile = new File(inputFile.uri());
       try (FileReader fReader = new FileReader(sourceFile)) {
@@ -164,14 +175,18 @@ public class PureJavaSensor implements Sensor {
                 if (std6900!=null && (currentToken.equalsIgnoreCase("procedure") || currentToken.equalsIgnoreCase("function"))) {
                   addNewIssue("STD_06900", inputFile, lineNumber, "Procedures and functions should not be used in RTL design");   
                 }
-                else if (std3300!=null && (currentToken.equalsIgnoreCase("buffer"))) {
+                else if (std3300!=null && currentToken.equalsIgnoreCase("buffer")) {
                   addNewIssue("STD_03300", inputFile, lineNumber, "Buffer port type is not recommended for synthesis");   
                 }
-                else if (std6700!=null && (currentToken.equalsIgnoreCase("wait"))) {
+                else if (std6700!=null && currentToken.equalsIgnoreCase("wait")) {
                   addNewIssue("STD_06700", inputFile, lineNumber, "Wait instruction is not synthesizable");   
                 }
                 else if (std2600!=null && (currentToken.equalsIgnoreCase("std_logic_arith") || currentToken.equalsIgnoreCase("std_logic_signed") || currentToken.equalsIgnoreCase("std_logic_unsigned"))) {
                   addNewIssue("STD_02600", inputFile, lineNumber, "\"std_logic_arith\", \"std_logic_signed\" and \"std_logic_unsigned\" libraries are not standardized and should not be used");   
+                }
+                else if (!cne300Issue && cne300!=null && inTopFile && currentToken.equalsIgnoreCase("entity")) {
+                  cne300Issue = true;
+                  addNewIssue("CNE_00300", inputFile, lineNumber, "Top entity");   
                 }
               }             
             }

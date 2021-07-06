@@ -82,14 +82,15 @@
 			<hb:FigureDesc />
 			<hb:Figure />
 		</hb:RuleDesc>
-	</hb:Rule><hb:Rule UID="CNE_00300">
+	</hb:Rule>
+	<hb:Rule UID="CNE_00300">
 		<hb:RuleUID>CNE_00300</hb:RuleUID>
 		<hb:RuleHist>
-			<hb:Status>Validated</hb:Status>
-			<hb:Engine>None</hb:Engine>
-			<hb:Version>6</hb:Version>
+			<hb:Status>Implemented</hb:Status>
+			<hb:Engine>Java</hb:Engine>
+			<hb:Version>7</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
-			<hb:Modified>2020-04-23</hb:Modified>
+			<hb:Modified>2021-07-06</hb:Modified>
 			<hb:Revision>Not used anymore.See Git logs.</hb:Revision>
 		</hb:RuleHist>
 		<hb:RuleContent>
