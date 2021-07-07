@@ -73,6 +73,7 @@ public class YosysGhdlSensor implements Sensor {
   private int topLineNumber=0;
   
   private ActiveRule cne2000;
+  private ActiveRule cne4600;
   private ActiveRule std3900;
   private ActiveRule std5200;
 
@@ -110,6 +111,7 @@ public class YosysGhdlSensor implements Sensor {
       workdir=BuildPathMaker.getWorkdir(config);
       
       cne2000 = context.activeRules().findByInternalKey(repo, "CNE_02000");
+      cne4600 = context.activeRules().findByInternalKey(repo, "CNE_04600");
       std3900 = context.activeRules().findByInternalKey(repo, "STD_03900");
       std5200 = context.activeRules().findByInternalKey(repo, "STD_05200");
       
@@ -235,11 +237,15 @@ public class YosysGhdlSensor implements Sensor {
         LOG.warn("Could not read source file");
       }
 
-
-      if(cne2000!=null && fsmRegex!=null && !stateName.matches(fsmRegex)) 
-        addNewIssue("CNE_02000",inputFile,sigDecLine,"State machine signal "+stateName+" is miswritten.");				
-      if(std3900!=null && (stateType.startsWith("std_")||(stateType.startsWith("ieee_"))))
+      if(cne4600!=null) {
+        addNewIssue("CNE_04600",inputFile,sigDecLine,"Final state machine.");
+      }
+      if(cne2000!=null && fsmRegex!=null && !stateName.matches(fsmRegex)) {
+        addNewIssue("CNE_02000",inputFile,sigDecLine,"State machine signal "+stateName+" is miswritten.");
+      }
+      if(std3900!=null && (stateType.startsWith("std_")||(stateType.startsWith("ieee_")))) {
         addNewIssue("STD_03900",inputFile,sigDecLine,"State machine signal "+stateName+" uses wrong type.");
+      }
 
     }
 
