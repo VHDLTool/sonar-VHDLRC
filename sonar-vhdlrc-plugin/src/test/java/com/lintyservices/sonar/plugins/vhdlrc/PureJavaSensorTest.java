@@ -144,7 +144,7 @@ public class PureJavaSensorTest {
   public void test_2200() {
     init();
     addTestFile(context,"src/test/files/javasensor/STD_02200_good.vhd");
-    addRule(context, "STD_02200", "Format", "Version"); 
+    addRule(context, "STD_02200", "Format", "Ver|Version"); 
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(0);
@@ -202,6 +202,28 @@ public class PureJavaSensorTest {
     assertThat(issues).hasSize(1);
     assertTrue(issues.get(0).primaryLocation().inputComponent().key().endsWith("test300top.vhd"));
     assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(6);
+  }
+  
+  @Test
+  public void test_6000() {
+    init();
+    addTestFile(context,"src/test/files/javasensor/testRange.vhd");
+    addRule(context, "STD_06000"); 
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(1);
+    assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(2);
+  }
+  
+  @Test
+  public void test_6100() {
+    init();
+    addTestFile(context,"src/test/files/javasensor/testRange.vhd");
+    addRule(context, "STD_06100"); 
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(1);
+    assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(2);
   }
 
   public static SensorContextTester createContext(String projectHomePath) {

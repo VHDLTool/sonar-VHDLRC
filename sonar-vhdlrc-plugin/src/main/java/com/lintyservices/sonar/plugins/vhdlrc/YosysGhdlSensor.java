@@ -238,7 +238,7 @@ public class YosysGhdlSensor implements Sensor {
       }
 
       if(cne4600!=null) {
-        addNewIssue("CNE_04600",inputFile,sigDecLine,"Final state machine.");
+        addNewIssue("CNE_04600",inputFile,sigDecLine,"Finite state machine.");
       }
       if(cne2000!=null && fsmRegex!=null && !stateName.matches(fsmRegex)) {
         addNewIssue("CNE_02000",inputFile,sigDecLine,"State machine signal "+stateName+" is miswritten.");
