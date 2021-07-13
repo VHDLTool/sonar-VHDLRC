@@ -57,10 +57,10 @@ public class PureJavaSensorTest {
   private static final String repo="vhdlrc-repository";
   private PureJavaSensor sensor = new PureJavaSensor();
 
-  private SensorContextTester context = createContext("src/test/files/javasensor");
+  private SensorContextTester context = createContext("src");
 
   private void init() {    
-    context = createContext("src/test/files/javasensor");
+    context = createContext("src");
   }
 
   @Rule
@@ -143,13 +143,13 @@ public class PureJavaSensorTest {
   @Test
   public void test_2200() {
     init();
-    addTestFile(context,"src/test/files/javasensor/STD_02200_good.vhd");
+    addTestFile(context,"src/main/resources/configuration/HANDBOOK/Extras/VHDL/STD_02200_good.vhd");
     addRule(context, "STD_02200", "Format", "Ver|Version"); 
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(0);
     init();
-    addTestFile(context,"src/test/files/javasensor/STD_02200_bad.vhd");
+    addTestFile(context,"src/main/resources/configuration/HANDBOOK/Extras/VHDL/STD_02200_bad.vhd");
     addRule(context, "STD_02200", "Format", "Version");
     sensor.execute(context);
     issues = new ArrayList<>(context.allIssues());
@@ -158,14 +158,14 @@ public class PureJavaSensorTest {
   
   @Test
   public void test_2700() {
-    init();
-    addTestFile(context,"src/test/files/javasensor/CNE_02700_good.vhd");
+    init();   
+    addTestFile(context,"src/test/files/javasensor/test2700_good.vhd");
     addRule(context, "CNE_02700", "Limit", "10"); 
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(0);
     init();
-    addTestFile(context,"src/test/files/javasensor/CNE_02700_bad.vhd");
+    addTestFile(context,"src/test/files/javasensor/test2700_bad.vhd");
     addRule(context, "CNE_02700", "Limit", "10"); 
     sensor.execute(context);
     issues = new ArrayList<>(context.allIssues());
@@ -224,6 +224,19 @@ public class PureJavaSensorTest {
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
     assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(2);
+  }
+  
+  @Test
+  public void test_5400() {
+    init();
+    addTestFile(context,"src/main/resources/configuration/HANDBOOK/Extras/VHDL/STD_05400_good.vhd");
+    addTestFile(context,"src/main/resources/configuration/HANDBOOK/Extras/VHDL/STD_05400_bad.vhd");
+    addRule(context, "STD_05400"); 
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(4);
+    assertTrue(issues.get(0).primaryLocation().inputComponent().key().endsWith("STD_05400_bad.vhd"));
+    assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(64);
   }
 
   public static SensorContextTester createContext(String projectHomePath) {

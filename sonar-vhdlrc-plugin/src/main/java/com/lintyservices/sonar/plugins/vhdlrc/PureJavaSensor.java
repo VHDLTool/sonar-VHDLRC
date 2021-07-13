@@ -82,6 +82,7 @@ public class PureJavaSensor implements Sensor {
   private ActiveRule cne4400;
   private ActiveRule std6000;
   private ActiveRule std6100;
+  private ActiveRule std5400;
 
 
   @Override
@@ -133,6 +134,7 @@ public class PureJavaSensor implements Sensor {
     cne300 = context.activeRules().find(RuleKey.of(repo, "CNE_00300"));
     std6000 = context.activeRules().find(RuleKey.of(repo, "STD_06000"));
     std6100 = context.activeRules().find(RuleKey.of(repo, "STD_06100"));
+    std5400 = context.activeRules().find(RuleKey.of(repo, "STD_05400"));
     
 
 
@@ -154,7 +156,7 @@ public class PureJavaSensor implements Sensor {
       if (std600Regex!=null && !fileName.endsWith(std600Regex)) {
         addNewIssue("STD_00600", inputFile, "All source files should have the same extension");
       }
-      if (fileName.startsWith(top)) {
+      if (top.length()>0 && fileName.startsWith(top)) {
         inTopFile = true;
       }
       File sourceFile = new File(inputFile.uri());
@@ -364,20 +366,20 @@ public class PureJavaSensor implements Sensor {
               }
               else if (!inBlockComment) {
                 if (std6900!=null && (currentToken.equalsIgnoreCase("procedure") || currentToken.equalsIgnoreCase("function"))) {
-                  addNewIssue("STD_06900", inputFile, lineNumber, "Procedures and functions should not be used in RTL design");   
+                  addNewIssue("STD_06900", inputFile, lineNumber, "Procedures and functions should not be used in RTL design");
                 }
                 else if (std3300!=null && currentToken.equalsIgnoreCase("buffer")) {
-                  addNewIssue("STD_03300", inputFile, lineNumber, "Buffer port type is not recommended for synthesis");   
+                  addNewIssue("STD_03300", inputFile, lineNumber, "Buffer port type is not recommended for synthesis");
                 }
                 else if (std6700!=null && currentToken.equalsIgnoreCase("wait")) {
-                  addNewIssue("STD_06700", inputFile, lineNumber, "Wait instruction is not synthesizable");   
+                  addNewIssue("STD_06700", inputFile, lineNumber, "Wait instruction is not synthesizable");
                 }
                 else if (std2600!=null && (currentToken.equalsIgnoreCase("std_logic_arith") || currentToken.equalsIgnoreCase("std_logic_signed") || currentToken.equalsIgnoreCase("std_logic_unsigned"))) {
                   addNewIssue("STD_02600", inputFile, lineNumber, "\"std_logic_arith\", \"std_logic_signed\" and \"std_logic_unsigned\" libraries are not standardized and should not be used");   
                 }
                 else if (!cne300Issue && cne300!=null && inTopFile && currentToken.equalsIgnoreCase("entity")) {
                   cne300Issue = true;
-                  addNewIssue("CNE_00300", inputFile, lineNumber, "Top entity");   
+                  addNewIssue("CNE_00300", inputFile, lineNumber, "Top entity");
                 }
                 else if (std6000!=null && currentToken.equalsIgnoreCase("array")) {
                   arrayDeclaration = true;   
@@ -389,15 +391,18 @@ public class PureJavaSensor implements Sensor {
                   arrayDeclaration = false;
                   if (stdDeclaration) {
                     stdDeclaration = false;
-                    addNewIssue("STD_06100", inputFile, lineNumber, "Decreasing index should be preferred when declaring std_logic_vector");   
+                    addNewIssue("STD_06100", inputFile, lineNumber, "Decreasing index should be preferred when declaring std_logic_vector");
                   }
                 }
                 else if (currentToken.equalsIgnoreCase("downto")) {
                   stdDeclaration = false;
                   if (arrayDeclaration) {
                     arrayDeclaration = false;
-                    addNewIssue("STD_06000", inputFile, lineNumber, "Increasing index should be preferred when declaring array");   
+                    addNewIssue("STD_06000", inputFile, lineNumber, "Increasing index should be preferred when declaring array");
                   }
+                }
+                else if (!inTopFile && std5400!=null && (currentToken.equalsIgnoreCase("\'Z\'") || currentToken.equalsIgnoreCase("Z...Z"))) {
+                  addNewIssue("STD_05400", inputFile, lineNumber, "Internal tristates should be avoided");
                 }
               }             
             }
@@ -414,7 +419,7 @@ public class PureJavaSensor implements Sensor {
         context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(inputFile).withValue(commentedLines).save(); // Count comments
         Integer std2800Limit = null;
         if (std2800!=null) {
-          std2800Limit = Integer.parseInt(std2800.param("Limit"));    
+          std2800Limit = Integer.parseInt(std2800.param("Limit"));
         }
         if (std2800Limit!=null && (commentedLines*100)/lineNumber>std2800Limit) { // Check if maximum percent of commented lines is exceeded
           addNewIssue("STD_02800", inputFile, "Comment proportion should not exceed defined percentage");
