@@ -33,6 +33,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 
 import org.apache.commons.io.FilenameUtils;
 import org.sonar.api.batch.fs.FilePredicates;
@@ -76,6 +77,7 @@ public class YosysGhdlSensor implements Sensor {
   private ActiveRule cne4600;
   private ActiveRule std3900;
   private ActiveRule std5200;
+  private ActiveRule std4000;
 
 
   @Override
@@ -114,8 +116,14 @@ public class YosysGhdlSensor implements Sensor {
       cne4600 = context.activeRules().findByInternalKey(repo, "CNE_04600");
       std3900 = context.activeRules().findByInternalKey(repo, "STD_03900");
       std5200 = context.activeRules().findByInternalKey(repo, "STD_05200");
+      std4000 = context.activeRules().findByInternalKey(repo, "STD_04000");
       
-      if(!IS_WINDOWS && (cne2000!=null || std3900!=null || std5200!=null)) {
+      if(!IS_WINDOWS && std4000!=null) { // Analyse each file separately with ghdl -s command
+        Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
+        files.forEach(file->checkGhdlLog(file, "ghdl -s \""+(new File(file.uri())).getPath()+"\""));
+      }
+      
+      if(!IS_WINDOWS && (cne2000!=null || std3900!=null || std5200!=null || cne4600!=null)) {        
         
         // Execute ghdl
         //System.out.println("bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\"");
@@ -168,7 +176,6 @@ public class YosysGhdlSensor implements Sensor {
       }
     }
   }
-
 
   private void addYosysIssues(Path kiss2Path) {
     fsmRegex = null;
@@ -436,6 +443,32 @@ public class YosysGhdlSensor implements Sensor {
       }
     } catch (IOException e) {
       LOG.warn("Could not read source file");
+    }
+  }
+  
+  private void checkGhdlLog(InputFile file, String ghdlCmd) {
+    String ghdlLog = executeCommand(new String[] {"bash", "-c", ghdlCmd});
+    BufferedReader reader = new BufferedReader(new StringReader(ghdlLog));
+    String currentLine;
+    try {
+      while ((currentLine = reader.readLine()) != null) {
+        String afterFilename = currentLine.substring(currentLine.lastIndexOf(".vhd") + 1);
+        int errorLine=-1;
+        try {
+          errorLine = Integer.parseInt(afterFilename.split(":")[1]);
+        }
+        catch (Exception e) {
+          LOG.warn("Could not parse error line number in ghdl log");
+        }
+        String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
+        if (errorMsg.length()!=currentLine.length()) {
+          if (errorLine!=-1 && std4000!=null && errorMsg.startsWith(" no choice for")) {
+            addNewIssue("STD_04000", file, errorLine, "All cases statements should be addressed in the VHDL code");
+          }
+        }
+      }
+    } catch (IOException e) {
+      LOG.warn("Could not read ghdl log");
     }
   }
 
