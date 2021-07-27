@@ -25,6 +25,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
+import org.apache.tika.langdetect.OptimaizeLangDetector;
+import org.apache.tika.language.detect.LanguageDetector;
+import org.apache.tika.language.detect.LanguageResult;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.ActiveRule;
@@ -83,6 +86,7 @@ public class PureJavaSensor implements Sensor {
   private ActiveRule std6000;
   private ActiveRule std6100;
   private ActiveRule std5400;
+  private ActiveRule std2700;
 
 
   @Override
@@ -135,6 +139,7 @@ public class PureJavaSensor implements Sensor {
     std6000 = context.activeRules().find(RuleKey.of(repo, "STD_06000"));
     std6100 = context.activeRules().find(RuleKey.of(repo, "STD_06100"));
     std5400 = context.activeRules().find(RuleKey.of(repo, "STD_05400"));
+    std2700 = context.activeRules().find(RuleKey.of(repo, "STD_02700"));
     
 
 
@@ -329,11 +334,60 @@ public class PureJavaSensor implements Sensor {
         
 
         while ((currentLine = bufRead.readLine()) != null) { // Browse file line by line
-
+          
           lineNumber++;
           if (inBlockComment) {
             commentedLines++;
           }
+                    
+          if (std2700!=null) { // Language check
+            LanguageDetector detector = new OptimaizeLangDetector().loadModels();
+            if (!inBlockComment && !inHeader) {
+              String lineBeforeComment;
+              String lineAfterComment;
+              int startOfComment = Math.min(currentLine.indexOf("--"),currentLine.indexOf("/*"));
+              if (startOfComment==-1) {
+                lineBeforeComment = currentLine;
+                lineAfterComment = "";
+              }
+              else
+              {
+                lineBeforeComment = currentLine.subSequence(0, startOfComment).toString();
+                lineAfterComment = currentLine.subSequence(startOfComment+1, currentLine.length()).toString();
+              }
+              LanguageResult result = detector.detect(lineBeforeComment);
+              if (lineBeforeComment.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+                addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in source code");
+              }
+              result = detector.detect(lineAfterComment);
+              if (lineAfterComment.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+                addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments");
+              }
+            }
+            else {
+              String lineBeforeCode;
+              String lineAfterCode;
+              int startOfCode =currentLine.indexOf("*/");
+              if (startOfCode==-1) {
+                lineBeforeCode = currentLine;
+                lineAfterCode = "";
+              }
+              else
+              {
+                lineBeforeCode = currentLine.subSequence(0, startOfCode).toString();
+                lineAfterCode = currentLine.subSequence(startOfCode+1, currentLine.length()).toString();
+              }
+              LanguageResult result = detector.detect(lineBeforeCode);
+              if (lineBeforeCode.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+                addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments");
+              }
+              result = detector.detect(lineAfterCode);
+              if (lineAfterCode.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+                addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in source code");
+              }
+            }
+          }
+  
           boolean inComment=false;
           Scanner input = new Scanner(currentLine);
           input.useDelimiter("((\\p{javaWhitespace})|;|,|\\.|\\(|\\))+");

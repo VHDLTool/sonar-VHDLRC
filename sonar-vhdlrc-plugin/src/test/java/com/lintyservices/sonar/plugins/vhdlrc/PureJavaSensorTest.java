@@ -238,6 +238,16 @@ public class PureJavaSensorTest {
     assertTrue(issues.get(0).primaryLocation().inputComponent().key().endsWith("STD_05400_bad.vhd"));
     assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(64);
   }
+  
+  @Test
+  public void test_std2700() {
+    init();   
+    addTestFile(context,"src/test/files/javasensor/teststd2700.vhd");
+    addRule(context, "STD_02700"); 
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(2);
+  }
 
   public static SensorContextTester createContext(String projectHomePath) {
     return SensorContextTester.create(Paths.get(projectHomePath))
