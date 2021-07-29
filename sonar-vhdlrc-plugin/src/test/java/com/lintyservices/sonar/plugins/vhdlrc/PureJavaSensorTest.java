@@ -248,6 +248,19 @@ public class PureJavaSensorTest {
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(2);
   }
+  
+  @Test
+  public void test_cne5400() {
+    init();   
+    addTestFile(context,"src/test/files/javasensor/CNE5400/a.vhd");
+    addTestFile(context,"src/test/files/javasensor/CNE5400/b.vhd");
+    addTestFile(context,"src/test/files/javasensor/CNE5400/c.vhd");
+    addTestFile(context,"src/test/files/javasensor/CNE5400/d.vhd");
+    addRule(context, "CNE_05400"); 
+    sensor.execute(context);
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(1);
+  }
 
   public static SensorContextTester createContext(String projectHomePath) {
     return SensorContextTester.create(Paths.get(projectHomePath))

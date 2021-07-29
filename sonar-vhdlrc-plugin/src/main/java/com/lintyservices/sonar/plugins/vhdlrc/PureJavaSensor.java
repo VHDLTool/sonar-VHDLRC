@@ -23,7 +23,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.language.detect.LanguageDetector;
@@ -47,11 +50,13 @@ public class PureJavaSensor implements Sensor {
 
   private static final String repo="vhdlrc-repository";
   private static final Logger LOG = Loggers.get(PureJavaSensor.class);
-
+  private static final Set <String> notAPackageName = new HashSet<>(Arrays.asList("all", "std", "ieee"));
+    
   private SensorContext context;
   private FilePredicates predicates;
   private int totalComments;
   private String top;
+  private Set<VhdlPackage> allVhdlPackages;
 
   private ActiveRule std6900;
   private ActiveRule std3300;
@@ -87,6 +92,7 @@ public class PureJavaSensor implements Sensor {
   private ActiveRule std6100;
   private ActiveRule std5400;
   private ActiveRule std2700;
+  private ActiveRule cne5400;
 
 
   @Override
@@ -104,6 +110,7 @@ public class PureJavaSensor implements Sensor {
     this.predicates = context.fileSystem().predicates();
     totalComments=0;
     top = BuildPathMaker.getTopEntities(context.config());
+    allVhdlPackages = new HashSet<>();
 
     std6900 = context.activeRules().find(RuleKey.of(repo, "STD_06900"));
     std3300 = context.activeRules().find(RuleKey.of(repo, "STD_03300"));
@@ -140,19 +147,43 @@ public class PureJavaSensor implements Sensor {
     std6100 = context.activeRules().find(RuleKey.of(repo, "STD_06100"));
     std5400 = context.activeRules().find(RuleKey.of(repo, "STD_05400"));
     std2700 = context.activeRules().find(RuleKey.of(repo, "STD_02700"));
+    cne5400 = context.activeRules().find(RuleKey.of(repo, "CNE_05400"));
     
 
 
     Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
     files.forEach(file->checkJavaRules(file));
+    allVhdlPackages.forEach(vhdlPackage->checkVhdlPackage(vhdlPackage.getPackageName(), 0, vhdlPackage.getPackageFile()));
     context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(context.project()).withValue(totalComments).save();
     
+  }
+
+  private void checkVhdlPackage (String packageName, int level, InputFile packageFile) {
+    for (VhdlPackage vhdlPackage : allVhdlPackages) {
+      String visitedPackageName = vhdlPackage.getPackageName();
+      InputFile visitedPackageFile = vhdlPackage.getPackageFile();
+      if (!visitedPackageName.equals(packageName)) {
+        for (String usedPackageName : vhdlPackage.getUsedPackages()) {
+          if (usedPackageName.equals(packageName)) {
+            level++;
+            if (level>2) {
+              addNewIssue("CNE_05400", packageFile, "Too many nested packages");
+            }
+            else {
+              checkVhdlPackage (visitedPackageName, level, visitedPackageFile);
+            }
+          }
+        }
+      }
+    }
   }
 
   private void checkJavaRules(InputFile inputFile) {
     if (inputFile!=null) {
       String fileName = inputFile.filename();
       boolean inTopFile = false;
+      boolean inPackageFile = false;
+      VhdlPackage vhdlPackage = new VhdlPackage("");
       boolean cne300Issue = false;
       String std600Regex = null;
       if (std600!=null) {
@@ -175,6 +206,9 @@ public class PureJavaSensor implements Sensor {
         boolean inHeader=true;
         boolean arrayDeclaration = false;
         boolean stdDeclaration = false;
+        boolean packageDeclaration = false;
+        boolean useClause1 = false;
+        boolean useClause2 = false;
         
         // Initialize header-related rules
 
@@ -419,6 +453,23 @@ public class PureJavaSensor implements Sensor {
                 inBlockComment=false;
               }
               else if (!inBlockComment) {
+                if (packageDeclaration) {
+                 packageDeclaration = false;
+                 vhdlPackage.setPackageName(currentToken.toLowerCase());
+                }
+                if (useClause1) {
+                  useClause1 = false;
+                  useClause2 = true;
+                  if (!notAPackageName.contains(currentToken.toLowerCase())) {
+                    vhdlPackage.getUsedPackages().add(currentToken.toLowerCase());
+                  }
+                }
+                if (useClause2) {
+                  useClause2 = false;
+                  if (!notAPackageName.contains(currentToken.toLowerCase())) {
+                    vhdlPackage.getUsedPackages().add(currentToken.toLowerCase());
+                  }
+                }
                 if (std6900!=null && (currentToken.equalsIgnoreCase("procedure") || currentToken.equalsIgnoreCase("function"))) {
                   addNewIssue("STD_06900", inputFile, lineNumber, "Procedures and functions should not be used in RTL design");
                 }
@@ -457,6 +508,14 @@ public class PureJavaSensor implements Sensor {
                 }
                 else if (!inTopFile && std5400!=null && (currentToken.equalsIgnoreCase("\'Z\'") || currentToken.equalsIgnoreCase("Z...Z"))) {
                   addNewIssue("STD_05400", inputFile, lineNumber, "Internal tristates should be avoided");
+                }
+                else if (cne5400!=null && currentToken.equalsIgnoreCase("package")) {
+                  inPackageFile = true;
+                  packageDeclaration = true;
+                  vhdlPackage.setPackageFile(inputFile);
+                }
+                else if (cne5400!=null && inPackageFile && currentToken.equalsIgnoreCase("use")) {
+                  useClause1 = true;   
                 }
               }             
             }
@@ -548,6 +607,10 @@ public class PureJavaSensor implements Sensor {
           addNewIssue("CNE_04400", inputFile, "File header should include company owner of code");
         }
         
+        // Add package-related informations
+        if (!vhdlPackage.getPackageName().equals("")) {
+          allVhdlPackages.add(vhdlPackage);
+        }
         
       } catch (IOException e) {
         LOG.warn("Could not read source file");
