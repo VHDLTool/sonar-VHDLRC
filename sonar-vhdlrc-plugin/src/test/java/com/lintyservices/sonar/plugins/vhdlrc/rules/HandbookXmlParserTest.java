@@ -31,6 +31,7 @@ import org.sonar.api.utils.log.LoggerLevel;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Rule;
@@ -148,14 +149,20 @@ public class HandbookXmlParserTest {
       assertThat(e.getMessage()).isEqualTo("Error when parsing rules in " + VhdlRulesDefinition.RULESET_PATH + " line 29");
     }
   }
-
+  
   @Test
   public void no_rule_key_should_be_is_illegale() throws FileNotFoundException {
     try {
       rl1 = XmlParser.parseXML(new FileInputStream(new File("src/test/files/handbooks/no_rule_key.xml")));
       fail();
-    } catch (NullPointerException e) {
-      assertThat(e.getMessage()).isEqualTo(null);
+    } catch (Exception e) {
+      if (e instanceof IllegalStateException) {
+        assertThat(e.getMessage()).isEqualTo("Error when parsing rules in " + VhdlRulesDefinition.RULESET_PATH + " line 142");
+        assertThat(e.getCause().getMessage()).contains("No mandatory RuleUID is defined");
+      }
+      else { // This test may have different behaviors according to the running environment
+        assertTrue(e instanceof NullPointerException);
+      }
     }
   }
 

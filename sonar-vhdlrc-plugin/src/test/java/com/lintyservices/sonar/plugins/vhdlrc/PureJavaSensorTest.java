@@ -260,6 +260,7 @@ public class PureJavaSensorTest {
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
+    assertThat(issues.get(0).primaryLocation().message()).isEqualTo("Too many nested packages : d <- c <- b <- a");
   }
 
   public static SensorContextTester createContext(String projectHomePath) {
