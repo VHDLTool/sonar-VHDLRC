@@ -2290,11 +2290,11 @@ Isolating them from initialized signal improves identification of these signals 
 	<hb:Rule UID="CNE_05400">
 		<hb:RuleUID>CNE_05400</hb:RuleUID>
 		<hb:RuleHist>
-			<hb:Status>Validated</hb:Status>
-			<hb:Engine>None</hb:Engine>
-			<hb:Version>3</hb:Version>
+			<hb:Status>Implemented</hb:Status>
+			<hb:Engine>Java</hb:Engine>
+			<hb:Version>4</hb:Version>
 			<hb:Creation>2015-02-17</hb:Creation>
-			<hb:Modified>2020-04-23</hb:Modified>
+			<hb:Modified>2021-08-02</hb:Modified>
 			<hb:Revision>Not used anymore.See Git logs.</hb:Revision>
 		</hb:RuleHist>
 		<hb:RuleContent>
@@ -2325,6 +2325,13 @@ Isolating them from initialized signal improves identification of these signals 
 			<hb:FigureDesc />
 			<hb:Figure />
 		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:IntParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Relation>LET</hb:Relation>
+				<hb:Value>2</hb:Value>
+			</hb:IntParam>
+		</hb:RuleParams>
 	</hb:Rule>
 	
 	<hb:Rule UID="CNE_05500">

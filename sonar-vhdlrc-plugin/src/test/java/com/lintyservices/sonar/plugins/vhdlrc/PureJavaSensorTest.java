@@ -256,7 +256,7 @@ public class PureJavaSensorTest {
     addTestFile(context,"src/test/files/javasensor/CNE5400/b.vhd");
     addTestFile(context,"src/test/files/javasensor/CNE5400/c.vhd");
     addTestFile(context,"src/test/files/javasensor/CNE5400/d.vhd");
-    addRule(context, "CNE_05400"); 
+    addRule(context, "CNE_05400", "Limit", "2"); 
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);

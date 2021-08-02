@@ -154,9 +154,8 @@ public class HandbookXmlParserTest {
     try {
       rl1 = XmlParser.parseXML(new FileInputStream(new File("src/test/files/handbooks/no_rule_key.xml")));
       fail();
-    } catch (IllegalStateException e) {
-      assertThat(e.getMessage()).isEqualTo("Error when parsing rules in " + VhdlRulesDefinition.RULESET_PATH + " line 142");
-      assertThat(e.getCause().getMessage()).contains("No mandatory RuleUID is defined");
+    } catch (NullPointerException e) {
+      assertThat(e.getMessage()).isEqualTo(null);
     }
   }
 

@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.Stack;
 
 import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.language.detect.LanguageDetector;
@@ -57,6 +58,7 @@ public class PureJavaSensor implements Sensor {
   private int totalComments;
   private String top;
   private Set<VhdlPackage> allVhdlPackages;
+  private Stack<String> packagesHierarchy;
 
   private ActiveRule std6900;
   private ActiveRule std3300;
@@ -111,6 +113,7 @@ public class PureJavaSensor implements Sensor {
     totalComments=0;
     top = BuildPathMaker.getTopEntities(context.config());
     allVhdlPackages = new HashSet<>();
+    packagesHierarchy = new Stack<>();
 
     std6900 = context.activeRules().find(RuleKey.of(repo, "STD_06900"));
     std3300 = context.activeRules().find(RuleKey.of(repo, "STD_03300"));
@@ -159,22 +162,42 @@ public class PureJavaSensor implements Sensor {
   }
 
   private void checkVhdlPackage (String packageName, int level, InputFile packageFile) {
-    for (VhdlPackage vhdlPackage : allVhdlPackages) {
-      String visitedPackageName = vhdlPackage.getPackageName();
-      InputFile visitedPackageFile = vhdlPackage.getPackageFile();
-      if (!visitedPackageName.equals(packageName)) {
-        for (String usedPackageName : vhdlPackage.getUsedPackages()) {
-          if (usedPackageName.equals(packageName)) {
-            level++;
-            if (level>2) {
-              addNewIssue("CNE_05400", packageFile, "Too many nested packages");
-            }
-            else {
+    if (packagesHierarchy.contains(packageName)) {
+      StringBuilder builder = new StringBuilder("Infinite loop : ");
+      for(String hierPackageName : packagesHierarchy) {
+        builder.append(hierPackageName);
+        builder.append(" <- ");
+      }
+      addNewIssue("CNE_05400", packageFile, builder.toString());
+    }
+    else {
+      packagesHierarchy.push(packageName);
+      for (VhdlPackage vhdlPackage : allVhdlPackages) {
+        String visitedPackageName = vhdlPackage.getPackageName();
+        InputFile visitedPackageFile = vhdlPackage.getPackageFile();
+        if (!visitedPackageName.equals(packageName)) {
+          for (String usedPackageName : vhdlPackage.getUsedPackages()) {
+            if (usedPackageName.equals(packageName)) {
+              level++;
+              Integer cne5400Limit = null;
+              if (cne5400!=null) {
+                 cne5400Limit = Integer.parseInt(cne5400.param("Limit"));
+              }
+              if (cne5400Limit!=null && level>cne5400Limit) {
+                StringBuilder builder = new StringBuilder("Too many nested packages : ");
+                for(String hierPackageName : packagesHierarchy) {
+                  builder.append(hierPackageName);
+                  builder.append(" <- ");
+                }
+                builder.append(visitedPackageName);
+                addNewIssue("CNE_05400", packageFile, builder.toString());
+              }
               checkVhdlPackage (visitedPackageName, level, visitedPackageFile);
             }
           }
         }
       }
+      packagesHierarchy.pop();
     }
   }
 
