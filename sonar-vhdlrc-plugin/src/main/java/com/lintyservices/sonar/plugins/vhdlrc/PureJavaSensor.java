@@ -389,20 +389,37 @@ public class PureJavaSensor implements Sensor {
            cne2700Limit = Integer.parseInt(cne2700.param("Limit"));
         }
         
-
+        
+        StringBuilder commentChain = new StringBuilder();
+        LanguageResult result = null;
+        int commentChainStartLine = 1;
+        LanguageDetector detector=null;
+        
         while ((currentLine = bufRead.readLine()) != null) { // Browse file line by line
-          
           lineNumber++;
           if (inBlockComment) {
             commentedLines++;
           }
                     
           if (std2700!=null) { // Language check
-            LanguageDetector detector = new OptimaizeLangDetector().loadModels();
+            detector = new OptimaizeLangDetector().loadModels();
+            
             if (!inBlockComment && !inHeader) {
+              
               String lineBeforeComment;
               String lineAfterComment;
-              int startOfComment = Math.min(currentLine.indexOf("--"),currentLine.indexOf("/*"));
+              int startCommmentIndex = currentLine.indexOf("--");
+              int startBlockCommmentIndex = currentLine.indexOf("/*");
+              int startOfComment;
+              if (startCommmentIndex!=-1 && startBlockCommmentIndex==-1) {
+                startOfComment = startCommmentIndex;
+              }
+              else if (startCommmentIndex==-1 && startBlockCommmentIndex!=-1) {
+                startOfComment = startBlockCommmentIndex;
+              }
+              else {
+                startOfComment = Math.min(currentLine.indexOf("--"),currentLine.indexOf("/*"));
+              }
               if (startOfComment==-1) {
                 lineBeforeComment = currentLine;
                 lineAfterComment = "";
@@ -412,16 +429,37 @@ public class PureJavaSensor implements Sensor {
                 lineBeforeComment = currentLine.subSequence(0, startOfComment).toString();
                 lineAfterComment = currentLine.subSequence(startOfComment+1, currentLine.length()).toString();
               }
-              LanguageResult result = detector.detect(lineBeforeComment);
+              boolean commentChainExisted = (commentChain.toString().length()>0);
+              commentChain.append(lineAfterComment);
+              if (!(lineBeforeComment.length()>0)) { // No code on this line -> Comment chain continues
+                if (!commentChainExisted && lineAfterComment.length()>0) {
+                  commentChainStartLine = lineNumber;
+                }                 
+              }
+              else { // End of comment chain (if there was one)
+                if (commentChainExisted) {
+                  result = detector.detect(commentChain.toString());
+                  
+                  if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+                    if (commentChainStartLine!=lineNumber) {
+                      addNewIssue("STD_02700", inputFile, commentChainStartLine, lineNumber, "English language should be preferred in comments");
+                    } 
+                    else {
+                      addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments");
+                    }                    
+                  }
+                }
+                commentChain = new StringBuilder(lineAfterComment);
+                commentChainStartLine = 1;
+              }
+              result = detector.detect(lineBeforeComment);
               if (lineBeforeComment.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
                 addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in source code");
               }
-              result = detector.detect(lineAfterComment);
-              if (lineAfterComment.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
-                addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments");
-              }
             }
-            else {
+            
+            else { // Header and block comments
+              
               String lineBeforeCode;
               String lineAfterCode;
               int startOfCode =currentLine.indexOf("*/");
@@ -434,15 +472,29 @@ public class PureJavaSensor implements Sensor {
                 lineBeforeCode = currentLine.subSequence(0, startOfCode).toString();
                 lineAfterCode = currentLine.subSequence(startOfCode+1, currentLine.length()).toString();
               }
-              LanguageResult result = detector.detect(lineBeforeCode);
-              if (lineBeforeCode.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
-                addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments");
+              if (lineBeforeCode.length()>0 && !(commentChain.toString().length()>0)) {
+                commentChainStartLine = lineNumber;
+              }
+              commentChain.append(lineBeforeCode);
+              if (lineAfterCode.length()>0) { // End of comments chain
+                result = detector.detect(commentChain.toString());
+                if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+                  if (commentChainStartLine!=lineNumber) {
+                    addNewIssue("STD_02700", inputFile, commentChainStartLine, lineNumber, "English language should be preferred in comments");
+                  }
+                  else {
+                    addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments");
+                  }
+                }
+                commentChain = new StringBuilder();
+                commentChainStartLine = 1;
               }
               result = detector.detect(lineAfterCode);
               if (lineAfterCode.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
                 addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in source code");
               }
             }
+            
           }
   
           boolean inComment=false;
@@ -550,6 +602,18 @@ public class PureJavaSensor implements Sensor {
 
           input.close();
         }
+        
+        if (detector!=null) {
+          result = detector.detect(commentChain.toString());
+          if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+            if (commentChainStartLine!=lineNumber) {
+              addNewIssue("STD_02700", inputFile, commentChainStartLine, lineNumber, "English language should be preferred in comments");
+            }
+            else {
+              addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments");
+            }
+          }
+        }
 
         totalComments+=commentedLines;
         context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(inputFile).withValue(commentedLines).save(); // Count comments
@@ -653,6 +717,21 @@ public class PureJavaSensor implements Sensor {
       .at(inputFile.selectLine(line))
       .message(msg);
     ni.at(issueLocation);
+    ni.save(); 
+  }
+  
+  private void addNewIssue(String ruleId, InputFile inputFile, int startLine, int endLine, String msg) {
+    NewIssue ni = context.newIssue()
+      .forRule(RuleKey.of(repo,ruleId));
+    NewIssueLocation issueLocation = ni.newLocation()
+      .on(inputFile)
+      .at(inputFile.selectLine(startLine));
+    NewIssueLocation secondaryLocation = ni.newLocation()
+      .on(inputFile)
+      .at(inputFile.selectLine(endLine))
+      .message(msg);
+    ni.at(issueLocation);
+    ni.addLocation(secondaryLocation);
     ni.save(); 
   }
   

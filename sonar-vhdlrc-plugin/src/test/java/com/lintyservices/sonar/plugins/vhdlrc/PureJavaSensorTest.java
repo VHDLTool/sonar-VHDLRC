@@ -246,7 +246,7 @@ public class PureJavaSensorTest {
     addRule(context, "STD_02700"); 
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
-    assertThat(issues).hasSize(2);
+    assertThat(issues).hasSize(3);
   }
   
   @Test
