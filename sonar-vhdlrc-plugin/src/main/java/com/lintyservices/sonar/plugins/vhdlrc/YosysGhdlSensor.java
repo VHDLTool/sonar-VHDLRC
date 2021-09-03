@@ -142,13 +142,40 @@ public class YosysGhdlSensor implements Sensor {
         String yosysFsmExtractExport=builder.toString()+"fsm_extract ; fsm_export";
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysFsmExtractExport+"\""}));
 
-        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; select o:* -module "+top+"; dump -o outputlist;\""}));
-        List<String> outputNames = getOutputs(workdir+"/outputlist");
-        builder= new StringBuilder();
-        for (String outputName:outputNames)
-          builder.append("select "+top+"/"+outputName+" %cie*; tee -q -o "+outputName+".statlog stat; select -clear; ");
+        //System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; select o:* -module "+top+"; dump -o outputlist;\""}));
+        // Generate input and output lists
+        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; tee -q -o outputlist select o:* -module "+top+" -list; select -clear; tee -q -o inputlist select i:* -module "+top+" -list\""}));
+        
+        // Parse output list file
+        File outputlistfile=new File(workdir+"/outputlist");
+        try (FileReader fReader = new FileReader(outputlistfile)){
+          BufferedReader bufRead = new BufferedReader(fReader);
+          String currentLine;
+          while ((currentLine = bufRead.readLine()) != null) {
+            builder.append("select "+top+"/"+currentLine+" %cie*; tee -q -o "+currentLine+".statlog stat; select -clear; ");
+          }
+         }catch (IOException e) {
+           LOG.warn("Could not read source file");
+         }
         String yosysCheckOutputs=builder.toString();
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth; "+yosysCheckOutputs+"\""}));
+        
+        /*List<String> outputNames = getOutputs(workdir+"/outputlist");
+        builder= new StringBuilder();
+        for (String outputName:outputNames)
+          builder.append("select "+top+"/"+outputName+" %cie*; tee -q -o "+outputName+".statlog stat; select -clear; ");*/
+        
+     // Parse input list file
+        File inputlistfile=new File(workdir+"/inputlist");
+        try (FileReader fReader = new FileReader(inputlistfile)){
+          BufferedReader bufRead = new BufferedReader(fReader);
+          String currentLine;
+          while ((currentLine = bufRead.readLine()) != null) {
+            //
+          }
+         }catch (IOException e) {
+           LOG.warn("Could not read source file");
+         }
 
       }
 
@@ -270,6 +297,7 @@ public class YosysGhdlSensor implements Sensor {
     ni.save(); 
   }
 
+  // Should be deprecated
   private List<String> getOutputs(String path){
     List<String> result=new ArrayList<>();
     File file=new File(path);
