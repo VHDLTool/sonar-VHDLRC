@@ -78,6 +78,7 @@ public class YosysGhdlSensor implements Sensor {
   private ActiveRule std3900;
   private ActiveRule std5200;
   private ActiveRule std4000;
+  private ActiveRule std5500;
 
 
   @Override
@@ -117,10 +118,11 @@ public class YosysGhdlSensor implements Sensor {
       std3900 = context.activeRules().findByInternalKey(repo, "STD_03900");
       std5200 = context.activeRules().findByInternalKey(repo, "STD_05200");
       std4000 = context.activeRules().findByInternalKey(repo, "STD_04000");
+      std5500 = context.activeRules().findByInternalKey(repo, "STD_05500");
       
-      if(!IS_WINDOWS && std4000!=null) { // Analyse each file separately with ghdl -s command
+      if(!IS_WINDOWS && (std4000!=null || std5500!=null)) { // Analyse each file separately with ghdl -a command
         Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
-        files.forEach(file->checkGhdlLog(file, "ghdl -s \""+(new File(file.uri())).getPath()+"\""));
+        files.forEach(file->checkGhdlLog(file, "ghdl -a \""+(new File(file.uri())).getPath()+"\""));
       }
       
       if(!IS_WINDOWS && (cne2000!=null || std3900!=null || std5200!=null || cne4600!=null)) {        
@@ -475,29 +477,61 @@ public class YosysGhdlSensor implements Sensor {
   }
   
   private void checkGhdlLog(InputFile file, String ghdlCmd) {
-    String ghdlLog = executeCommand(new String[] {"bash", "-c", ghdlCmd});
+    
+    String ghdlLog = executeCommand(new String[] {"bash", "-c", ghdlCmd}); // Analyze file
     BufferedReader reader = new BufferedReader(new StringReader(ghdlLog));
     String currentLine;
-    try {
-      while ((currentLine = reader.readLine()) != null) {
-        String afterFilename = currentLine.substring(currentLine.lastIndexOf(".vhd") + 1);
-        int errorLine=-1;
-        try {
-          errorLine = Integer.parseInt(afterFilename.split(":")[1]);
-        }
-        catch (Exception e) {
-          LOG.warn("Could not parse error line number in ghdl log");
-        }
-        String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
-        if (errorMsg.length()!=currentLine.length()) {
-          if (errorLine!=-1 && std4000!=null && errorMsg.startsWith(" no choice for")) {
-            addNewIssue("STD_04000", file, errorLine, "All cases statements should be addressed in the VHDL code");
+    
+    if (std4000!=null) { // Parse ghdl -c log
+      try {
+        while ((currentLine = reader.readLine()) != null) {
+          String afterFilename = currentLine.substring(currentLine.lastIndexOf(".vhd") + 1);
+          int errorLine=-1;
+          try {
+            errorLine = Integer.parseInt(afterFilename.split(":")[1]);
+          }
+          catch (Exception e) {
+            LOG.warn("Could not parse error line number in ghdl log");
+          }
+          String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
+          if (errorMsg.length()!=currentLine.length()) {
+            if (errorLine!=-1 && errorMsg.startsWith(" no choice for")) {
+              addNewIssue("STD_04000", file, errorLine, "All cases statements should be addressed in the VHDL code");
+            }
           }
         }
-      }
-    } catch (IOException e) {
-      LOG.warn("Could not read ghdl log");
+      } catch (IOException e) {
+        LOG.warn("Could not read ghdl log");
+      }   
     }
+    
+    if(std5500!=null) {  // Parse ghdl --synth log
+      String ghdlSynthLog = executeCommand(new String[] {"bash", "-c", "ghdl --synth"}); // Synthesize design
+      reader = new BufferedReader(new StringReader(ghdlSynthLog));
+      try {
+        while ((currentLine = reader.readLine()) != null) {
+          String afterFilename = currentLine.substring(currentLine.lastIndexOf(".vhd") + 1);
+          int errorLine=-1;
+          try {
+            errorLine = Integer.parseInt(afterFilename.split(":")[1]);
+          }
+          catch (Exception e) {
+            LOG.warn("Could not parse error line number in ghdl synthesis log");
+          }
+          String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
+          if (errorMsg.length()!=currentLine.length()) {
+            if (errorLine!=-1 && errorMsg.startsWith(" latch infered for")) {
+              addNewIssue("STD_05500", file, errorLine, "Latches should be avoided");
+            }
+          }
+        }
+      } catch (IOException e) {
+        LOG.warn("Could not read ghdl synthesis log");
+      }
+    }
+    
+    executeCommand(new String[] {"bash", "-c", "ghdl --remove"}); // Remove generated files
+    
   }
 
 
