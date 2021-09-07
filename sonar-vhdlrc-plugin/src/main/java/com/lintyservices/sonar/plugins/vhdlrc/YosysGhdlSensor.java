@@ -145,9 +145,9 @@ public class YosysGhdlSensor implements Sensor {
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysFsmExtractExport+"\""}));
 
         //System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; select o:* -module "+top+"; dump -o outputlist;\""}));
-        // Generate input and output lists
-        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; tee -q -o outputlist select o:* -module "+top+" -list; select -clear; tee -q -o inputlist select i:* -module "+top+" -list\""}));
-        
+        // Generate input, output and clock lists
+        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth ; tee -q -o outputlist select o:* -module "+top+" -list; select -clear ; tee -q -o inputlist select i:* -module "+top+" -list; select -clear ;  tee -q -a clocklist select t:* %x:+[C] t:* %d -list; select -clear ; tee -q -a clocklist select t:* %x:+[CLK] t:* %d -list\""}));
+                
         // Parse output list file
         File outputlistfile=new File(workdir+"/outputlist");
         try (FileReader fReader = new FileReader(outputlistfile)){
@@ -174,6 +174,19 @@ public class YosysGhdlSensor implements Sensor {
           String currentLine;
           while ((currentLine = bufRead.readLine()) != null) {
             //
+          }
+         }catch (IOException e) {
+           LOG.warn("Could not read source file");
+         }
+        
+     // Parse clock list file
+        List<String> clockList = new ArrayList<>();
+        File clocklistfile=new File(workdir+"/clocklist");
+        try (FileReader fReader = new FileReader(clocklistfile)){
+          BufferedReader bufRead = new BufferedReader(fReader);
+          String currentLine;
+          while ((currentLine = bufRead.readLine()) != null) {
+            clockList.add(currentLine);
           }
          }catch (IOException e) {
            LOG.warn("Could not read source file");
@@ -506,7 +519,7 @@ public class YosysGhdlSensor implements Sensor {
     }
     
     if(std5500!=null) {  // Parse ghdl --synth log
-      String ghdlSynthLog = executeCommand(new String[] {"bash", "-c", "ghdl --synth"}); // Synthesize design
+      String ghdlSynthLog = executeCommand(new String[] {"bash", "-c", "ghdl --synth"}); // Synthesize file
       reader = new BufferedReader(new StringReader(ghdlSynthLog));
       try {
         while ((currentLine = reader.readLine()) != null) {
