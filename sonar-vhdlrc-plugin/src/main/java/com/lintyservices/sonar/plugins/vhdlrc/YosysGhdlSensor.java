@@ -79,6 +79,7 @@ public class YosysGhdlSensor implements Sensor {
   private ActiveRule std5200;
   private ActiveRule std4000;
   private ActiveRule std5500;
+  private ActiveRule std4400;
 
 
   @Override
@@ -119,6 +120,7 @@ public class YosysGhdlSensor implements Sensor {
       std5200 = context.activeRules().findByInternalKey(repo, "STD_05200");
       std4000 = context.activeRules().findByInternalKey(repo, "STD_04000");
       std5500 = context.activeRules().findByInternalKey(repo, "STD_05500");
+      std4400 = context.activeRules().findByInternalKey(repo, "STD_04400");
       
       if(!IS_WINDOWS && (std4000!=null || std5500!=null)) { // Analyse each file separately with ghdl -a command
         Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
@@ -174,19 +176,36 @@ public class YosysGhdlSensor implements Sensor {
           String currentLine;
           while ((currentLine = bufRead.readLine()) != null) {
             //
+           
           }
          }catch (IOException e) {
            LOG.warn("Could not read source file");
          }
         
      // Parse clock list file
-        List<String> clockList = new ArrayList<>();
+        Set<String> clockFileList = new HashSet<>();
+        Set<String> clockNameList = new HashSet<>();
         File clocklistfile=new File(workdir+"/clocklist");
         try (FileReader fReader = new FileReader(clocklistfile)){
           BufferedReader bufRead = new BufferedReader(fReader);
           String currentLine;
           while ((currentLine = bufRead.readLine()) != null) {
-            clockList.add(currentLine);
+            //clockList.add(currentLine);
+            int lastSlash = currentLine.lastIndexOf("/");
+            int len = currentLine.length();
+            if (lastSlash!=-1) {
+              String fileName = currentLine.substring(0, lastSlash);
+              String clockName = currentLine.substring(lastSlash+1, len);
+              if (clockFileList.add(fileName) && clockFileList.size()>1) {
+                InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhd"));
+                if (inputFile == null) {
+                  inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhdl"));
+                }
+                if (inputFile != null && std4400!=null) {
+                  addNewIssue("STD_04400",inputFile, 1 ,clockName+" All clocks should be declared in a dedicated module");
+                }
+              }
+            }
           }
          }catch (IOException e) {
            LOG.warn("Could not read source file");
