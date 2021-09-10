@@ -24,8 +24,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
@@ -148,7 +151,7 @@ public class YosysGhdlSensor implements Sensor {
 
         //System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; select o:* -module "+top+"; dump -o outputlist;\""}));
         // Generate input, output and clock lists
-        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth ; tee -q -o outputlist select o:* -module "+top+" -list; select -clear ; tee -q -o inputlist select i:* -module "+top+" -list; select -clear ;  tee -q -a clocklist select t:* %x:+[C] t:* %d -list; select -clear ; tee -q -a clocklist select t:* %x:+[CLK] t:* %d -list\""}));
+        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth ; tee -q -o outputlist select o:* -module "+top+" -list; select -clear ; tee -q -o inputlist select i:* -module "+top+" -list; select -clear ;  tee -q -o clocklist select t:* %x:+[C] t:* %d -list; select -clear ; tee -q -a clocklist select t:* %x:+[CLK] t:* %d -list\""}));
                 
         // Parse output list file
         File outputlistfile=new File(workdir+"/outputlist");
@@ -183,28 +186,40 @@ public class YosysGhdlSensor implements Sensor {
          }
         
      // Parse clock list file
-        Set<String> clockFileList = new HashSet<>();
-        Set<String> clockNameList = new HashSet<>();
+        Map <String,Set<String>> clocks = new HashMap<>();
         File clocklistfile=new File(workdir+"/clocklist");
         try (FileReader fReader = new FileReader(clocklistfile)){
           BufferedReader bufRead = new BufferedReader(fReader);
           String currentLine;
           while ((currentLine = bufRead.readLine()) != null) {
-            //clockList.add(currentLine);
             int lastSlash = currentLine.lastIndexOf("/");
             int len = currentLine.length();
             if (lastSlash!=-1) {
-              String fileName = currentLine.substring(0, lastSlash);
-              String clockName = currentLine.substring(lastSlash+1, len);
-              if (clockFileList.add(fileName) && clockFileList.size()>1) {
-                InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhd"));
-                if (inputFile == null) {
-                  inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhdl"));
-                }
-                if (inputFile != null && std4400!=null) {
-                  addNewIssue("STD_04400",inputFile, 1 ,clockName+" All clocks should be declared in a dedicated module");
-                }
+              String fileName = currentLine.substring(0, lastSlash).toLowerCase();
+              String clockName = currentLine.substring(lastSlash+1, len).toLowerCase();
+              Set<String> clocksSet = clocks.get(fileName);
+              if (clocksSet!=null) {
+                clocksSet.add(clockName);
               }
+              else {
+                clocks.put(fileName, new HashSet<String>(Arrays.asList(clockName)));
+              }
+            }
+          }
+          if (clocks.size()>1) {
+            for (Map.Entry<String,Set<String>> pair: clocks.entrySet()) {
+              String fileName = pair.getKey();
+              Set<String> clockNames = pair.getValue();
+              InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhd"));
+              if (inputFile == null) {
+                inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhdl"));
+              }
+              if (inputFile != null && std4400!=null) {
+                List<Integer> clockLines = getClockLocation(new File(inputFile.uri()), clockNames);
+                for (int clockLine : clockLines) {
+                  addNewIssue("STD_04400", inputFile, clockLine ,"All clocks should be declared in a dedicated module");
+                }
+              }  
             }
           }
          }catch (IOException e) {
@@ -443,6 +458,33 @@ public class YosysGhdlSensor implements Sensor {
     } catch (IOException e) {
       LOG.warn("Could not read source file");
     }
+  }
+  
+  private List<Integer> getClockLocation(File file, Set<String> clocks){
+    List<Integer> clockLines = new ArrayList<>();
+    try (FileReader fReader = new FileReader(file)){
+      BufferedReader bufRead = new BufferedReader(fReader);
+      String currentLine = null;
+      boolean finished = false;      
+      int currentLineNumber = 0;
+      while ((currentLine = bufRead.readLine()) != null && !finished) {
+        currentLineNumber++;
+        Scanner input = new Scanner(currentLine);
+        while(input.hasNext() && !finished) {
+          String currentToken = input.next();
+          if (clocks.remove(currentToken.toLowerCase())) {            
+            if (clocks.isEmpty()) {
+              finished = true;
+            }
+            clockLines.add(currentLineNumber);
+          }
+        }
+        input.close();
+      }
+    } catch (IOException e) {
+      LOG.warn("Could not read source file");
+    }
+    return clockLines;
   }
 
   private String parseStatLog(Path path){
