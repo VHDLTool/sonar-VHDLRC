@@ -46,11 +46,11 @@
 	<hb:Rule UID="CNE_00200">
 		<hb:RuleUID>CNE_00200</hb:RuleUID>
 		<hb:RuleHist>
-			<hb:Status>Validated</hb:Status>
-			<hb:Engine>None</hb:Engine>
+			<hb:Status>Implemented</hb:Status>
+			<hb:Engine>Yosys-ghdl</hb:Engine>
 			<hb:Version>6</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
-			<hb:Modified>2020-04-23</hb:Modified>
+			<hb:Modified>2021-09-13</hb:Modified>
 			<hb:Revision>Not used anymore.See Git logs.</hb:Revision>
 		</hb:RuleHist>
 		<hb:RuleContent>
@@ -1972,7 +1972,7 @@ Isolating them from initialized signal improves identification of these signals 
 		<hb:RuleUID>CNE_04600</hb:RuleUID>
 		<hb:RuleHist>
 			<hb:Status>Implemented</hb:Status>
-			<hb:Engine>Yosys</hb:Engine>
+			<hb:Engine>Yosys-ghdl</hb:Engine>
 			<hb:Version>6</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
 			<hb:Modified>2021-07-07</hb:Modified>
@@ -4105,7 +4105,7 @@ Benefits of changing resets to synchronous :
 		<hb:RuleUID>STD_04000</hb:RuleUID>
 		<hb:RuleHist>
 			<hb:Status>Implemented</hb:Status>
-			<hb:Engine>Yosys</hb:Engine>
+			<hb:Engine>Yosys-ghdl</hb:Engine>
 			<hb:Version>6</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
 			<hb:Modified>2021-07-20</hb:Modified>
@@ -4293,7 +4293,7 @@ Here is a list of possible assertion checks for a FIFO design:
 		<hb:RuleUID>STD_04400</hb:RuleUID>
 		<hb:RuleHist>
 			<hb:Status>Implemented</hb:Status>
-			<hb:Engine>Yosys</hb:Engine>
+			<hb:Engine>Yosys-ghdl</hb:Engine>
 			<hb:Version>6</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
 			<hb:Modified>2021-09-09</hb:Modified>

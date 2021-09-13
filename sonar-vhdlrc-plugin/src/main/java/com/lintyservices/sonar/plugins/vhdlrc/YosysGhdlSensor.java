@@ -75,7 +75,7 @@ public class YosysGhdlSensor implements Sensor {
   private String workdir;
   private String topFile="";
   private int topLineNumber=0;
-  
+
   private ActiveRule cne2000;
   private ActiveRule cne4600;
   private ActiveRule std3900;
@@ -83,6 +83,7 @@ public class YosysGhdlSensor implements Sensor {
   private ActiveRule std4000;
   private ActiveRule std5500;
   private ActiveRule std4400;
+  private ActiveRule cne200;
 
 
   @Override
@@ -102,7 +103,7 @@ public class YosysGhdlSensor implements Sensor {
     baseProjDir=System.getProperty("user.dir");
     String top=BuildPathMaker.getTopEntities(config);
     workdir = null;
-    
+
     if(executeCommand(new String[] {"bash","-c","yosys -H | grep -c ghdl"}).equals("1")) { // Check if ghdl module has been included in yosys at build time 
       yosysGhdlCmd="yosys -p \"ghdl";
     }
@@ -116,7 +117,7 @@ public class YosysGhdlSensor implements Sensor {
       String ghdlParams=" "+BuildPathMaker.getGhdlOptions(config);	
       String yosysFsmCmd = yosysGhdlCmd+ghdlParams+" "+top+" "+yosysFsmDetectCmd;
       workdir=BuildPathMaker.getWorkdir(config);
-      
+
       cne2000 = context.activeRules().findByInternalKey(repo, "CNE_02000");
       cne4600 = context.activeRules().findByInternalKey(repo, "CNE_04600");
       std3900 = context.activeRules().findByInternalKey(repo, "STD_03900");
@@ -124,27 +125,28 @@ public class YosysGhdlSensor implements Sensor {
       std4000 = context.activeRules().findByInternalKey(repo, "STD_04000");
       std5500 = context.activeRules().findByInternalKey(repo, "STD_05500");
       std4400 = context.activeRules().findByInternalKey(repo, "STD_04400");
-      
+      cne200 = context.activeRules().findByInternalKey(repo, "CNE_00200");
+
       if(!IS_WINDOWS && (std4000!=null || std5500!=null)) { // Analyse each file separately with ghdl -a command
         Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
         files.forEach(file->checkGhdlLog(file, "ghdl -a \""+(new File(file.uri())).getPath()+"\""));
       }
-      
+
       if(!IS_WINDOWS && (cne2000!=null || std3900!=null || std5200!=null || cne4600!=null)) {        
-        
+
         // Execute ghdl
         //System.out.println("bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\"");
         System.out.println(executeCommand(new String[] {"bash","-c","bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\""}));
 
         // Detect fsm with yosys and dump results in fsmdetect file
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysFsmCmd}));
-        
+
         // Get the names of ignored fsms from fsmdetect file
         List<String> ignoredFsmNames=getIgnoredFsms();
         StringBuilder builder= new StringBuilder();
         for (String fsmName:ignoredFsmNames)
           builder.append("setattr -set fsm_encoding \\\"auto\\\" "+fsmName+"; ");
-        
+
         // Generate kiss2 files
         String yosysFsmExtractExport=builder.toString()+"fsm_extract ; fsm_export";
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysFsmExtractExport+"\""}));
@@ -152,7 +154,7 @@ public class YosysGhdlSensor implements Sensor {
         //System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; select o:* -module "+top+"; dump -o outputlist;\""}));
         // Generate input, output and clock lists
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth ; tee -q -o outputlist select o:* -module "+top+" -list; select -clear ; tee -q -o inputlist select i:* -module "+top+" -list; select -clear ;  tee -q -o clocklist select t:* %x:+[C] t:* %d -list; select -clear ; tee -q -a clocklist select t:* %x:+[CLK] t:* %d -list\""}));
-                
+
         // Parse output list file
         File outputlistfile=new File(workdir+"/outputlist");
         try (FileReader fReader = new FileReader(outputlistfile)){
@@ -161,31 +163,31 @@ public class YosysGhdlSensor implements Sensor {
           while ((currentLine = bufRead.readLine()) != null) {
             builder.append("select "+top+"/"+currentLine+" %cie*; tee -q -o "+currentLine+".statlog stat; select -clear; ");
           }
-         }catch (IOException e) {
-           LOG.warn("Could not read source file");
-         }
+        }catch (IOException e) {
+          LOG.warn("Could not read source file");
+        }
         String yosysCheckOutputs=builder.toString();
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth; "+yosysCheckOutputs+"\""}));
-        
+
         /*List<String> outputNames = getOutputs(workdir+"/outputlist");
         builder= new StringBuilder();
         for (String outputName:outputNames)
           builder.append("select "+top+"/"+outputName+" %cie*; tee -q -o "+outputName+".statlog stat; select -clear; ");*/
-        
-     // Parse input list file
+
+        // Parse input list file
         File inputlistfile=new File(workdir+"/inputlist");
         try (FileReader fReader = new FileReader(inputlistfile)){
           BufferedReader bufRead = new BufferedReader(fReader);
           String currentLine;
           while ((currentLine = bufRead.readLine()) != null) {
             //
-           
+
           }
-         }catch (IOException e) {
-           LOG.warn("Could not read source file");
-         }
-        
-     // Parse clock list file
+        }catch (IOException e) {
+          LOG.warn("Could not read source file");
+        }
+
+        // Parse clock list file
         Map <String,Set<String>> clocks = new HashMap<>();
         File clocklistfile=new File(workdir+"/clocklist");
         try (FileReader fReader = new FileReader(clocklistfile)){
@@ -206,25 +208,30 @@ public class YosysGhdlSensor implements Sensor {
               }
             }
           }
-          if (clocks.size()>1) {
-            for (Map.Entry<String,Set<String>> pair: clocks.entrySet()) {
-              String fileName = pair.getKey();
-              Set<String> clockNames = pair.getValue();
-              InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhd"));
-              if (inputFile == null) {
-                inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhdl"));
-              }
-              if (inputFile != null && std4400!=null) {
-                List<Integer> clockLines = getClockLocation(new File(inputFile.uri()), clockNames);
-                for (int clockLine : clockLines) {
+          for (Map.Entry<String,Set<String>> pair: clocks.entrySet()) {
+            String fileName = pair.getKey();
+            Set<String> clockNames = pair.getValue();
+            InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhd"));
+            if (inputFile == null) {
+              inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhdl"));
+            }              
+            if (inputFile != null ) {
+              List<Integer> clockLines = getClockLocation(new File(inputFile.uri()), clockNames);
+              boolean inTop = fileName.startsWith(top.toLowerCase());
+              boolean clocksDeclaredInMultipleFiles = clocks.size()>1;
+              for (int clockLine : clockLines) {
+                if (clocksDeclaredInMultipleFiles && std4400!=null) {
                   addNewIssue("STD_04400", inputFile, clockLine ,"All clocks should be declared in a dedicated module");
                 }
-              }  
-            }
+                if (inTop && cne200!=null) {
+                  addNewIssue("CNE_00200", inputFile, clockLine ,"The clock signal name does not contain the clock frequency value (Warning, to be verified manually)");
+                }
+              }
+            }  
           }
-         }catch (IOException e) {
-           LOG.warn("Could not read source file");
-         }
+        }catch (IOException e) {
+          LOG.warn("Could not read source file");
+        }
 
       }
 
@@ -459,7 +466,7 @@ public class YosysGhdlSensor implements Sensor {
       LOG.warn("Could not read source file");
     }
   }
-  
+
   private List<Integer> getClockLocation(File file, Set<String> clocks){
     List<Integer> clockLines = new ArrayList<>();
     try (FileReader fReader = new FileReader(file)){
@@ -549,13 +556,13 @@ public class YosysGhdlSensor implements Sensor {
       LOG.warn("Could not read source file");
     }
   }
-  
+
   private void checkGhdlLog(InputFile file, String ghdlCmd) {
-    
+
     String ghdlLog = executeCommand(new String[] {"bash", "-c", ghdlCmd}); // Analyze file
     BufferedReader reader = new BufferedReader(new StringReader(ghdlLog));
     String currentLine;
-    
+
     if (std4000!=null) { // Parse ghdl -c log
       try {
         while ((currentLine = reader.readLine()) != null) {
@@ -578,7 +585,7 @@ public class YosysGhdlSensor implements Sensor {
         LOG.warn("Could not read ghdl log");
       }   
     }
-    
+
     if(std5500!=null) {  // Parse ghdl --synth log
       String ghdlSynthLog = executeCommand(new String[] {"bash", "-c", "ghdl --synth"}); // Synthesize file
       reader = new BufferedReader(new StringReader(ghdlSynthLog));
@@ -603,9 +610,9 @@ public class YosysGhdlSensor implements Sensor {
         LOG.warn("Could not read ghdl synthesis log");
       }
     }
-    
+
     executeCommand(new String[] {"bash", "-c", "ghdl --remove"}); // Remove generated files
-    
+
   }
 
 
@@ -635,7 +642,7 @@ public class YosysGhdlSensor implements Sensor {
     }
     return theRun.toString().trim();
   }
-  
+
   public static String stringParamToRegex (String param) {
     String regex = null;
     if(param!=null) {
