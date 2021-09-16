@@ -75,7 +75,8 @@ public class YosysGhdlSensor implements Sensor {
   private String workdir;
   private String topFile="";
   private int topLineNumber=0;
-  private Map<String,String> outputs = new HashMap<>();
+  private Map<String, String> outputs = new HashMap<>(); //Output ports raising an issue according to rule STD_05200 (key = component name, value = port name)
+  private Map<String, String> inputs = new HashMap<>(); //Input ports raising an issue according to rule STD_05100 (key = component name, value = port name)
 
 
   private ActiveRule cne2000;
@@ -86,6 +87,7 @@ public class YosysGhdlSensor implements Sensor {
   private ActiveRule std5500;
   private ActiveRule std4400;
   private ActiveRule cne200;
+  private ActiveRule std5100;
 
 
   @Override
@@ -128,6 +130,7 @@ public class YosysGhdlSensor implements Sensor {
       std5500 = context.activeRules().findByInternalKey(repo, "STD_05500");
       std4400 = context.activeRules().findByInternalKey(repo, "STD_04400");
       cne200 = context.activeRules().findByInternalKey(repo, "CNE_00200");
+      std5100 = context.activeRules().findByInternalKey(repo, "STD_05100");
 
       if(!IS_WINDOWS && (std4000!=null || std5500!=null)) { // Analyse each file separately with ghdl -a command
         Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
@@ -250,14 +253,21 @@ public class YosysGhdlSensor implements Sensor {
       }
 
 
-      try { // Parse files containing dumped "stat" command results. If "Number of cells"/=0 then an issue is created (rule STD_05200)
+      try { // Parse files containing dumped "stat" command results. If "Number of cells"/=0 then an issue should be raised (rule STD_05200)
         Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->parseStatLog(o1));    
       } catch (IOException e) {
         LOG.warn("Could not find any .statlog file in build directory");
       }
-
+      
+      try { // Parse files containing dumped "stat" command results. If different numbers of cells are found, an issue should be raised (rule STD_05100)
+        Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".istatlog")).forEach(o1->parseIStatLog(o1));    
+      } catch (IOException e) {
+        LOG.warn("Could not find any .istatlog file in build directory");
+      }
+      
       outputs.remove("");
-      findOutputs(Paths.get(workdir+"/"+topFile),topLineNumber); // Add issues on output ports declarations (rule STD_05200)
+      inputs.remove("");
+      findPortIssues(Paths.get(workdir+"/"+topFile),topLineNumber); // Add issues on top entity ports (rules STD_05100 and STD_05200)
 
       try { // Parse generated .kiss2 files and add the corresponding issues
         Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".kiss2")).forEach(o1->addYosysIssues(o1)); //could use workdir
@@ -516,11 +526,11 @@ public class YosysGhdlSensor implements Sensor {
               int numCells = Integer.parseInt(input.next());
               foundNumberOfCells=true;
               if (numCells!=0) {
-                String output = FilenameUtils.removeExtension(path.getFileName().toString()).toLowerCase();
-                int delimitation = output.lastIndexOf("*");
-                int len = output.length();
-                String componentName = output.substring(0, delimitation);
-                String portName = output.substring(delimitation+1, len);
+                String outputFullName = FilenameUtils.removeExtension(path.getFileName().toString()).toLowerCase();
+                int delimitation = outputFullName.lastIndexOf("*");
+                int len = outputFullName.length();
+                String componentName = outputFullName.substring(0, delimitation);
+                String portName = outputFullName.substring(delimitation+1, len);
                 outputs.put(componentName, portName);               
               }
             }
@@ -533,8 +543,51 @@ public class YosysGhdlSensor implements Sensor {
       LOG.warn("Could not read statlog file");
     }
   }
+  
+  private void parseIStatLog(Path path) {
+    File file=path.toFile();
+    try (FileReader fReader = new FileReader(file)){
+      BufferedReader bufRead = new BufferedReader(fReader);
+      //System.out.println("Parseistatlog : "+file.getPath());
+      String currentLine = null;
+      boolean foundNumberOfCells1=false;
+      boolean foundNumberOfCells2=false;
+      int numCells1 = -1;
+      int numCells2 = -1;
+      while ((currentLine = bufRead.readLine()) != null && !(foundNumberOfCells1 && foundNumberOfCells2)) {    
+        Scanner input = new Scanner(currentLine);
+        while (input.hasNext() && !(foundNumberOfCells1 && foundNumberOfCells2)) {
+          String currentToken = input.next();
+          if (currentToken.equalsIgnoreCase("Number") && input.hasNext() && input.next().equalsIgnoreCase("of") && input.hasNext() && input.next().startsWith("cells") && input.hasNext()) {
+            try {
+              if (!foundNumberOfCells1) {
+                numCells1 = Integer.parseInt(input.next());
+                foundNumberOfCells1=true;
+              }
+              else {
+                numCells2 = Integer.parseInt(input.next());
+                foundNumberOfCells2=true;
+              }
+              if (foundNumberOfCells1 && foundNumberOfCells2 && numCells1!=numCells2) {
+                String inputFullName = FilenameUtils.removeExtension(path.getFileName().toString()).toLowerCase();
+                int delimitation = inputFullName.lastIndexOf("*");
+                int len = inputFullName.length();
+                String componentName = inputFullName.substring(0, delimitation);
+                String portName = inputFullName.substring(delimitation+1, len);
+                inputs.put(componentName, portName);               
+              }
+            }
+            catch(Exception e) {}               
+          } 
+        }
+        input.close();
+      }
+    } catch (IOException e) {
+      LOG.warn("Could not read statlog file");
+    }
+  }
 
-  private void findOutputs(Path path, int startLine){
+  private void findPortIssues(Path path, int startLine){
     File file=path.toFile();
     int currentLineNumber=0;
     try (FileReader fReader = new FileReader(file)){
@@ -561,6 +614,13 @@ public class YosysGhdlSensor implements Sensor {
                 addNewIssue("STD_05200",inputFile,currentLineNumber,"Output signal "+outputs.get(currentToken)+" includes combinatorial elements in its output path.");
               }
               outputs.remove(currentToken.toLowerCase());
+            }
+            else if (inComponent && inputs.containsKey(currentToken.toLowerCase())) {
+              InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
+              if(inputFile!=null && std5100!=null) {
+                addNewIssue("STD_05100",inputFile,currentLineNumber,"Asynchronous input signals should be synchronized with at least a two Flip-Flops synchronizer : "+inputs.get(currentToken));
+              }
+              inputs.remove(currentToken.toLowerCase());
             }
           }
           input.close();
