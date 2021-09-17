@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -75,8 +76,8 @@ public class YosysGhdlSensor implements Sensor {
   private String workdir;
   private String topFile="";
   private int topLineNumber=0;
-  private Map<String, String> outputs = new HashMap<>(); //Output ports raising an issue according to rule STD_05200 (key = component name, value = port name)
-  private Map<String, String> inputs = new HashMap<>(); //Input ports raising an issue according to rule STD_05100 (key = component name, value = port name)
+  private Map<String, Set<String>> outputs = new HashMap<>(); //Output ports raising an issue according to rule STD_05200 (key = component name, value = port name)
+  private Map<String, Set<String>> inputs = new HashMap<>(); //Input ports raising an issue according to rule STD_05100 (key = component name, value = port name)
 
 
   private ActiveRule cne2000;
@@ -531,7 +532,13 @@ public class YosysGhdlSensor implements Sensor {
                 int len = outputFullName.length();
                 String componentName = outputFullName.substring(0, delimitation);
                 String portName = outputFullName.substring(delimitation+1, len);
-                outputs.put(componentName, portName);               
+                Set<String> ports = outputs.get(componentName);
+                if (ports!=null) {
+                  ports.add(portName);
+                }
+                else {
+                  outputs.put(componentName, new HashSet<String>(Arrays.asList(portName)));
+                }
               }
             }
             catch(Exception e) {}               
@@ -548,7 +555,6 @@ public class YosysGhdlSensor implements Sensor {
     File file=path.toFile();
     try (FileReader fReader = new FileReader(file)){
       BufferedReader bufRead = new BufferedReader(fReader);
-      //System.out.println("Parseistatlog : "+file.getPath());
       String currentLine = null;
       boolean foundNumberOfCells1=false;
       boolean foundNumberOfCells2=false;
@@ -574,7 +580,13 @@ public class YosysGhdlSensor implements Sensor {
                 int len = inputFullName.length();
                 String componentName = inputFullName.substring(0, delimitation);
                 String portName = inputFullName.substring(delimitation+1, len);
-                inputs.put(componentName, portName);               
+                Set<String> ports = inputs.get(componentName);
+                if (ports!=null) {
+                  ports.add(portName);
+                }
+                else {
+                  inputs.put(componentName, new HashSet<String>(Arrays.asList(portName)));
+                }               
               }
             }
             catch(Exception e) {}               
@@ -611,14 +623,14 @@ public class YosysGhdlSensor implements Sensor {
             else if (inComponent && outputs.containsKey(currentToken.toLowerCase())) {
               InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
               if(inputFile!=null && std5200!=null) {
-                addNewIssue("STD_05200",inputFile,currentLineNumber,"Output signal "+outputs.get(currentToken)+" includes combinatorial elements in its output path.");
+                addNewIssue("STD_05200",inputFile,currentLineNumber,"Output signal "+collectionToString(outputs.get(currentToken))+" includes combinatorial elements in its output path.");
               }
               outputs.remove(currentToken.toLowerCase());
             }
             else if (inComponent && inputs.containsKey(currentToken.toLowerCase())) {
               InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
               if(inputFile!=null && std5100!=null) {
-                addNewIssue("STD_05100",inputFile,currentLineNumber,"Asynchronous input signals should be synchronized with at least a two Flip-Flops synchronizer : "+inputs.get(currentToken));
+                addNewIssue("STD_05100",inputFile,currentLineNumber,"Asynchronous input signals should be synchronized with at least a two Flip-Flops synchronizer : "+collectionToString(inputs.get(currentToken)));
               }
               inputs.remove(currentToken.toLowerCase());
             }
@@ -725,6 +737,21 @@ public class YosysGhdlSensor implements Sensor {
       regex = param.trim().replace("*", ".*");
     }
     return regex;
+  }
+  
+  public static String collectionToString (Collection<String> collec) {
+    StringBuilder builder = new StringBuilder();
+    boolean firstElement = true;
+    for (String str : collec) {
+      if (firstElement ) {
+        firstElement = false;
+        builder.append(str);
+      }
+      else {
+        builder.append(", ").append(str);
+      }
+    }
+    return builder.toString();
   }
 
 }
