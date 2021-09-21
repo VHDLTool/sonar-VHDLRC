@@ -43,7 +43,7 @@ public class VhdlRcPluginTest {
     vhdlRcPlugin.define(context);
     int extensionsNumber=18;
     if (System.getProperty("withoutVhdlLanguageSupport")!=null && System.getProperty("withoutVhdlLanguageSupport").equals("true")) {
-      extensionsNumber-=3;
+      extensionsNumber-=2;
     }
     if (System.getProperty("withoutYosys")!=null && System.getProperty("withoutYosys").equals("true")) {
       extensionsNumber-=6;
