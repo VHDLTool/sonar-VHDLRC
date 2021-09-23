@@ -2328,7 +2328,7 @@ Isolating them from initialized signal improves identification of these signals 
 		<hb:RuleParams>
 			<hb:IntParam>
 				<hb:ParamID>P1</hb:ParamID>
-				<hb:Relation>LET</hb:Relation>
+				<hb:Relation>E</hb:Relation>
 				<hb:Value>2</hb:Value>
 			</hb:IntParam>
 		</hb:RuleParams>
@@ -4637,6 +4637,13 @@ signals generated without clock and signals generated in another time domain.</h
 			<hb:Figure fileref="STD_05100.svg" height="150px"
 				width="450px" />
 		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:IntParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Relation>E</hb:Relation>
+				<hb:Value>2</hb:Value>
+			</hb:IntParam>
+		</hb:RuleParams>
 	</hb:Rule>
 		
 	<hb:Rule UID="STD_05200">

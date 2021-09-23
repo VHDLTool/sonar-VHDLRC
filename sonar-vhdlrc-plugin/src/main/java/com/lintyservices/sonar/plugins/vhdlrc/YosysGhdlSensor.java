@@ -191,7 +191,8 @@ public class YosysGhdlSensor implements Sensor {
           String currentLine;
           while ((currentLine = bufRead.readLine()) != null) {
             String currentLineAsName = currentLine.replaceAll("/", "\\*");
-            builder.append("select "+currentLine+" %co3; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co3  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
+            int std5100Limit = Integer.parseInt(std5100.param("Limit"));
+            builder.append("select "+currentLine+" %co"+std5100Limit+"; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co"+std5100Limit+"  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
           }
         }catch (IOException e) {
           LOG.warn("Could not read inputlist file");
@@ -595,7 +596,7 @@ public class YosysGhdlSensor implements Sensor {
         input.close();
       }
     } catch (IOException e) {
-      LOG.warn("Could not read statlog file");
+      LOG.warn("Could not read istatlog file");
     }
   }
 
@@ -605,7 +606,6 @@ public class YosysGhdlSensor implements Sensor {
     try (FileReader fReader = new FileReader(file)){
       BufferedReader bufRead = new BufferedReader(fReader);
       String currentLine = null;
-      boolean inComponent=false;
       while ((currentLine = bufRead.readLine()) != null) {
         currentLineNumber++;
         if (currentLineNumber>=startLine) {
@@ -617,22 +617,22 @@ public class YosysGhdlSensor implements Sensor {
             if (currentToken.toLowerCase().startsWith("--")) {
               inComment = true;
             }
-            else if (currentToken.toLowerCase().startsWith("component")) {
-              inComponent = true;
-            }
-            else if (inComponent && outputs.containsKey(currentToken.toLowerCase())) {
-              InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
-              if(inputFile!=null && std5200!=null) {
-                addNewIssue("STD_05200",inputFile,currentLineNumber,"Output signal "+collectionToString(outputs.get(currentToken))+" includes combinatorial elements in its output path.");
+            else if ((currentToken.toLowerCase().startsWith("component") || currentToken.toLowerCase().startsWith("entity")) && input.hasNext()) {
+              currentToken = input.next();
+              if (outputs.containsKey(currentToken.toLowerCase())) {
+                InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
+                if(inputFile!=null && std5200!=null) {
+                  addNewIssue("STD_05200",inputFile,currentLineNumber,"Output signal "+collectionToString(outputs.get(currentToken.toLowerCase()))+" includes combinatorial elements in its output path.");
+                }
+                outputs.remove(currentToken.toLowerCase());
               }
-              outputs.remove(currentToken.toLowerCase());
-            }
-            else if (inComponent && inputs.containsKey(currentToken.toLowerCase())) {
-              InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
-              if(inputFile!=null && std5100!=null) {
-                addNewIssue("STD_05100",inputFile,currentLineNumber,"Asynchronous input signals should be synchronized with at least a two Flip-Flops synchronizer : "+collectionToString(inputs.get(currentToken)));
+              if (inputs.containsKey(currentToken.toLowerCase())) {
+                InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
+                if(inputFile!=null && std5100!=null) {
+                  addNewIssue("STD_05100",inputFile,currentLineNumber,"Asynchronous input signals should be synchronized with at least a two Flip-Flops synchronizer : "+collectionToString(inputs.get(currentToken.toLowerCase())));
+                }
+                inputs.remove(currentToken.toLowerCase());
               }
-              inputs.remove(currentToken.toLowerCase());
             }
           }
           input.close();
