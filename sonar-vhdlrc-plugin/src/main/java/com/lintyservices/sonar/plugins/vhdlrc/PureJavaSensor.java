@@ -596,8 +596,8 @@ public class PureJavaSensor implements Sensor {
             }
           }
 
-          if (!emptyLine && std2000!=null && !currentLine.startsWith(std2000.param("Format"))) { // Check indentation
-            addNewIssue("STD_02000", inputFile, lineNumber, "Text should be indented according to the defined pattern");
+          if (!emptyLine && std2000!=null && currentLine.startsWith("\t")) { // Check indentation
+            addNewIssue("STD_02000", inputFile, lineNumber, "Tabulation characters should be avoided for indentation");
           }
 
           input.close();
@@ -621,7 +621,7 @@ public class PureJavaSensor implements Sensor {
         if (std2800!=null) {
           std2800Limit = Integer.parseInt(std2800.param("Limit"));
         }
-        if (std2800Limit!=null && (commentedLines*100)/lineNumber>std2800Limit) { // Check if maximum percent of commented lines is exceeded
+        if (lineNumber!=0 && std2800Limit!=null && (commentedLines*100)/lineNumber>std2800Limit) { // Check if maximum percent of commented lines is exceeded
           addNewIssue("STD_02800", inputFile, "Comment proportion should not exceed defined percentage");
         }
         

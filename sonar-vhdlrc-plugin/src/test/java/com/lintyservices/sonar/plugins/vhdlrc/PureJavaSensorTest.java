@@ -114,6 +114,10 @@ public class PureJavaSensorTest {
   @Test
   public void test_2800() {
     init();
+    addTestFile(context,"src/test/files/javasensor/testEmpty.vhd");
+    addRule(context, "STD_02800", "Limit", "60");
+    sensor.execute(context);
+    init();
     addTestFile(context,"src/test/files/javasensor/test2800.vhd");
     addRule(context, "STD_02800", "Limit", "60");
     sensor.execute(context);
@@ -137,7 +141,7 @@ public class PureJavaSensorTest {
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
-    assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(4);
+    assertThat(issues.get(0).primaryLocation().textRange().start().line()).isEqualTo(8);
   }
 
   @Test
