@@ -1,5 +1,5 @@
  -- buffer
- -- port
+ -- Creation date
  -- License : Linty
  
  library IEEE;

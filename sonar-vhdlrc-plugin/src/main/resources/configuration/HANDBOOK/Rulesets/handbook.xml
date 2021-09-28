@@ -1177,7 +1177,7 @@ The definition area (for signals, constants components...) is not included in th
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Softwares</hb:Value>
+				<hb:Value>*Softwares*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1224,7 +1224,7 @@ The definition area (for signals, constants components...) is not included in th
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>File name</hb:Value>
+				<hb:Value>*File name*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1271,7 +1271,7 @@ The definition area (for signals, constants components...) is not included in th
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Creation date</hb:Value>
+				<hb:Value>*Creation date*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1318,7 +1318,7 @@ The definition area (for signals, constants components...) is not included in th
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Project name</hb:Value>
+				<hb:Value>*Project name*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1365,7 +1365,7 @@ The definition area (for signals, constants components...) is not included in th
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Author</hb:Value>
+				<hb:Value>*Author*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1412,7 +1412,7 @@ The definition area (for signals, constants components...) is not included in th
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Description</hb:Value>
+				<hb:Value>*Description*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1459,7 +1459,7 @@ The definition area (for signals, constants components...) is not included in th
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Naming conventions</hb:Value>
+				<hb:Value>*Naming conventions*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1506,7 +1506,7 @@ The definition area (for signals, constants components...) is not included in th
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Limitations</hb:Value>
+				<hb:Value>*Limitations*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1553,7 +1553,7 @@ The definition area (for signals, constants components...) is not included in th
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Version</hb:Value>
+				<hb:Value>*Version*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1596,6 +1596,13 @@ The definition area (for signals, constants components...) is not included in th
 			<hb:FigureDesc />
 			<hb:Figure />
 		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:StringParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Position>Equal</hb:Position>
+				<hb:Value>*Author*</hb:Value>
+			</hb:StringParam>
+		</hb:RuleParams>
 	</hb:Rule>
 	
 	<hb:Rule UID="CNE_03800">
@@ -1641,7 +1648,7 @@ Understanding the last modifications allows integrator to know if a bug was corr
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Version history</hb:Value>
+				<hb:Value>*Version history*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1688,7 +1695,7 @@ Understanding the last modifications allows integrator to know if a bug was corr
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Version</hb:Value>
+				<hb:Value>*Version*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1735,7 +1742,7 @@ Understanding the last modifications allows integrator to know if a bug was corr
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Version</hb:Value>
+				<hb:Value>*Version*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1783,7 +1790,7 @@ Understanding the last modifications allows integrator to know if a bug was corr
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Version</hb:Value>
+				<hb:Value>*Version*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1830,7 +1837,7 @@ Understanding the last modifications allows integrator to know if a bug was corr
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Licensing</hb:Value>
+				<hb:Value>*Licensing*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1877,7 +1884,7 @@ Understanding the last modifications allows integrator to know if a bug was corr
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Company</hb:Value>
+				<hb:Value>*Company*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1924,7 +1931,7 @@ Understanding the last modifications allows integrator to know if a bug was corr
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Company</hb:Value>
+				<hb:Value>*Company*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -1968,7 +1975,9 @@ Isolating them from initialized signal improves identification of these signals 
 			<hb:FigureDesc />
 			<hb:Figure />
 		</hb:RuleDesc>
-	</hb:Rule><hb:Rule UID="CNE_04600">
+	</hb:Rule>
+	
+	<hb:Rule UID="CNE_04600">
 		<hb:RuleUID>CNE_04600</hb:RuleUID>
 		<hb:RuleHist>
 			<hb:Status>Implemented</hb:Status>
@@ -3358,7 +3367,7 @@ Large VHDL project could use version control software (like SVN). If this is the
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Version</hb:Value>
+				<hb:Value>*Version*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -3408,7 +3417,7 @@ Large VHDL project could use version control software (like SVN). If this is the
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Copyright</hb:Value>
+				<hb:Value>*Copyright*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -3455,7 +3464,7 @@ Large VHDL project could use version control software (like SVN). If this is the
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Creation</hb:Value>
+				<hb:Value>*Creation*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>
@@ -3502,7 +3511,7 @@ Large VHDL project could use version control software (like SVN). If this is the
 			<hb:StringParam>
 				<hb:ParamID>P1</hb:ParamID>
 				<hb:Position>Equal</hb:Position>
-				<hb:Value>Description</hb:Value>
+				<hb:Value>*Description*</hb:Value>
 			</hb:StringParam>
 		</hb:RuleParams>
 	</hb:Rule>

@@ -52,7 +52,7 @@ public class PureJavaSensor implements Sensor {
   private static final String repo="vhdlrc-repository";
   private static final Logger LOG = Loggers.get(PureJavaSensor.class);
   private static final Set <String> notAPackageName = new HashSet<>(Arrays.asList("all", "std", "ieee"));
-    
+
   private SensorContext context;
   private FilePredicates predicates;
   private int totalComments;
@@ -151,14 +151,14 @@ public class PureJavaSensor implements Sensor {
     std5400 = context.activeRules().find(RuleKey.of(repo, "STD_05400"));
     std2700 = context.activeRules().find(RuleKey.of(repo, "STD_02700"));
     cne5400 = context.activeRules().find(RuleKey.of(repo, "CNE_05400"));
-    
+
 
 
     Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
     files.forEach(file->checkJavaRules(file));
     allVhdlPackages.forEach(vhdlPackage->checkVhdlPackage(vhdlPackage.getPackageName(), 0, vhdlPackage.getPackageFile()));
     context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(context.project()).withValue(totalComments).save();
-    
+
   }
 
   private void checkVhdlPackage (String packageName, int level, InputFile packageFile) {
@@ -181,7 +181,7 @@ public class PureJavaSensor implements Sensor {
               level++;
               Integer cne5400Limit = null;
               if (cne5400!=null) {
-                 cne5400Limit = Integer.parseInt(cne5400.param("Limit"));
+                cne5400Limit = Integer.parseInt(cne5400.param("Limit"));
               }
               if (cne5400Limit!=null && level>cne5400Limit) {
                 StringBuilder builder = new StringBuilder("Too many nested packages : ");
@@ -220,7 +220,7 @@ public class PureJavaSensor implements Sensor {
       }
       File sourceFile = new File(inputFile.uri());
       try (FileReader fReader = new FileReader(sourceFile)) {
-        
+
         BufferedReader bufRead = new BufferedReader(fReader);
         String currentLine = null;
         int lineNumber=0;
@@ -232,7 +232,7 @@ public class PureJavaSensor implements Sensor {
         boolean packageDeclaration = false;
         boolean useClause1 = false;
         boolean useClause2 = false;
-        
+
         // Initialize header-related rules
 
         boolean std2200issue = true;
@@ -241,171 +241,171 @@ public class PureJavaSensor implements Sensor {
           String format = std2200.param("Format");
           std2200Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean std2300issue = true;
         String std2300Regex = null;
         if (std2300!=null) {
           String format = std2300.param("Format");
           std2300Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean std2400issue = true;
         String std2400Regex = null;
         if (std2400!=null) {
           String format = std2400.param("Format");
           std2400Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean std2500issue = true;
         String std2500Regex = null;
         if (std2300!=null) {
           String format = std2500.param("Format");
           std2500Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne2800issue = true;
         String cne2800Regex = null;
         if (cne2800!=null) {
           String format = cne2800.param("Format");
           cne2800Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne2900issue = true;
         String cne2900Regex = null;
         if (cne2900!=null) {
           String format = cne2900.param("Format");
           cne2900Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne3000issue = true;
         String cne3000Regex = null;
         if (cne3000!=null) {
           String format = cne3000.param("Format");
           cne3000Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne3100issue = true;
         String cne3100Regex = null;
         if (cne3100!=null) {
           String format = cne3100.param("Format");
           cne3100Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne3200issue = true;
         String cne3200Regex = null;
         if (cne3200!=null) {
           String format = cne3200.param("Format");
           cne3200Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne3300issue = true;
         String cne3300Regex = null;
         if (cne3300!=null) {
           String format = cne3300.param("Format");
           cne3300Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne3400issue = true;
         String cne3400Regex = null;
         if (cne3400!=null) {
           String format = cne3400.param("Format");
           cne3400Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne3500issue = true;
         String cne3500Regex = null;
         if (cne3500!=null) {
           String format = cne3500.param("Format");
           cne3500Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne3600issue = true;
         String cne3600Regex = null;
         if (cne3600!=null) {
           String format = cne3600.param("Format");
           cne3600Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne3700issue = true;
         String cne3700Regex = null;
         if (cne3700!=null) {
           String format = cne3700.param("Format");
           cne3700Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne3800issue = true;
         String cne3800Regex = null;
         if (cne3800!=null) {
           String format = cne3800.param("Format");
           cne3800Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne3900issue = true;
         String cne3900Regex = null;
         if (cne3900!=null) {
           String format = cne3900.param("Format");
           cne3900Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne4000issue = true;
         String cne4000Regex = null;
         if (cne4000!=null) {
           String format = cne4000.param("Format");
           cne4000Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne4100issue = true;
         String cne4100Regex = null;
         if (cne4100!=null) {
           String format = cne4100.param("Format");
           cne4100Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne4200issue = true;
         String cne4200Regex = null;
         if (cne4200!=null) {
           String format = cne4200.param("Format");
           cne4200Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne4300issue = true;
         String cne4300Regex = null;
         if (cne4300!=null) {
           String format = cne4300.param("Format");
           cne4300Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         boolean cne4400issue = true;
         String cne4400Regex = null;
         if (cne4400!=null) {
           String format = cne4400.param("Format");
           cne4400Regex = YosysGhdlSensor.stringParamToRegex(format);
         }
-        
+
         // End of header-related rules
-        
+
         Integer cne2700Limit = null;
         if (cne2700!=null) {
-           cne2700Limit = Integer.parseInt(cne2700.param("Limit"));
+          cne2700Limit = Integer.parseInt(cne2700.param("Limit"));
         }
-        
-        
+
+
         StringBuilder commentChain = new StringBuilder();
         LanguageResult result = null;
         int commentChainStartLine = 1;
         LanguageDetector detector=null;
-        
+
         while ((currentLine = bufRead.readLine()) != null) { // Browse file line by line
           lineNumber++;
           if (inBlockComment) {
             commentedLines++;
           }
-                    
+
           if (std2700!=null) { // Language check
             detector = new OptimaizeLangDetector().loadModels();
-            
+
             if (!inBlockComment && !inHeader) {
-              
+
               String lineBeforeComment;
               String lineAfterComment;
               int startCommmentIndex = currentLine.indexOf("--");
@@ -439,7 +439,7 @@ public class PureJavaSensor implements Sensor {
               else { // End of comment chain (if there was one)
                 if (commentChainExisted) {
                   result = detector.detect(commentChain.toString());
-                  
+
                   if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
                     if (commentChainStartLine!=lineNumber) {
                       addNewIssue("STD_02700", inputFile, commentChainStartLine, lineNumber, "English language should be preferred in comments");
@@ -457,9 +457,9 @@ public class PureJavaSensor implements Sensor {
                 addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in source code");
               }
             }
-            
+
             else { // Header and block comments
-              
+
               String lineBeforeCode;
               String lineAfterCode;
               int startOfCode =currentLine.indexOf("*/");
@@ -494,9 +494,96 @@ public class PureJavaSensor implements Sensor {
                 addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in source code");
               }
             }
+          }
+
+          if (inHeader) {
+            
+            if (std2200Regex!=null && (currentLine.matches(std2200Regex))) {
+              std2200issue = false;   
+            }
+
+            if (std2300Regex!=null && (currentLine.matches(std2300Regex))) {
+              std2300issue = false;   
+            }
+
+            if (std2400Regex!=null && (currentLine.matches(std2400Regex))) {
+              std2400issue = false;   
+            }
+
+            if (std2500Regex!=null && (currentLine.matches(std2500Regex))) {
+              std2500issue = false;   
+            }
+
+            if (cne2800Regex!=null && (currentLine.matches(cne2800Regex))) {
+              cne2800issue = false;   
+            }
+
+            if (cne2900Regex!=null && (currentLine.matches(cne2900Regex))) {
+              cne2900issue = false;   
+            }
+
+            if (cne3000Regex!=null && (currentLine.matches(cne3000Regex))) {
+              cne3000issue = false;   
+            }
+
+            if (cne3100Regex!=null && (currentLine.matches(cne3100Regex))) {
+              cne3100issue = false;   
+            }
+
+            if (cne3200Regex!=null && (currentLine.matches(cne3200Regex))) {
+              cne3200issue = false;   
+            }
+
+            if (cne3300Regex!=null && (currentLine.matches(cne3300Regex))) {
+              cne3300issue = false;   
+            }
+
+            if (cne3400Regex!=null && (currentLine.matches(cne3400Regex))) {
+              cne3400issue = false;   
+            }
+
+            if (cne3500Regex!=null && (currentLine.matches(cne3500Regex))) {
+              cne3500issue = false;   
+            }
+
+            if (cne3600Regex!=null && (currentLine.matches(cne3600Regex))) {
+              cne3600issue = false;   
+            }
+
+            if (cne3700Regex!=null && (currentLine.matches(cne3700Regex))) {
+              cne3700issue = false;   
+            }
+
+            if (cne3800Regex!=null && (currentLine.matches(cne3800Regex))) {
+              cne3800issue = false;   
+            }
+
+            if (cne3900Regex!=null && (currentLine.matches(cne3900Regex))) {
+              cne3900issue = false;   
+            }
+
+            if (cne4000Regex!=null && (currentLine.matches(cne4000Regex))) {
+              cne4000issue = false;   
+            }
+
+            if (cne4100Regex!=null && (currentLine.matches(cne4100Regex))) {
+              cne4100issue = false;   
+            }
+
+            if (cne4200Regex!=null && (currentLine.matches(cne4200Regex))) {
+              cne4200issue = false;   
+            }
+            
+            if (cne4300Regex!=null && (currentLine.matches(cne4300Regex))) {
+              cne4300issue = false;   
+            }
+
+            if (cne4400Regex!=null && (currentLine.matches(cne4400Regex))) {
+              cne4400issue = false;   
+            }
             
           }
-  
+          
           boolean inComment=false;
           Scanner input = new Scanner(currentLine);
           input.useDelimiter("((\\p{javaWhitespace})|;|,|\\.|\\(|\\))+");
@@ -504,133 +591,10 @@ public class PureJavaSensor implements Sensor {
           while (input.hasNext()) {
 
             String currentToken = input.next();
-            
-            if (inHeader && inComment) { // Browse header
-              if (std2200Regex!=null && (currentToken.matches(std2200Regex))) {
-                std2200issue = false;   
-              }
-            }
-            
-            if (inHeader && inComment) {
-              if (std2300Regex!=null && (currentToken.matches(std2300Regex))) {
-                std2300issue = false;   
-              }
-            }
 
             if (inHeader && inComment) {
-              if (std2400Regex!=null && (currentToken.matches(std2400Regex))) {
-                std2400issue = false;   
-              }
+              // Browse header line word by word
             }
-
-            if (inHeader && inComment) {
-              if (std2500Regex!=null && (currentToken.matches(std2500Regex))) {
-                std2500issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne2800Regex!=null && (currentToken.matches(cne2800Regex))) {
-                cne2800issue = false;   
-              }
-            }
-            
-            if (inHeader && inComment) {
-              if (cne2900Regex!=null && (currentToken.matches(cne2900Regex))) {
-                cne2900issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne3000Regex!=null && (currentToken.matches(cne3000Regex))) {
-                cne3000issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne3100Regex!=null && (currentToken.matches(cne3100Regex))) {
-                cne3100issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne3200Regex!=null && (currentToken.matches(cne3200Regex))) {
-                cne3200issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne3300Regex!=null && (currentToken.matches(cne3300Regex))) {
-                cne3300issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne3400Regex!=null && (currentToken.matches(cne3400Regex))) {
-                cne3400issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne3500Regex!=null && (currentToken.matches(cne3500Regex))) {
-                cne3500issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne3600Regex!=null && (currentToken.matches(cne3600Regex))) {
-                cne3600issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne3700Regex!=null && (currentToken.matches(cne3700Regex))) {
-                cne3700issue = false;   
-              }
-            }
-            
-            if (inHeader && inComment) {
-              if (cne3800Regex!=null && (currentToken.matches(cne3800Regex))) {
-                cne3800issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne3900Regex!=null && (currentToken.matches(cne3900Regex))) {
-                cne3900issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne4000Regex!=null && (currentToken.matches(cne4000Regex))) {
-                cne4000issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne4100Regex!=null && (currentToken.matches(cne4100Regex))) {
-                cne4100issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne4200Regex!=null && (currentToken.matches(cne4200Regex))) {
-                cne4200issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne4300Regex!=null && (currentToken.matches(cne4300Regex))) {
-                cne4300issue = false;   
-              }
-            }
-
-            if (inHeader && inComment) {
-              if (cne4400Regex!=null && (currentToken.matches(cne4400Regex))) {
-                cne4400issue = false;   
-              }
-            }
-
             else if (!inComment) { // Browse uncommented line
               emptyLine=false;
               if (inHeader && currentToken.equalsIgnoreCase("library")) {
@@ -649,8 +613,8 @@ public class PureJavaSensor implements Sensor {
               }
               else if (!inBlockComment) {
                 if (packageDeclaration) {
-                 packageDeclaration = false;
-                 vhdlPackage.setPackageName(currentToken.toLowerCase());
+                  packageDeclaration = false;
+                  vhdlPackage.setPackageName(currentToken.toLowerCase());
                 }
                 if (useClause1) {
                   useClause1 = false;
@@ -722,7 +686,7 @@ public class PureJavaSensor implements Sensor {
 
           input.close();
         }
-        
+
         if (detector!=null) {
           result = detector.detect(commentChain.toString());
           if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
@@ -744,7 +708,7 @@ public class PureJavaSensor implements Sensor {
         if (lineNumber!=0 && std2800Limit!=null && (commentedLines*100)/lineNumber>std2800Limit) { // Check if maximum percent of commented lines is exceeded
           addNewIssue("STD_02800", inputFile, "Comment proportion should not exceed defined percentage");
         }
-        
+
         if (cne2700Limit!=null && lineNumber>cne2700Limit) { // Check number of lines in file
           addNewIssue("CNE_02700", inputFile, "Too many lines in file");
         }
@@ -813,12 +777,12 @@ public class PureJavaSensor implements Sensor {
         if (cne4400Regex!=null && cne4400issue) {
           addNewIssue("CNE_04400", inputFile, "File header should include company owner of code");
         }
-        
+
         // Add package-related informations
         if (!vhdlPackage.getPackageName().equals("")) {
           allVhdlPackages.add(vhdlPackage);
         }
-        
+
       } catch (IOException e) {
         LOG.warn("Could not read source file");
       }
@@ -839,7 +803,7 @@ public class PureJavaSensor implements Sensor {
     ni.at(issueLocation);
     ni.save(); 
   }
-  
+
   private void addNewIssue(String ruleId, InputFile inputFile, int startLine, int endLine, String msg) {
     NewIssue ni = context.newIssue()
       .forRule(RuleKey.of(repo,ruleId));
@@ -854,7 +818,7 @@ public class PureJavaSensor implements Sensor {
     ni.addLocation(secondaryLocation);
     ni.save(); 
   }
-  
+
   private void addNewIssue(String ruleId, InputFile inputFile, String msg) {
     NewIssue ni = context.newIssue()
       .forRule(RuleKey.of(repo,ruleId));

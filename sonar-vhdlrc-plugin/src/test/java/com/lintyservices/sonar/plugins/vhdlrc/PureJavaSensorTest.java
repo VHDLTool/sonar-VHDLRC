@@ -148,13 +148,13 @@ public class PureJavaSensorTest {
   public void test_2200() {
     init();
     addTestFile(context,"src/main/resources/configuration/HANDBOOK/Extras/VHDL/STD_02200_good.vhd");
-    addRule(context, "STD_02200", "Format", "Ver,Version"); 
+    addRule(context, "STD_02200", "Format", "*Ver*,*Version*"); 
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(0);
     init();
     addTestFile(context,"src/main/resources/configuration/HANDBOOK/Extras/VHDL/STD_02200_bad.vhd");
-    addRule(context, "STD_02200", "Format", "Version");
+    addRule(context, "STD_02200", "Format", "*Version*");
     sensor.execute(context);
     issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
@@ -164,13 +164,13 @@ public class PureJavaSensorTest {
   public void test_4200() {
     init();
     addTestFile(context,"src/test/files/javasensor/test4200.vhd");
-    addRule(context, "CNE_04200", "Format", "Licensing,License"); 
+    addRule(context, "CNE_04200", "Format", "*aaa*, *Creation date*"); 
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(0);
     init();
     addTestFile(context,"src/test/files/javasensor/test4200.vhd");
-    addRule(context, "CNE_04200", "Format", "Licensing");
+    addRule(context, "CNE_04200", "Format", "*aaa*, *bbb*");
     sensor.execute(context);
     issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
