@@ -732,9 +732,10 @@ public class YosysGhdlSensor implements Sensor {
   public static String stringParamToRegex (String param) {
     String regex = null;
     if(param!=null) {
-      if(!param.startsWith("*"))
+      if(!param.startsWith("*")) {
         param="^"+param;
-      regex = param.trim().replace("*", ".*");
+      }
+      regex = param.trim().replace("*", ".*").replace(',', '|');
     }
     return regex;
   }

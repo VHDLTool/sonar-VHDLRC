@@ -510,6 +510,126 @@ public class PureJavaSensor implements Sensor {
                 std2200issue = false;   
               }
             }
+            
+            if (inHeader && inComment) {
+              if (std2300Regex!=null && (currentToken.matches(std2300Regex))) {
+                std2300issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (std2400Regex!=null && (currentToken.matches(std2400Regex))) {
+                std2400issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (std2500Regex!=null && (currentToken.matches(std2500Regex))) {
+                std2500issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne2800Regex!=null && (currentToken.matches(cne2800Regex))) {
+                cne2800issue = false;   
+              }
+            }
+            
+            if (inHeader && inComment) {
+              if (cne2900Regex!=null && (currentToken.matches(cne2900Regex))) {
+                cne2900issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne3000Regex!=null && (currentToken.matches(cne3000Regex))) {
+                cne3000issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne3100Regex!=null && (currentToken.matches(cne3100Regex))) {
+                cne3100issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne3200Regex!=null && (currentToken.matches(cne3200Regex))) {
+                cne3200issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne3300Regex!=null && (currentToken.matches(cne3300Regex))) {
+                cne3300issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne3400Regex!=null && (currentToken.matches(cne3400Regex))) {
+                cne3400issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne3500Regex!=null && (currentToken.matches(cne3500Regex))) {
+                cne3500issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne3600Regex!=null && (currentToken.matches(cne3600Regex))) {
+                cne3600issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne3700Regex!=null && (currentToken.matches(cne3700Regex))) {
+                cne3700issue = false;   
+              }
+            }
+            
+            if (inHeader && inComment) {
+              if (cne3800Regex!=null && (currentToken.matches(cne3800Regex))) {
+                cne3800issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne3900Regex!=null && (currentToken.matches(cne3900Regex))) {
+                cne3900issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne4000Regex!=null && (currentToken.matches(cne4000Regex))) {
+                cne4000issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne4100Regex!=null && (currentToken.matches(cne4100Regex))) {
+                cne4100issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne4200Regex!=null && (currentToken.matches(cne4200Regex))) {
+                cne4200issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne4300Regex!=null && (currentToken.matches(cne4300Regex))) {
+                cne4300issue = false;   
+              }
+            }
+
+            if (inHeader && inComment) {
+              if (cne4400Regex!=null && (currentToken.matches(cne4400Regex))) {
+                cne4400issue = false;   
+              }
+            }
 
             else if (!inComment) { // Browse uncommented line
               emptyLine=false;
