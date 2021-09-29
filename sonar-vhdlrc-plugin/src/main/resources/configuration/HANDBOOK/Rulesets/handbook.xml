@@ -83,6 +83,7 @@
 			<hb:Figure />
 		</hb:RuleDesc>
 	</hb:Rule>
+	
 	<hb:Rule UID="CNE_00300">
 		<hb:RuleUID>CNE_00300</hb:RuleUID>
 		<hb:RuleHist>
@@ -121,7 +122,9 @@
 			<hb:FigureDesc />
 			<hb:Figure />
 		</hb:RuleDesc>
-	</hb:Rule><hb:Rule UID="CNE_00400">
+	</hb:Rule>
+	
+	<hb:Rule UID="CNE_00400">
 		<hb:RuleUID>CNE_00400</hb:RuleUID>
 		<hb:RuleHist>
 			<hb:Status>Validated</hb:Status>
@@ -159,7 +162,9 @@
 			<hb:FigureDesc />
 			<hb:Figure />
 		</hb:RuleDesc>
-	</hb:Rule><hb:Rule UID="CNE_00500">
+	</hb:Rule>
+	
+	<hb:Rule UID="CNE_00500">
 		<hb:RuleUID>CNE_00500</hb:RuleUID>
 		<hb:RuleHist>
 			<hb:Status>Validated</hb:Status>
@@ -8385,7 +8390,48 @@ Isolating them from initialized signal improves identification of these signals 
 						<hb:FigureDesc />
 						<hb:Figure />
 					</hb:RuleDesc>
-				</hb:Rule>	
+				</hb:Rule>
+				
+				<hb:Rule UID="GHD_00000">
+					<hb:RuleUID>GHD_00000</hb:RuleUID>
+					<hb:RuleHist>
+						<hb:Status>Implemented</hb:Status>
+						<hb:Engine>Yosys-ghdl</hb:Engine>
+						<hb:Version>1</hb:Version>
+						<hb:Creation>2021-09-29</hb:Creation>
+						<hb:Modified>2021-09-29</hb:Modified>
+						<hb:Revision>Not used anymore.See Git logs.</hb:Revision>
+					</hb:RuleHist>
+					<hb:RuleContent>
+						<hb:Name>Ghdl synthesis messages</hb:Name>
+						<hb:IsParent>false</hb:IsParent>
+						<hb:IsSon>false</hb:IsSon>
+						<hb:ParentUID xsi:nil="true" />
+						<hb:Technology>VLSI</hb:Technology>
+						<hb:ApplicationFields>General</hb:ApplicationFields>
+						<hb:Category>Design</hb:Category>
+						<hb:SubCategory>Miscellaneous</hb:SubCategory>
+						<hb:Severity>Note</hb:Severity>
+						<hb:Rationale>Ghdl -s command may raise error and warning messages</hb:Rationale>
+						<hb:ShortDesc>This rule reports all ghdl synthesis error and warning messages</hb:ShortDesc>
+						<hb:LongDesc>This rule reports all ghdl synthesis error and warning messages</hb:LongDesc>
+					</hb:RuleContent>
+					<hb:Sonarqube>
+						<hb:SonarType>Code_Smell</hb:SonarType>
+						<hb:SonarSeverity>Minor</hb:SonarSeverity>
+						<hb:RemediationEffort>Easy</hb:RemediationEffort>
+						<hb:SonarTag></hb:SonarTag>
+					</hb:Sonarqube>
+					<hb:RuleDesc>
+						<hb:GoodExDesc></hb:GoodExDesc>
+						<hb:GoodExample ></hb:GoodExample>
+						<hb:BadExDesc></hb:BadExDesc>
+						<hb:BadExample ></hb:BadExample>
+						<hb:FigureDesc />
+						<hb:Figure />
+					</hb:RuleDesc>
+				</hb:Rule>
+					
 	<hb:RuleSetHist>
 		<hb:Version>6</hb:Version>
 		<hb:Creation>2014-09-30</hb:Creation>

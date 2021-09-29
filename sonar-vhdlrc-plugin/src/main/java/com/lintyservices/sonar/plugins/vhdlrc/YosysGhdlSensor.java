@@ -89,6 +89,7 @@ public class YosysGhdlSensor implements Sensor {
   private ActiveRule std4400;
   private ActiveRule cne200;
   private ActiveRule std5100;
+  private ActiveRule ghdlMessages;
 
 
   @Override
@@ -132,10 +133,11 @@ public class YosysGhdlSensor implements Sensor {
       std4400 = context.activeRules().findByInternalKey(repo, "STD_04400");
       cne200 = context.activeRules().findByInternalKey(repo, "CNE_00200");
       std5100 = context.activeRules().findByInternalKey(repo, "STD_05100");
+      ghdlMessages = context.activeRules().findByInternalKey(repo, "GHD_00000");
 
-      if(!IS_WINDOWS && (std4000!=null || std5500!=null)) { // Analyse each file separately with ghdl -a command
+      if(!IS_WINDOWS && (ghdlMessages !=null || std4000!=null || std5500!=null)) { // Analyse each file separately with ghdl -s command
         Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
-        files.forEach(file->checkGhdlLog(file, "ghdl -a \""+(new File(file.uri())).getPath()+"\""));
+        files.forEach(file->checkGhdlLog(file, "ghdl -a \""+(new File(file.uri())).getPath()+"\"; ghdl --synth"));
       }
 
       if(!IS_WINDOWS && (cne2000!=null || std3900!=null || std5200!=null || cne4600!=null)) {        
@@ -260,13 +262,13 @@ public class YosysGhdlSensor implements Sensor {
       } catch (IOException e) {
         LOG.warn("Could not find any .statlog file in build directory");
       }
-      
+
       try { // Parse files containing dumped "stat" command results. If different numbers of cells are found, an issue should be raised (rule STD_05100)
         Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".istatlog")).forEach(o1->parseIStatLog(o1));    
       } catch (IOException e) {
         LOG.warn("Could not find any .istatlog file in build directory");
       }
-      
+
       outputs.remove("");
       inputs.remove("");
       findPortIssues(Paths.get(workdir+"/"+topFile),topLineNumber); // Add issues on top entity ports (rules STD_05100 and STD_05200)
@@ -551,7 +553,7 @@ public class YosysGhdlSensor implements Sensor {
       LOG.warn("Could not read statlog file");
     }
   }
-  
+
   private void parseIStatLog(Path path) {
     File file=path.toFile();
     try (FileReader fReader = new FileReader(file)){
@@ -648,53 +650,38 @@ public class YosysGhdlSensor implements Sensor {
     String ghdlLog = executeCommand(new String[] {"bash", "-c", ghdlCmd}); // Analyze file
     BufferedReader reader = new BufferedReader(new StringReader(ghdlLog));
     String currentLine;
-
-    if (std4000!=null) { // Parse ghdl -c log
-      try {
-        while ((currentLine = reader.readLine()) != null) {
-          String afterFilename = currentLine.substring(currentLine.lastIndexOf(".vhd") + 1);
-          int errorLine=-1;
-          try {
-            errorLine = Integer.parseInt(afterFilename.split(":")[1]);
-          }
-          catch (Exception e) {
-            LOG.warn("Could not parse error line number in ghdl log");
-          }
-          String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
-          if (errorMsg.length()!=currentLine.length()) {
-            if (errorLine!=-1 && errorMsg.startsWith(" no choice for")) {
-              addNewIssue("STD_04000", file, errorLine, "All cases statements should be addressed in the VHDL code");
+    reader = new BufferedReader(new StringReader(ghdlLog));
+    try {
+      while ((currentLine = reader.readLine()) != null) {
+        String afterFilename = currentLine.substring(currentLine.lastIndexOf(".vhd") + 1);
+        int errorLine=-1;
+        try {
+          errorLine = Integer.parseInt(afterFilename.split(":")[1]);
+        }
+        catch (Exception e) {
+          LOG.warn("Could not parse error line number in ghdl synthesis log");
+        }
+        String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
+        if (errorMsg.length()!=currentLine.length()) {
+          if (errorLine!=-1) {
+            if (ghdlMessages!=null) {
+              try {  
+                Integer.parseInt(errorMsg);  
+              } catch(NumberFormatException e){
+                addNewIssue("GHD_00000", file, errorLine, errorMsg);
+              }  
+            }
+            if (std4000!=null && errorMsg.startsWith(" no choice for")) {
+              addNewIssue("STD_04000", file, errorLine, "All case statements should be addressed in the VHDL code : "+errorMsg);
+            }
+            else if (std5500!=null && errorMsg.startsWith(" latch infered for")) {
+              addNewIssue("STD_05500", file, errorLine, "Latches should be avoided : "+(currentLine.substring(currentLine.lastIndexOf(" ")+1).replaceAll("\"", "")));
             }
           }
         }
-      } catch (IOException e) {
-        LOG.warn("Could not read ghdl log");
-      }   
-    }
-
-    if(std5500!=null) {  // Parse ghdl --synth log
-      String ghdlSynthLog = executeCommand(new String[] {"bash", "-c", "ghdl --synth"}); // Synthesize file
-      reader = new BufferedReader(new StringReader(ghdlSynthLog));
-      try {
-        while ((currentLine = reader.readLine()) != null) {
-          String afterFilename = currentLine.substring(currentLine.lastIndexOf(".vhd") + 1);
-          int errorLine=-1;
-          try {
-            errorLine = Integer.parseInt(afterFilename.split(":")[1]);
-          }
-          catch (Exception e) {
-            LOG.warn("Could not parse error line number in ghdl synthesis log");
-          }
-          String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
-          if (errorMsg.length()!=currentLine.length()) {
-            if (errorLine!=-1 && errorMsg.startsWith(" latch infered for")) {
-              addNewIssue("STD_05500", file, errorLine, "Latches should be avoided");
-            }
-          }
-        }
-      } catch (IOException e) {
-        LOG.warn("Could not read ghdl synthesis log");
       }
+    } catch (IOException e) {
+      LOG.warn("Could not read ghdl synthesis log");
     }
 
     executeCommand(new String[] {"bash", "-c", "ghdl --remove"}); // Remove generated files
@@ -739,7 +726,7 @@ public class YosysGhdlSensor implements Sensor {
     }
     return regex;
   }
-  
+
   public static String collectionToString (Collection<String> collec) {
     StringBuilder builder = new StringBuilder();
     boolean firstElement = true;
