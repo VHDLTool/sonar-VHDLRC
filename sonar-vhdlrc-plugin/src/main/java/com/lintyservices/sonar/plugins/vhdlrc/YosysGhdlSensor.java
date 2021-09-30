@@ -90,6 +90,8 @@ public class YosysGhdlSensor implements Sensor {
   private ActiveRule cne200;
   private ActiveRule std5100;
   private ActiveRule ghdlMessages;
+  
+  private int std5100Limit;
 
 
   @Override
@@ -193,8 +195,8 @@ public class YosysGhdlSensor implements Sensor {
           String currentLine;
           while ((currentLine = bufRead.readLine()) != null) {
             String currentLineAsName = currentLine.replaceAll("/", "\\*");
-            int std5100Limit = Integer.parseInt(std5100.param("Limit"));
-            builder.append("select "+currentLine+" %co"+std5100Limit+"; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co"+std5100Limit+"  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
+            std5100Limit = Integer.parseInt(std5100.param("Limit"));
+            builder.append("select "+currentLine+" %co"+std5100Limit+1+"; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co"+std5100Limit+"  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
           }
         }catch (IOException e) {
           LOG.warn("Could not read inputlist file");
@@ -631,7 +633,7 @@ public class YosysGhdlSensor implements Sensor {
               if (inputs.containsKey(currentToken.toLowerCase())) {
                 InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
                 if(inputFile!=null && std5100!=null) {
-                  addNewIssue("STD_05100",inputFile,currentLineNumber,"Asynchronous input signals should be synchronized with at least a two Flip-Flops synchronizer : "+collectionToString(inputs.get(currentToken.toLowerCase())));
+                  addNewIssue("STD_05100",inputFile,currentLineNumber,"Asynchronous input signals should be synchronized with at least a "+std5100Limit+" Flip-Flops synchronizer : "+collectionToString(inputs.get(currentToken.toLowerCase())));
                 }
                 inputs.remove(currentToken.toLowerCase());
               }
@@ -659,7 +661,7 @@ public class YosysGhdlSensor implements Sensor {
           errorLine = Integer.parseInt(afterFilename.split(":")[1]);
         }
         catch (Exception e) {
-          LOG.warn("Could not parse error line number in ghdl synthesis log");
+          //LOG.warn("Could not parse error line number in ghdl synthesis log");
         }
         String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
         if (errorMsg.length()!=currentLine.length()) {
