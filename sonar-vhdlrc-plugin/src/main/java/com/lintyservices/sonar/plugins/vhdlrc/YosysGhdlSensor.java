@@ -90,7 +90,7 @@ public class YosysGhdlSensor implements Sensor {
   private ActiveRule cne200;
   private ActiveRule std5100;
   private ActiveRule ghdlMessages;
-  
+
   private int std5100Limit;
 
 
@@ -656,28 +656,30 @@ public class YosysGhdlSensor implements Sensor {
     try {
       while ((currentLine = reader.readLine()) != null) {
         String afterFilename = currentLine.substring(currentLine.lastIndexOf(".vhd") + 1);
-        int errorLine=-1;
-        try {
-          errorLine = Integer.parseInt(afterFilename.split(":")[1]);
-        }
-        catch (Exception e) {
-          //LOG.warn("Could not parse error line number in ghdl synthesis log");
-        }
-        String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
-        if (errorMsg.length()!=currentLine.length()) {
-          if (errorLine!=-1) {
-            if (ghdlMessages!=null) {
-              try {  
-                Integer.parseInt(errorMsg);  
-              } catch(NumberFormatException e){
-                addNewIssue("GHD_00000", file, errorLine, errorMsg);
-              }  
-            }
-            if (std4000!=null && errorMsg.startsWith(" no choice for")) {
-              addNewIssue("STD_04000", file, errorLine, "All case statements should be addressed in the VHDL code : "+errorMsg);
-            }
-            else if (std5500!=null && errorMsg.startsWith(" latch infered for")) {
-              addNewIssue("STD_05500", file, errorLine, "Latches should be avoided : "+(currentLine.substring(currentLine.lastIndexOf(" ")+1).replaceAll("\"", "")));
+        if (afterFilename.length()!=currentLine.length()) {
+          int errorLine=-1;
+          try {
+            errorLine = Integer.parseInt(afterFilename.split(":")[1]);
+          }
+          catch (Exception e) {
+            LOG.warn("Could not parse error line number in ghdl synthesis log");
+          }
+          String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
+          if (errorMsg.length()!=currentLine.length()) {
+            if (errorLine!=-1) {
+              if (ghdlMessages!=null) {
+                try {  
+                  Integer.parseInt(errorMsg);  
+                } catch(NumberFormatException e){
+                  addNewIssue("GHD_00000", file, errorLine, errorMsg);
+                }  
+              }
+              if (std4000!=null && errorMsg.startsWith(" no choice for")) {
+                addNewIssue("STD_04000", file, errorLine, "All case statements should be addressed in the VHDL code : "+errorMsg);
+              }
+              else if (std5500!=null && errorMsg.startsWith(" latch infered for")) {
+                addNewIssue("STD_05500", file, errorLine, "Latches should be avoided : "+(currentLine.substring(currentLine.lastIndexOf(" ")+1).replaceAll("\"", "")));
+              }
             }
           }
         }
