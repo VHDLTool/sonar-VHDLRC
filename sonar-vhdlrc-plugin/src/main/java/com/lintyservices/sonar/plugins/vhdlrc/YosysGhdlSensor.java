@@ -196,7 +196,7 @@ public class YosysGhdlSensor implements Sensor {
           while ((currentLine = bufRead.readLine()) != null) {
             String currentLineAsName = currentLine.replaceAll("/", "\\*");
             std5100Limit = Integer.parseInt(std5100.param("Limit"));
-            builder.append("select "+currentLine+" %co"+std5100Limit+1+"; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co"+std5100Limit+"  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
+            builder.append("select "+currentLine+" %co"+(std5100Limit+1)+"; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co"+(std5100Limit+1)+"  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
           }
         }catch (IOException e) {
           LOG.warn("Could not read inputlist file");
