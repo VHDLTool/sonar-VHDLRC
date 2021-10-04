@@ -4,9 +4,18 @@
 -- En-tête français. Tous droits réservés
 
 library
-print("Hello world")
-print("Bonjour tout le monde")
+hello
 
 -- Commentaire en français
+-- Commentaire en français
+-- Commentaire en français
+
+code
+
+/*commentaire en
+francais*/
+
+code
+
 -- Commentaire en français
 -- Commentaire en français

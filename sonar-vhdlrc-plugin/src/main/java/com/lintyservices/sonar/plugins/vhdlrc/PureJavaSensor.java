@@ -394,8 +394,10 @@ public class PureJavaSensor implements Sensor {
         LanguageResult result = null;
         int commentChainStartLine = 1;
         LanguageDetector detector=null;
-
+        String lastLine = null;
+        
         while ((currentLine = bufRead.readLine()) != null) { // Browse file line by line
+          
           lineNumber++;
           if (inBlockComment) {
             commentedLines++;
@@ -420,41 +422,34 @@ public class PureJavaSensor implements Sensor {
               else {
                 startOfComment = Math.min(currentLine.indexOf("--"),currentLine.indexOf("/*"));
               }
+              boolean commentChainExisted = (commentChain.toString().length()>0);
               if (startOfComment==-1) {
                 lineBeforeComment = currentLine;
                 lineAfterComment = "";
               }
               else
               {
+                if (!commentChainExisted) {
+                  commentChainStartLine = lineNumber;
+                }
                 lineBeforeComment = currentLine.subSequence(0, startOfComment).toString();
                 lineAfterComment = currentLine.subSequence(startOfComment+1, currentLine.length()).toString();
               }
-              boolean commentChainExisted = (commentChain.toString().length()>0);
               commentChain.append(lineAfterComment);
-              if (!(lineBeforeComment.length()>0)) { // No code on this line -> Comment chain continues
-                if (!commentChainExisted && lineAfterComment.length()>0) {
-                  commentChainStartLine = lineNumber;
-                }                 
-              }
-              else { // End of comment chain (if there was one)
+              
+              if (lineBeforeComment.length()>0) { // End of comment chain (if there was one)
                 if (commentChainExisted) {
                   result = detector.detect(commentChain.toString());
-
                   if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
                     if (commentChainStartLine!=lineNumber) {
-                      addNewIssue("STD_02700", inputFile, commentChainStartLine, lineNumber, "English language should be preferred in comments");
+                      addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments: code "+result.getLanguage());
                     } 
                     else {
-                      addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments");
+                      addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments: code "+result.getLanguage());
                     }                    
                   }
                 }
                 commentChain = new StringBuilder(lineAfterComment);
-                commentChainStartLine = 1;
-              }
-              result = detector.detect(lineBeforeComment);
-              if (lineBeforeComment.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
-                addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in source code");
               }
             }
 
@@ -480,19 +475,19 @@ public class PureJavaSensor implements Sensor {
                 result = detector.detect(commentChain.toString());
                 if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
                   if (commentChainStartLine!=lineNumber) {
-                    addNewIssue("STD_02700", inputFile, commentChainStartLine, lineNumber, "English language should be preferred in comments");
+                    addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments: code "+result.getLanguage());
                   }
                   else {
-                    addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments");
+                    addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments: code "+result.getLanguage());
                   }
                 }
                 commentChain = new StringBuilder();
-                commentChainStartLine = 1;
               }
-              result = detector.detect(lineAfterCode);
+              // Too many false positives
+              /*result = detector.detect(lineAfterCode);
               if (lineAfterCode.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
                 addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in source code");
-              }
+              }*/
             }
           }
 
@@ -599,6 +594,18 @@ public class PureJavaSensor implements Sensor {
               emptyLine=false;
               if (inHeader && currentToken.equalsIgnoreCase("library")) {
                 inHeader = false;
+                if (detector!=null) {          
+                  result = detector.detect(commentChain.toString());
+                  if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+                    if (commentChainStartLine!=lineNumber) {
+                      addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments : code "+result.getLanguage());
+                    }
+                    else {
+                      addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments : code "+result.getLanguage());
+                    }
+                  }
+                }
+                commentChain = new StringBuilder();
               }
               if (currentToken.startsWith("--")) {
                 inComment=true;
@@ -684,17 +691,19 @@ public class PureJavaSensor implements Sensor {
             addNewIssue("STD_02000", inputFile, lineNumber, "Tabulation characters should be avoided for indentation");
           }
 
+          lastLine = currentLine;
           input.close();
         }
+        bufRead.close();
 
-        if (detector!=null) {
+        if (detector!=null) {          
           result = detector.detect(commentChain.toString());
           if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
-            if (commentChainStartLine!=lineNumber) {
-              addNewIssue("STD_02700", inputFile, commentChainStartLine, lineNumber, "English language should be preferred in comments");
+            if (commentChainStartLine!=lineNumber && !lastLine.equals("")) {
+              addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, lastLine.length()-1, "English language should be preferred in comments : code "+result.getLanguage());
             }
             else {
-              addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments");
+              addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments : code "+result.getLanguage());
             }
           }
         }
@@ -783,6 +792,8 @@ public class PureJavaSensor implements Sensor {
           allVhdlPackages.add(vhdlPackage);
         }
 
+        fReader.close();
+        
       } catch (IOException e) {
         LOG.warn("Could not read source file");
       }
@@ -804,18 +815,14 @@ public class PureJavaSensor implements Sensor {
     ni.save(); 
   }
 
-  private void addNewIssue(String ruleId, InputFile inputFile, int startLine, int endLine, String msg) {
+  private void addNewIssue(String ruleId, InputFile inputFile, int startLine, int startLineOffset, int endLine, int endLineOffset, String msg) {
     NewIssue ni = context.newIssue()
       .forRule(RuleKey.of(repo,ruleId));
     NewIssueLocation issueLocation = ni.newLocation()
-      .on(inputFile)
-      .at(inputFile.selectLine(startLine));
-    NewIssueLocation secondaryLocation = ni.newLocation()
-      .on(inputFile)
-      .at(inputFile.selectLine(endLine))
+      .on(inputFile)  
+      .at(inputFile.newRange(startLine, startLineOffset, endLine, endLineOffset))
       .message(msg);
     ni.at(issueLocation);
-    ni.addLocation(secondaryLocation);
     ni.save(); 
   }
 
