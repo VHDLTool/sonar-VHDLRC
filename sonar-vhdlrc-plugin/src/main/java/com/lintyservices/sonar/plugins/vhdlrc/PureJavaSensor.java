@@ -721,11 +721,11 @@ public class PureJavaSensor implements Sensor {
           std2800Relation = std2800.param("Relation");
         }
         if (lineNumber!=0 && std2800Limit!=null && !stringParamRelation(std2800Relation, (commentedLines*100)/lineNumber, std2800Limit)) { // Check if maximum percent of commented lines is exceeded
-          addNewIssue("STD_02800", inputFile, "Comment proportion should comply with defined percentage");
+          addNewIssue("STD_02800", inputFile, "Comments percentage should be : " + std2800Relation +std2800Limit+". Actual value : "+ (commentedLines*100)/lineNumber);
         }
 
         if (cne2700Limit!=null && !stringParamRelation(cne2700Relation, lineNumber, cne2700Limit)) { // Check number of lines in file
-          addNewIssue("CNE_02700", inputFile, "File size should comply with defined limit");
+          addNewIssue("CNE_02700", inputFile, "File size should be : " + cne2700Relation +cne2700Limit+". Actual value : "+ lineNumber);
         }
 
         // Add issues related to missing info in header
