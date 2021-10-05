@@ -115,18 +115,18 @@ public class PureJavaSensorTest {
   public void test_2800() {
     init();
     addTestFile(context,"src/test/files/javasensor/testEmpty.vhd");
-    addRule(context, "STD_02800", "Limit", "60");
+    addRule(context, "STD_02800", "Limit", "60", "Relation", "<=");
     sensor.execute(context);
     init();
     addTestFile(context,"src/test/files/javasensor/test2800.vhd");
-    addRule(context, "STD_02800", "Limit", "60");
+    addRule(context, "STD_02800", "Limit", "60", "Relation", "<=");
     sensor.execute(context);
     assertThat(context.measure(context.module().key(), CustomMetrics.COMMENT_LINES_STD_02800).value()).isEqualTo(6);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(0);
     init();
     addTestFile(context,"src/test/files/javasensor/test2800.vhd");
-    addRule(context, "STD_02800", "Limit", "40");
+    addRule(context, "STD_02800", "Limit", "40", "Relation", "<=");
     sensor.execute(context);
     assertThat(context.measure(context.module().key(), CustomMetrics.COMMENT_LINES_STD_02800).value()).isEqualTo(6);
     issues = new ArrayList<>(context.allIssues());
@@ -180,13 +180,13 @@ public class PureJavaSensorTest {
   public void test_2700() {
     init();   
     addTestFile(context,"src/test/files/javasensor/test2700_good.vhd");
-    addRule(context, "CNE_02700", "Limit", "10"); 
+    addRule(context, "CNE_02700", "Limit", "10", "Relation", "<="); 
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(0);
     init();
     addTestFile(context,"src/test/files/javasensor/test2700_bad.vhd");
-    addRule(context, "CNE_02700", "Limit", "10"); 
+    addRule(context, "CNE_02700", "Limit", "10", "Relation", "<="); 
     sensor.execute(context);
     issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
@@ -276,7 +276,7 @@ public class PureJavaSensorTest {
     addTestFile(context,"src/test/files/javasensor/CNE5400/b.vhd");
     addTestFile(context,"src/test/files/javasensor/CNE5400/c.vhd");
     addTestFile(context,"src/test/files/javasensor/CNE5400/d.vhd");
-    addRule(context, "CNE_05400", "Limit", "2"); 
+    addRule(context, "CNE_05400", "Limit", "2", "Relation", "<="); 
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(1);
@@ -319,6 +319,19 @@ public class PureJavaSensorTest {
       .setRuleKey(RuleKey.of(repo, ruleKey))
       .setLanguage("vhdl")
       .setParam(paramKey, paramValue)
+      .build()
+      );
+    context.setActiveRules(builder.build());
+  }
+  
+  public static void addRule(SensorContextTester context, String ruleKey, String paramKey, String paramValue, String param2Key, String param2Value) {
+    ActiveRulesBuilder builder = new ActiveRulesBuilder();
+    builder.addRule (
+      new NewActiveRule.Builder()
+      .setRuleKey(RuleKey.of(repo, ruleKey))
+      .setLanguage("vhdl")
+      .setParam(paramKey, paramValue)
+      .setParam(param2Key, param2Value)
       .build()
       );
     context.setActiveRules(builder.build());

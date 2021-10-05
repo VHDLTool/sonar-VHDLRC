@@ -2342,7 +2342,7 @@ Isolating them from initialized signal improves identification of these signals 
 		<hb:RuleParams>
 			<hb:IntParam>
 				<hb:ParamID>P1</hb:ParamID>
-				<hb:Relation>E</hb:Relation>
+				<hb:Relation>LET</hb:Relation>
 				<hb:Value>2</hb:Value>
 			</hb:IntParam>
 		</hb:RuleParams>

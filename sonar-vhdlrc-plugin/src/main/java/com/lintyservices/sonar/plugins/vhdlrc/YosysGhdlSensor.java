@@ -237,6 +237,7 @@ public class YosysGhdlSensor implements Sensor {
               boolean inTop = fileName.startsWith(top.toLowerCase());
               boolean clocksDeclaredInMultipleFiles = clocks.size()>1;
               for (int clockLine : clockLines) {
+                //System.out.println("clockLine : "+clockLine);
                 if (clocksDeclaredInMultipleFiles && std4400!=null) {
                   addNewIssue("STD_04400", inputFile, clockLine ,"All clocks should be declared in a dedicated module");
                 }

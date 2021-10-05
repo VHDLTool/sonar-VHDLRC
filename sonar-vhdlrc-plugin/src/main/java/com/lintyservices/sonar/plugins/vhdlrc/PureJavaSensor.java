@@ -180,10 +180,12 @@ public class PureJavaSensor implements Sensor {
             if (usedPackageName.equals(packageName)) {
               level++;
               Integer cne5400Limit = null;
+              String cne5400Relation = null;
               if (cne5400!=null) {
                 cne5400Limit = Integer.parseInt(cne5400.param("Limit"));
+                cne5400Relation = cne5400.param("Relation");
               }
-              if (cne5400Limit!=null && level>cne5400Limit) {
+              if (cne5400Limit!=null && !stringParamRelation(cne5400Relation, level, cne5400Limit)) {
                 StringBuilder builder = new StringBuilder("Too many nested packages : ");
                 for(String hierPackageName : packagesHierarchy) {
                   builder.append(hierPackageName);
@@ -385,8 +387,10 @@ public class PureJavaSensor implements Sensor {
         // End of header-related rules
 
         Integer cne2700Limit = null;
+        String cne2700Relation = null;
         if (cne2700!=null) {
           cne2700Limit = Integer.parseInt(cne2700.param("Limit"));
+          cne2700Relation = cne2700.param("Relation");
         }
 
 
@@ -711,15 +715,17 @@ public class PureJavaSensor implements Sensor {
         totalComments+=commentedLines;
         context.<Integer>newMeasure().forMetric(CustomMetrics.COMMENT_LINES_STD_02800).on(inputFile).withValue(commentedLines).save(); // Count comments
         Integer std2800Limit = null;
+        String std2800Relation = null;
         if (std2800!=null) {
           std2800Limit = Integer.parseInt(std2800.param("Limit"));
+          std2800Relation = std2800.param("Relation");
         }
-        if (lineNumber!=0 && std2800Limit!=null && (commentedLines*100)/lineNumber>std2800Limit) { // Check if maximum percent of commented lines is exceeded
-          addNewIssue("STD_02800", inputFile, "Comment proportion should not exceed defined percentage");
+        if (lineNumber!=0 && std2800Limit!=null && !stringParamRelation(std2800Relation, (commentedLines*100)/lineNumber, std2800Limit)) { // Check if maximum percent of commented lines is exceeded
+          addNewIssue("STD_02800", inputFile, "Comment proportion should comply with defined percentage");
         }
 
-        if (cne2700Limit!=null && lineNumber>cne2700Limit) { // Check number of lines in file
-          addNewIssue("CNE_02700", inputFile, "Too many lines in file");
+        if (cne2700Limit!=null && !stringParamRelation(cne2700Relation, lineNumber, cne2700Limit)) { // Check number of lines in file
+          addNewIssue("CNE_02700", inputFile, "File size should comply with defined limit");
         }
 
         // Add issues related to missing info in header
@@ -834,6 +840,35 @@ public class PureJavaSensor implements Sensor {
       .message(msg);
     ni.at(issueLocation);
     ni.save(); 
+  }
+  
+  private static boolean stringParamRelation(String relation, int value, int limit) {
+    boolean result;
+    switch (relation) {
+    case "=":
+      result = value == limit;
+    break;
+    case "==":
+      result = value == limit;
+    break;
+    case "<":
+      result = value < limit;
+    break;
+    case "<=":
+      result = value <= limit;
+    break;
+    case ">":
+      result = value > limit;
+    break;
+    case ">=":
+      result = value >= limit;
+    break;
+    default:
+      LOG.warn("Could not parse relation : "+relation);
+      result = value == limit;
+    break;
+    }
+    return result;
   }
 
 }
