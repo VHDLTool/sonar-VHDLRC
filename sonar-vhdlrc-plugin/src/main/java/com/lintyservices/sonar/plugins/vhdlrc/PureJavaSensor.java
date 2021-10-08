@@ -654,7 +654,7 @@ public class PureJavaSensor implements Sensor {
                 }
                 else if (!cne300Issue && cne300!=null && inTopFile && currentToken.equalsIgnoreCase("entity")) {
                   cne300Issue = true;
-                  addNewIssue("CNE_00300", inputFile, lineNumber, "Top entity");
+                  addNewIssue("CNE_00300", inputFile, lineNumber, "Check that signal names do not contain FPGA/ASIC pin number value");
                 }
                 else if (std6000!=null && currentToken.equalsIgnoreCase("array")) {
                   arrayDeclaration = true;   
