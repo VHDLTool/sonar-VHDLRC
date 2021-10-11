@@ -30,13 +30,13 @@ import org.sonar.api.resources.Qualifiers;
 import org.sonar.api.utils.Version;
 
 import com.google.common.collect.ImmutableList;
-import com.lintyservices.sonar.plugins.vhdlrc.metrics.MetricSensor;
+import com.lintyservices.sonar.plugins.vhdlrc.metrics.CustomMetrics;
 import com.lintyservices.sonar.plugins.vhdlrc.rules.VhdlRulesDefinition;
 import com.lintyservices.sonar.zamia.BuildPathMaker;
 
 public class VhdlRcPlugin implements Plugin {
 
-  public static final Version SONARQUBE_LTS_VERSION = Version.create(7, 9);
+  public static final Version SONARQUBE_LTS_VERSION = Version.create(8,9,0);
   private static final String VHDL_RULECHEKER_SUBCATEGORY = "VHDL RuleChecker";
   public static boolean withoutVhdl = false;
 
@@ -50,7 +50,9 @@ public class VhdlRcPlugin implements Plugin {
     builder.add(
       VhdlRulesDefinition.class,
       VhdlRcProfile.class,
-      VhdlRcSensor.class
+      CustomMetrics.class,
+      VhdlRcSensor.class,
+      PureJavaSensor.class
       );
     InputStream is = VhdlRcPlugin.class.getClassLoader().getResourceAsStream("strings.properties");
     Properties props = new Properties();
@@ -63,7 +65,6 @@ public class VhdlRcPlugin implements Plugin {
     if(!(props.get("withoutVhdl")!=null && props.get("withoutVhdl").equals("true"))) {
       builder.add(
         Vhdl.class,
-        MetricSensor.class,
         PropertyDefinition.builder(Vhdl.FILE_SUFFIXES_KEY)
         .category(Vhdl.VHDLRC_CATEGORY)
         .subCategory("General")

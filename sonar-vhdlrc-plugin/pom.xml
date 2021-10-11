@@ -71,6 +71,11 @@
       <artifactId>sonar-plugin-api-impl</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-langdetect</artifactId>
+      <version>1.27</version>
+    </dependency>
   </dependencies>
 
   <build>

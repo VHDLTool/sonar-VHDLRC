@@ -142,6 +142,7 @@
             <xs:enumeration value="ZamiaCad"/> 		<!-- use of Zamaicad engine to evaluate the rule -->
             <xs:enumeration value="Yosys-ghdl"/>	<!-- use of Yosys engine which ghdl frontend to evaluate the rule -->
             <xs:enumeration value="Yosys"/>			<!-- use of Yosys engine to evaluate the rule -->
+            <xs:enumeration value="Java"/>			<!-- use of pure Java engine to evaluate the rule -->
             <xs:enumeration value="None"/>     		<!-- No engine identified for this rule-->  
         </xs:restriction>
     </xs:simpleType>

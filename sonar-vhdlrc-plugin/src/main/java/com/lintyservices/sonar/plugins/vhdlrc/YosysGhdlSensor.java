@@ -24,8 +24,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
@@ -33,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 
 import org.apache.commons.io.FilenameUtils;
 import org.sonar.api.batch.fs.FilePredicates;
@@ -61,7 +66,7 @@ public class YosysGhdlSensor implements Sensor {
   public static final String SOURCES_DIR = "vhdl";
   public static final String REPORTING_RULE = "rule_checker/reporting/rule";
   private static final String repo="vhdlrc-repository";
-  private static final String yosysFsmDetectCmd="; tee -q -o fsmdetect fsm_detect\"";
+  private static final String yosysFsmDetectCmd="; tee -q -o fsmdetect fsm_detect; fsm_extract; fsm_export\"";
   private static final Logger LOG = Loggers.get(YosysGhdlSensor.class);
   private static String yosysGhdlCmd;
   private String fsmRegex;
@@ -71,10 +76,22 @@ public class YosysGhdlSensor implements Sensor {
   private String workdir;
   private String topFile="";
   private int topLineNumber=0;
-  
+  private Map<String, Set<String>> outputs = new HashMap<>(); //Output ports raising an issue according to rule STD_05200 (key = component name, value = port name)
+  private Map<String, Set<String>> inputs = new HashMap<>(); //Input ports raising an issue according to rule STD_05100 (key = component name, value = port name)
+
+
   private ActiveRule cne2000;
+  private ActiveRule cne4600;
   private ActiveRule std3900;
   private ActiveRule std5200;
+  private ActiveRule std4000;
+  private ActiveRule std5500;
+  private ActiveRule std4400;
+  private ActiveRule cne200;
+  private ActiveRule std5100;
+  private ActiveRule ghdlMessages;
+
+  private int std5100Limit;
 
 
   @Override
@@ -94,7 +111,7 @@ public class YosysGhdlSensor implements Sensor {
     baseProjDir=System.getProperty("user.dir");
     String top=BuildPathMaker.getTopEntities(config);
     workdir = null;
-    
+
     if(executeCommand(new String[] {"bash","-c","yosys -H | grep -c ghdl"}).equals("1")) { // Check if ghdl module has been included in yosys at build time 
       yosysGhdlCmd="yosys -p \"ghdl";
     }
@@ -108,37 +125,130 @@ public class YosysGhdlSensor implements Sensor {
       String ghdlParams=" "+BuildPathMaker.getGhdlOptions(config);	
       String yosysFsmCmd = yosysGhdlCmd+ghdlParams+" "+top+" "+yosysFsmDetectCmd;
       workdir=BuildPathMaker.getWorkdir(config);
-      
+
       cne2000 = context.activeRules().findByInternalKey(repo, "CNE_02000");
+      cne4600 = context.activeRules().findByInternalKey(repo, "CNE_04600");
       std3900 = context.activeRules().findByInternalKey(repo, "STD_03900");
       std5200 = context.activeRules().findByInternalKey(repo, "STD_05200");
-      
-      if(!IS_WINDOWS && (cne2000!=null || std3900!=null || std5200!=null)) {
-        
+      std4000 = context.activeRules().findByInternalKey(repo, "STD_04000");
+      std5500 = context.activeRules().findByInternalKey(repo, "STD_05500");
+      std4400 = context.activeRules().findByInternalKey(repo, "STD_04400");
+      cne200 = context.activeRules().findByInternalKey(repo, "CNE_00200");
+      std5100 = context.activeRules().findByInternalKey(repo, "STD_05100");
+      ghdlMessages = context.activeRules().findByInternalKey(repo, "GHD_00000");
+
+      if(!IS_WINDOWS && (ghdlMessages !=null || std4000!=null || std5500!=null)) { // Analyse each file separately with ghdl -s command
+        Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
+        files.forEach(file->checkGhdlLog(file, "ghdl -a \""+(new File(file.uri())).getPath()+"\"; ghdl --synth"));
+      }
+
+      if(!IS_WINDOWS && (cne2000!=null || std3900!=null || std5200!=null || cne4600!=null)) {        
+
         // Execute ghdl
         //System.out.println("bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\"");
         System.out.println(executeCommand(new String[] {"bash","-c","bash "+rcSynth+" "+top+" \""+ghdlParams+"\""+" \""+buildCmdParams+"\""}));
 
         // Detect fsm with yosys and dump results in fsmdetect file
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysFsmCmd}));
-        
+
         // Get the names of ignored fsms from fsmdetect file
         List<String> ignoredFsmNames=getIgnoredFsms();
         StringBuilder builder= new StringBuilder();
-        for (String fsmName:ignoredFsmNames)
+        for (String fsmName:ignoredFsmNames) {
           builder.append("setattr -set fsm_encoding \\\"auto\\\" "+fsmName+"; ");
-        
+        }
+
         // Generate kiss2 files
         String yosysFsmExtractExport=builder.toString()+"fsm_extract ; fsm_export";
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysFsmExtractExport+"\""}));
 
-        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; select o:* -module "+top+"; dump -o outputlist;\""}));
-        List<String> outputNames = getOutputs(workdir+"/outputlist");
-        builder= new StringBuilder();
-        for (String outputName:outputNames)
-          builder.append("select "+top+"/"+outputName+" %cie*; tee -q -o "+outputName+".statlog stat; select -clear; ");
+        //System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; select o:* -module "+top+"; dump -o outputlist;\""}));
+        // Generate input, output and clock lists
+        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth ; tee -q -o outputlist select o:* -module "+top+" -list; select -clear ; tee -q -o inputlist select i:* -module "+top+" -list; select -clear ;  tee -q -o clocklist select t:* %x:+[C] t:* %d -list; select -clear ; tee -q -a clocklist select t:* %x:+[CLK] t:* %d -list\""}));
+
+        // Parse output list file
+        File listFile=new File(workdir+"/outputlist");
+        try (FileReader fReader = new FileReader(listFile)){
+          BufferedReader bufRead = new BufferedReader(fReader);
+          String currentLine;
+          while ((currentLine = bufRead.readLine()) != null) {
+            String currentLineAsName = currentLine.replaceAll("/", "\\*");
+            builder.append("select "+currentLine+" %cie*; tee -q -o "+currentLineAsName+".statlog stat; select -clear; ");
+          }
+        }catch (IOException e) {
+          LOG.warn("Could not read outputlist file");
+        }
         String yosysCheckOutputs=builder.toString();
         System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; synth; "+yosysCheckOutputs+"\""}));
+        executeCommand(new String[] {"bash", "-c", "ghdl --remove"});
+
+        /*List<String> outputNames = getOutputs(workdir+"/outputlist");
+        builder= new StringBuilder();
+        for (String outputName:outputNames)
+          builder.append("select "+top+"/"+outputName+" %cie*; tee -q -o "+outputName+".statlog stat; select -clear; ");*/
+
+        // Parse input list file
+        listFile=new File(workdir+"/inputlist");
+        builder= new StringBuilder();
+        try (FileReader fReader = new FileReader(listFile)){
+          BufferedReader bufRead = new BufferedReader(fReader);
+          String currentLine;
+          while ((currentLine = bufRead.readLine()) != null) {
+            String currentLineAsName = currentLine.replaceAll("/", "\\*");
+            std5100Limit = Integer.parseInt(std5100.param("Limit"));
+            builder.append("select "+currentLine+" %co"+(std5100Limit+1)+"; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co"+(std5100Limit+1)+"  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
+          }
+        }catch (IOException e) {
+          LOG.warn("Could not read inputlist file");
+        }
+        String yosysCheckInputs=builder.toString();
+        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysCheckInputs+"\""}));
+
+        // Parse clock list file
+        Map <String,Set<String>> clocks = new HashMap<>();
+        File clocklistfile=new File(workdir+"/clocklist");
+        try (FileReader fReader = new FileReader(clocklistfile)){
+          BufferedReader bufRead = new BufferedReader(fReader);
+          String currentLine;
+          while ((currentLine = bufRead.readLine()) != null) {
+            int lastSlash = currentLine.lastIndexOf("/");
+            int len = currentLine.length();
+            if (lastSlash!=-1) {
+              String fileName = currentLine.substring(0, lastSlash).toLowerCase();
+              String clockName = currentLine.substring(lastSlash+1, len).toLowerCase();
+              Set<String> clocksSet = clocks.get(fileName);
+              if (clocksSet!=null) {
+                clocksSet.add(clockName);
+              }
+              else {
+                clocks.put(fileName, new HashSet<String>(Arrays.asList(clockName)));
+              }
+            }
+          }
+          for (Map.Entry<String,Set<String>> pair: clocks.entrySet()) {
+            String fileName = pair.getKey();
+            Set<String> clockNames = pair.getValue();
+            InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhd"));
+            if (inputFile == null) {
+              inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhdl"));
+            }              
+            if (inputFile != null ) {
+              List<Integer> clockLines = getClockLocation(new File(inputFile.uri()), clockNames);
+              boolean inTop = fileName.startsWith(top.toLowerCase());
+              boolean clocksDeclaredInMultipleFiles = clocks.size()>1;
+              for (int clockLine : clockLines) {
+                if (clocksDeclaredInMultipleFiles && std4400!=null) {
+                  addNewIssue("STD_04400", inputFile, clockLine ,"All clocks should be declared in a dedicated module");
+                }
+                if (inTop && cne200!=null) {
+                  addNewIssue("CNE_00200", inputFile, clockLine ,"The clock signal name does not contain the clock frequency value (Warning, to be verified manually)");
+                }
+              }
+            }  
+          }
+        }catch (IOException e) {
+          LOG.warn("Could not read source file");
+        }
 
       }
 
@@ -148,16 +258,22 @@ public class YosysGhdlSensor implements Sensor {
         LOG.warn("Could not find any .cf file in build directory");
       }
 
-      Set<String> outputs=new HashSet<>();
 
-      try { // Parse files containing dumped "stat" command results. If "Number of cells"/=0 then an issue is created (rule STD_05200)
-        Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->outputs.add(parseStatLog(o1)));    
+      try { // Parse files containing dumped "stat" command results. If "Number of cells"/=0 then an issue should be raised (rule STD_05200)
+        Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".statlog")).forEach(o1->parseStatLog(o1));    
       } catch (IOException e) {
         LOG.warn("Could not find any .statlog file in build directory");
       }
 
+      try { // Parse files containing dumped "stat" command results. If different numbers of cells are found, an issue should be raised (rule STD_05100)
+        Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".istatlog")).forEach(o1->parseIStatLog(o1));    
+      } catch (IOException e) {
+        LOG.warn("Could not find any .istatlog file in build directory");
+      }
+
       outputs.remove("");
-      findOutputs(Paths.get(workdir+"/"+topFile),topLineNumber,outputs); // Add issues on output ports declarations (rule STD_05200)
+      inputs.remove("");
+      findPortIssues(Paths.get(workdir+"/"+topFile),topLineNumber); // Add issues on top entity ports (rules STD_05100 and STD_05200)
 
       try { // Parse generated .kiss2 files and add the corresponding issues
         Files.walk(Paths.get(workdir)).filter(Files::isRegularFile).filter(o->o.toString().toLowerCase().endsWith(".kiss2")).forEach(o1->addYosysIssues(o1)); //could use workdir
@@ -167,18 +283,12 @@ public class YosysGhdlSensor implements Sensor {
     }
   }
 
-
   private void addYosysIssues(Path kiss2Path) {
     fsmRegex = null;
     if (cne2000!=null) {
       String format = cne2000.param("Format");
-      if(format!=null) {
-        if(!format.startsWith("*"))
-          format="^"+format;
-        fsmRegex=format.trim().replace("*", ".*");
-      }
+      fsmRegex = stringParamToRegex(format);
     }
-
 
     String[] kiss2FileName =kiss2Path.getFileName().toString().split("-\\$fsm\\$.");
     String vhdlFilePath=kiss2Path.toString().split("-\\$fsm")[0];	
@@ -240,11 +350,15 @@ public class YosysGhdlSensor implements Sensor {
         LOG.warn("Could not read source file");
       }
 
-
-      if(cne2000!=null && fsmRegex!=null && !stateName.matches(fsmRegex)) 
-        addNewIssue("CNE_02000",inputFile,sigDecLine,"State machine signal "+stateName+" is miswritten.");				
-      if(std3900!=null && (stateType.startsWith("std_")||(stateType.startsWith("ieee_"))))
+      if(cne4600!=null) {
+        addNewIssue("CNE_04600",inputFile,sigDecLine,"Finite state machine.");
+      }
+      if(cne2000!=null && fsmRegex!=null && !stateName.matches(fsmRegex)) {
+        addNewIssue("CNE_02000",inputFile,sigDecLine,"State machine signal "+stateName+" is miswritten.");
+      }
+      if(std3900!=null && (stateType.startsWith("std_")||(stateType.startsWith("ieee_")))) {
         addNewIssue("STD_03900",inputFile,sigDecLine,"State machine signal "+stateName+" uses wrong type.");
+      }
 
     }
 
@@ -262,6 +376,7 @@ public class YosysGhdlSensor implements Sensor {
     ni.save(); 
   }
 
+  // Should be deprecated
   private List<String> getOutputs(String path){
     List<String> result=new ArrayList<>();
     File file=new File(path);
@@ -375,41 +490,126 @@ public class YosysGhdlSensor implements Sensor {
     }
   }
 
-  private String parseStatLog(Path path){
-    File file=path.toFile();
-    String output="";
+  private List<Integer> getClockLocation(File file, Set<String> clocks){
+    List<Integer> clockLines = new ArrayList<>();
     try (FileReader fReader = new FileReader(file)){
       BufferedReader bufRead = new BufferedReader(fReader);
       String currentLine = null;
-      boolean foundNumberOfCells=false;
-      while ((currentLine = bufRead.readLine()) != null && !foundNumberOfCells) {                           
+      boolean finished = false;      
+      int currentLineNumber = 0;
+      while ((currentLine = bufRead.readLine()) != null && !finished) {
+        currentLineNumber++;
         Scanner input = new Scanner(currentLine);
-        while(input.hasNext()&&!foundNumberOfCells) {
+        while(input.hasNext() && !finished) {
           String currentToken = input.next();
-          if (currentToken.equalsIgnoreCase("Number") && input.hasNext() && input.next().equalsIgnoreCase("of") && input.hasNext() && input.next().startsWith("cells") && input.hasNext()) {
-            try {
-              if(Integer.parseInt(input.next())!=0)
-                output=FilenameUtils.removeExtension(path.getFileName().toString().toLowerCase());
-              foundNumberOfCells=true;
+          if (clocks.remove(currentToken.toLowerCase())) {            
+            if (clocks.isEmpty()) {
+              finished = true;
             }
-            catch(NumberFormatException e) {}               
-          } 
+            clockLines.add(currentLineNumber);
+          }
         }
         input.close();
       }
     } catch (IOException e) {
       LOG.warn("Could not read source file");
     }
-    return output;
+    return clockLines;
   }
 
-  private void findOutputs(Path path, int startLine, Set<String> outputs){
+  private void parseStatLog(Path path){
+    File file=path.toFile();
+    try (FileReader fReader = new FileReader(file)){
+      BufferedReader bufRead = new BufferedReader(fReader);
+      String currentLine = null;
+      boolean foundNumberOfCells=false;
+      while ((currentLine = bufRead.readLine()) != null && !foundNumberOfCells) {    
+        Scanner input = new Scanner(currentLine);
+        while(input.hasNext()&&!foundNumberOfCells) {
+          String currentToken = input.next();
+          if (currentToken.equalsIgnoreCase("Number") && input.hasNext() && input.next().equalsIgnoreCase("of") && input.hasNext() && input.next().startsWith("cells") && input.hasNext()) {
+            try {
+              int numCells = Integer.parseInt(input.next());
+              foundNumberOfCells=true;
+              if (numCells!=0) {
+                String outputFullName = FilenameUtils.removeExtension(path.getFileName().toString()).toLowerCase();
+                int delimitation = outputFullName.lastIndexOf("*");
+                int len = outputFullName.length();
+                String componentName = outputFullName.substring(0, delimitation);
+                String portName = outputFullName.substring(delimitation+1, len);
+                Set<String> ports = outputs.get(componentName);
+                if (ports!=null) {
+                  ports.add(portName);
+                }
+                else {
+                  outputs.put(componentName, new HashSet<String>(Arrays.asList(portName)));
+                }
+              }
+            }
+            catch(Exception e) {}               
+          } 
+        }
+        input.close();
+      }
+    } catch (IOException e) {
+      LOG.warn("Could not read statlog file");
+    }
+  }
+
+  private void parseIStatLog(Path path) {
+    File file=path.toFile();
+    try (FileReader fReader = new FileReader(file)){
+      BufferedReader bufRead = new BufferedReader(fReader);
+      String currentLine = null;
+      boolean foundNumberOfCells1=false;
+      boolean foundNumberOfCells2=false;
+      int numCells1 = -1;
+      int numCells2 = -1;
+      while ((currentLine = bufRead.readLine()) != null && !(foundNumberOfCells1 && foundNumberOfCells2)) {    
+        Scanner input = new Scanner(currentLine);
+        while (input.hasNext() && !(foundNumberOfCells1 && foundNumberOfCells2)) {
+          String currentToken = input.next();
+          if (currentToken.equalsIgnoreCase("Number") && input.hasNext() && input.next().equalsIgnoreCase("of") && input.hasNext() && input.next().startsWith("cells") && input.hasNext()) {
+            try {
+              if (!foundNumberOfCells1) {
+                numCells1 = Integer.parseInt(input.next());
+                foundNumberOfCells1=true;
+              }
+              else {
+                numCells2 = Integer.parseInt(input.next());
+                foundNumberOfCells2=true;
+              }
+              if (foundNumberOfCells1 && foundNumberOfCells2 && numCells1!=numCells2) {
+                String inputFullName = FilenameUtils.removeExtension(path.getFileName().toString()).toLowerCase();
+                int delimitation = inputFullName.lastIndexOf("*");
+                int len = inputFullName.length();
+                String componentName = inputFullName.substring(0, delimitation);
+                String portName = inputFullName.substring(delimitation+1, len);
+                Set<String> ports = inputs.get(componentName);
+                if (ports!=null) {
+                  ports.add(portName);
+                }
+                else {
+                  inputs.put(componentName, new HashSet<String>(Arrays.asList(portName)));
+                }               
+              }
+            }
+            catch(Exception e) {}               
+          } 
+        }
+        input.close();
+      }
+    } catch (IOException e) {
+      LOG.warn("Could not read istatlog file");
+    }
+  }
+
+  private void findPortIssues(Path path, int startLine){
     File file=path.toFile();
     int currentLineNumber=0;
     try (FileReader fReader = new FileReader(file)){
       BufferedReader bufRead = new BufferedReader(fReader);
       String currentLine = null;
-      boolean inPortDecl=false;
       while ((currentLine = bufRead.readLine()) != null) {
         currentLineNumber++;
         if (currentLineNumber>=startLine) {
@@ -421,13 +621,22 @@ public class YosysGhdlSensor implements Sensor {
             if (currentToken.toLowerCase().startsWith("--")) {
               inComment = true;
             }
-            else if (currentToken.toLowerCase().startsWith("port")) {
-              inPortDecl = true;
-            }
-            else if (inPortDecl && outputs.remove(currentToken.toLowerCase())) {
-              InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
-              if(inputFile!=null && std5200!=null)
-                addNewIssue("STD_05200",inputFile,currentLineNumber,"Output signal "+currentToken+" includes combinatorial elements in its output path.");
+            else if ((currentToken.toLowerCase().startsWith("component") || currentToken.toLowerCase().startsWith("entity")) && input.hasNext()) {
+              currentToken = input.next();
+              if (outputs.containsKey(currentToken.toLowerCase())) {
+                InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
+                if(inputFile!=null && std5200!=null) {
+                  addNewIssue("STD_05200",inputFile,currentLineNumber,"Output signal "+collectionToString(outputs.get(currentToken.toLowerCase()))+" includes combinatorial elements in its output path.");
+                }
+                outputs.remove(currentToken.toLowerCase());
+              }
+              if (inputs.containsKey(currentToken.toLowerCase())) {
+                InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(workdir+"/"+topFile));
+                if(inputFile!=null && std5100!=null) {
+                  addNewIssue("STD_05100",inputFile,currentLineNumber,"Asynchronous input signals should be synchronized with at least a "+std5100Limit+" Flip-Flops synchronizer : "+collectionToString(inputs.get(currentToken.toLowerCase())));
+                }
+                inputs.remove(currentToken.toLowerCase());
+              }
             }
           }
           input.close();
@@ -436,6 +645,51 @@ public class YosysGhdlSensor implements Sensor {
     } catch (IOException e) {
       LOG.warn("Could not read source file");
     }
+  }
+
+  private void checkGhdlLog(InputFile file, String ghdlCmd) {
+
+    String ghdlLog = executeCommand(new String[] {"bash", "-c", ghdlCmd}); // Analyze file
+    BufferedReader reader = new BufferedReader(new StringReader(ghdlLog));
+    String currentLine;
+    reader = new BufferedReader(new StringReader(ghdlLog));
+    try {
+      while ((currentLine = reader.readLine()) != null) {
+        String afterFilename = currentLine.substring(currentLine.lastIndexOf(".vhd") + 1);
+        if (afterFilename.length()!=currentLine.length()) {
+          int errorLine=-1;
+          try {
+            errorLine = Integer.parseInt(afterFilename.split(":")[1]);
+          }
+          catch (Exception e) {
+            LOG.warn("Could not parse error line number in ghdl synthesis log");
+          }
+          String errorMsg = afterFilename.substring(afterFilename.lastIndexOf(":") + 1);
+          if (errorMsg.length()!=currentLine.length()) {
+            if (errorLine!=-1) {
+              if (ghdlMessages!=null) {
+                try {  
+                  Integer.parseInt(errorMsg);  
+                } catch(NumberFormatException e){
+                  addNewIssue("GHD_00000", file, errorLine, errorMsg);
+                }  
+              }
+              if (std4000!=null && errorMsg.startsWith(" no choice for")) {
+                addNewIssue("STD_04000", file, errorLine, "All case statements should be addressed in the VHDL code : "+errorMsg);
+              }
+              else if (std5500!=null && errorMsg.startsWith(" latch infered for")) {
+                addNewIssue("STD_05500", file, errorLine, "Latches should be avoided : "+(currentLine.substring(currentLine.lastIndexOf(" ")+1).replaceAll("\"", "")));
+              }
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+      LOG.warn("Could not read ghdl synthesis log");
+    }
+
+    executeCommand(new String[] {"bash", "-c", "ghdl --remove"}); // Remove generated files
+
   }
 
 
@@ -464,6 +718,32 @@ public class YosysGhdlSensor implements Sensor {
       throw new RuntimeException(e);
     }
     return theRun.toString().trim();
+  }
+
+  public static String stringParamToRegex (String param) {
+    String regex = null;
+    if(param!=null) {
+      if(!param.startsWith("*")) {
+        param="^"+param;
+      }
+      regex = param.trim().replace("*", ".*").replace(',', '|');
+    }
+    return regex;
+  }
+
+  public static String collectionToString (Collection<String> collec) {
+    StringBuilder builder = new StringBuilder();
+    boolean firstElement = true;
+    for (String str : collec) {
+      if (firstElement ) {
+        firstElement = false;
+        builder.append(str);
+      }
+      else {
+        builder.append(", ").append(str);
+      }
+    }
+    return builder.toString();
   }
 
 }

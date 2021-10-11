@@ -48,7 +48,7 @@ public class BuildPathMaker {
   public static final String GHDL_OPTIONS_KEY = "sonar.vhdlrc.ghdlOptions";
   public static final String WORKDIR_KEY = "sonar.vhdlrc.workdir";
   public static final String DEFAULT_ENTITY = "WORK.TOP";
-  public static final String DEFAULT_GHDLSCRIPT = "/mnt/c/fsmexample/vhdlrcsynth.sh";
+  public static final String DEFAULT_GHDLSCRIPT = "./vhdlrcsynth.sh";
   public static final String DEFAULT_SCRIPT_PARAMS = "";
   public static final boolean DEFAULT_KEEP_SOURCE = false;
   public static final boolean DEFAULT_KEEP_REPORTS = false;
