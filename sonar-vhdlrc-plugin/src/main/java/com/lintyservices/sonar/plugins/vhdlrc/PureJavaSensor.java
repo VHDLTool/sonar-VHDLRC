@@ -59,6 +59,7 @@ public class PureJavaSensor implements Sensor {
   private String top;
   private Set<VhdlPackage> allVhdlPackages;
   private Stack<String> packagesHierarchy;
+  private String defaultLanguage = "";
 
   private ActiveRule std6900;
   private ActiveRule std3300;
@@ -151,6 +152,10 @@ public class PureJavaSensor implements Sensor {
     std5400 = context.activeRules().find(RuleKey.of(repo, "STD_05400"));
     std2700 = context.activeRules().find(RuleKey.of(repo, "STD_02700"));
     cne5400 = context.activeRules().find(RuleKey.of(repo, "CNE_05400"));
+    
+    if (std2700!=null) {
+      defaultLanguage = std2700.param("Format");
+    }
 
 
 
@@ -185,7 +190,7 @@ public class PureJavaSensor implements Sensor {
                 cne5400Limit = Integer.parseInt(cne5400.param("Limit"));
                 cne5400Relation = cne5400.param("Relation");
               }
-              if (cne5400Limit!=null && !stringParamRelation(cne5400Relation, level, cne5400Limit)) {
+              if (cne5400Limit!=null && !intParamRelation(cne5400Relation, level, cne5400Limit)) {
                 StringBuilder builder = new StringBuilder("Too many nested packages : ");
                 for(String hierPackageName : packagesHierarchy) {
                   builder.append(hierPackageName);
@@ -439,12 +444,12 @@ public class PureJavaSensor implements Sensor {
                 lineBeforeComment = currentLine.subSequence(0, startOfComment).toString();
                 lineAfterComment = currentLine.subSequence(startOfComment+1, currentLine.length()).toString();
               }
-              commentChain.append(lineAfterComment);
+              commentChain.append(lineAfterComment).append(" ");
               
               if (lineBeforeComment.length()>0) { // End of comment chain (if there was one)
                 if (commentChainExisted) {
                   result = detector.detect(commentChain.toString());
-                  if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+                  if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {
                     if (commentChainStartLine!=lineNumber) {
                       addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments: code "+result.getLanguage());
                     } 
@@ -474,10 +479,10 @@ public class PureJavaSensor implements Sensor {
               if (lineBeforeCode.length()>0 && !(commentChain.toString().length()>0)) {
                 commentChainStartLine = lineNumber;
               }
-              commentChain.append(lineBeforeCode);
+              commentChain.append(lineBeforeCode).append(" ");
               if (lineAfterCode.length()>0) { // End of comments chain
                 result = detector.detect(commentChain.toString());
-                if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+                if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {
                   if (commentChainStartLine!=lineNumber) {
                     addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments: code "+result.getLanguage());
                   }
@@ -489,7 +494,7 @@ public class PureJavaSensor implements Sensor {
               }
               // Too many false positives
               /*result = detector.detect(lineAfterCode);
-              if (lineAfterCode.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+              if (lineAfterCode.length()>0 && result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage)) {
                 addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in source code");
               }*/
             }
@@ -600,7 +605,7 @@ public class PureJavaSensor implements Sensor {
                 inHeader = false;
                 if (detector!=null) {          
                   result = detector.detect(commentChain.toString());
-                  if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+                  if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {
                     if (commentChainStartLine!=lineNumber) {
                       addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments : code "+result.getLanguage());
                     }
@@ -702,7 +707,7 @@ public class PureJavaSensor implements Sensor {
 
         if (detector!=null) {          
           result = detector.detect(commentChain.toString());
-          if (result.getLanguage().length()>0 && !result.getLanguage().startsWith("en")) {
+          if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {
             if (commentChainStartLine!=lineNumber && !lastLine.equals("")) {
               addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, lastLine.length()-1, "English language should be preferred in comments : code "+result.getLanguage());
             }
@@ -720,11 +725,11 @@ public class PureJavaSensor implements Sensor {
           std2800Limit = Integer.parseInt(std2800.param("Limit"));
           std2800Relation = std2800.param("Relation");
         }
-        if (lineNumber!=0 && std2800Limit!=null && !stringParamRelation(std2800Relation, (commentedLines*100)/lineNumber, std2800Limit)) { // Check if maximum percent of commented lines is exceeded
+        if (lineNumber!=0 && std2800Limit!=null && !intParamRelation(std2800Relation, (commentedLines*100)/lineNumber, std2800Limit)) { // Check if maximum percent of commented lines is exceeded
           addNewIssue("STD_02800", inputFile, "Comments percentage should be : " + std2800Relation +std2800Limit+". Actual value : "+ (commentedLines*100)/lineNumber);
         }
 
-        if (cne2700Limit!=null && !stringParamRelation(cne2700Relation, lineNumber, cne2700Limit)) { // Check number of lines in file
+        if (cne2700Limit!=null && !intParamRelation(cne2700Relation, lineNumber, cne2700Limit)) { // Check number of lines in file
           addNewIssue("CNE_02700", inputFile, "File size should be : " + cne2700Relation +cne2700Limit+". Actual value : "+ lineNumber);
         }
 
@@ -842,7 +847,7 @@ public class PureJavaSensor implements Sensor {
     ni.save(); 
   }
   
-  private static boolean stringParamRelation(String relation, int value, int limit) {
+  private static boolean intParamRelation(String relation, int value, int limit) {
     boolean result;
     switch (relation) {
     case "=":

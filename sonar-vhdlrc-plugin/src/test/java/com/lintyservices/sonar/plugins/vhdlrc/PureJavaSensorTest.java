@@ -263,10 +263,10 @@ public class PureJavaSensorTest {
   public void test_std2700() {
     init();   
     addTestFile(context,"src/test/files/javasensor/teststd2700.vhd");
-    addRule(context, "STD_02700"); 
+    addRule(context, "STD_02700", "Format", "EN"); 
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
-    assertThat(issues).hasSize(4);
+    assertThat(issues).hasSize(5);
   }
   
   @Test
