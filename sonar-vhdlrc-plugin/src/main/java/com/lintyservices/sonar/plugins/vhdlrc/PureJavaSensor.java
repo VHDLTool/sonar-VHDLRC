@@ -444,7 +444,9 @@ public class PureJavaSensor implements Sensor {
                 lineBeforeComment = currentLine.subSequence(0, startOfComment).toString();
                 lineAfterComment = currentLine.subSequence(startOfComment+1, currentLine.length()).toString();
               }
-              commentChain.append(lineAfterComment).append(" ");
+              if (lineAfterComment.length()!=0) {
+                commentChain.append(lineAfterComment).append(" ");
+              }
               
               if (lineBeforeComment.length()>0) { // End of comment chain (if there was one)
                 if (commentChainExisted) {
@@ -479,7 +481,9 @@ public class PureJavaSensor implements Sensor {
               if (lineBeforeCode.length()>0 && !(commentChain.toString().length()>0)) {
                 commentChainStartLine = lineNumber;
               }
-              commentChain.append(lineBeforeCode).append(" ");
+              if (lineBeforeCode.length()!=0) {
+                commentChain.append(lineBeforeCode).append(" ");
+              }
               if (lineAfterCode.length()>0) { // End of comments chain
                 result = detector.detect(commentChain.toString());
                 if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {

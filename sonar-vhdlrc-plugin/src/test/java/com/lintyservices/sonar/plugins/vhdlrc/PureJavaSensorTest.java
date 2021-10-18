@@ -267,6 +267,18 @@ public class PureJavaSensorTest {
     sensor.execute(context);
     List<Issue> issues = new ArrayList<>(context.allIssues());
     assertThat(issues).hasSize(5);
+    init();   
+    addTestFile(context,"src/test/files/javasensor/teststd2700FR.vhd");
+    addRule(context, "STD_02700", "Format", "FR"); 
+    sensor.execute(context);
+    issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(1);
+    init();   
+    addTestFile(context,"src/test/files/javasensor/teststd2700FR.vhd");
+    addRule(context, "STD_02700", "Format", "EN"); 
+    sensor.execute(context);
+    issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(2);
   }
   
   @Test
