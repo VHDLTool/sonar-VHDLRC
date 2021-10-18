@@ -85,12 +85,6 @@ begin
           else
             sm_state_mealy2 <= s1;
           end if;
-        when s2=>
-          if data_in = '1' then
-            sm_state_mealy2 <= s3;
-          else
-            sm_state_mealy2 <= s2;
-          end if;
       end case;
 
     end if;

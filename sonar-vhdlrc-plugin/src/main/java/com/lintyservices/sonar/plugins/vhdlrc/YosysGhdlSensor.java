@@ -674,7 +674,7 @@ public class YosysGhdlSensor implements Sensor {
                   addNewIssue("GHD_00000", file, errorLine, errorMsg);
                 }  
               }
-              if (std4000!=null && errorMsg.startsWith(" no choice for")) {
+              if (std4000!=null && (errorMsg.startsWith(" no choice for") || errorMsg.startsWith(" no choices for"))) {
                 addNewIssue("STD_04000", file, errorLine, "All case statements should be addressed in the VHDL code : "+errorMsg);
               }
               else if (std5500!=null && errorMsg.startsWith(" latch infered for")) {

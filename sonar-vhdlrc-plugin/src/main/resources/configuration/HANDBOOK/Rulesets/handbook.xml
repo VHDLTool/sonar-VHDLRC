@@ -3601,6 +3601,13 @@ Nevertheless, never mix these two library families.</hb:LongDesc>
 			<hb:FigureDesc />
 			<hb:Figure />
 		</hb:RuleDesc>
+		<hb:RuleParams>
+			<hb:StringParam>
+				<hb:ParamID>P1</hb:ParamID>
+				<hb:Position>Equal</hb:Position>
+				<hb:Value>EN</hb:Value>
+			</hb:StringParam>
+		</hb:RuleParams>
 	</hb:Rule>
 	
 	<hb:Rule UID="STD_02800">
