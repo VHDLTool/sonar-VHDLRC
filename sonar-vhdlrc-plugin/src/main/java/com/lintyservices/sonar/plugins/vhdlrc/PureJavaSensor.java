@@ -453,10 +453,10 @@ public class PureJavaSensor implements Sensor {
                   result = detector.detect(commentChain.toString());
                   if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {
                     if (commentChainStartLine!=lineNumber) {
-                      addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments: code "+result.getLanguage());
+                      addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments : "+result.getLanguage());
                     } 
                     else {
-                      addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments: code "+result.getLanguage());
+                      addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments : "+result.getLanguage());
                     }                    
                   }
                 }
@@ -488,10 +488,10 @@ public class PureJavaSensor implements Sensor {
                 result = detector.detect(commentChain.toString());
                 if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {
                   if (commentChainStartLine!=lineNumber) {
-                    addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments: code "+result.getLanguage());
+                    addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments : "+result.getLanguage());
                   }
                   else {
-                    addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments: code "+result.getLanguage());
+                    addNewIssue("STD_02700", inputFile, lineNumber, "English language should be preferred in comments : "+result.getLanguage());
                   }
                 }
                 commentChain = new StringBuilder();
