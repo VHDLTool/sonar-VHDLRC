@@ -3566,7 +3566,7 @@ Nevertheless, never mix these two library families.</hb:LongDesc>
 	<hb:Rule UID="STD_02700">
 		<hb:RuleUID>STD_02700</hb:RuleUID>
 		<hb:RuleHist>
-			<hb:Status>Validated</hb:Status>
+			<hb:Status>Implemented</hb:Status>
 			<hb:Engine>Java</hb:Engine>
 			<hb:Version>6</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
@@ -4791,7 +4791,7 @@ Do not hesitate to pipeline the structure according to the targeted clock freque
 		<hb:RuleUID>STD_05500</hb:RuleUID>
 		<hb:RuleHist>
 			<hb:Status>Implemented</hb:Status>
-			<hb:Engine>None</hb:Engine>
+			<hb:Engine>Yosys-ghdl</hb:Engine>
 			<hb:Version>7</hb:Version>
 			<hb:Creation>2014-09-30</hb:Creation>
 			<hb:Modified>2021-09-06</hb:Modified>
