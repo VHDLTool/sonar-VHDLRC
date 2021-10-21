@@ -444,14 +444,12 @@ public class PureJavaSensor implements Sensor {
                 lineBeforeComment = currentLine.subSequence(0, startOfComment).toString();
                 lineAfterComment = currentLine.subSequence(startOfComment+1, currentLine.length()).toString();
               }
-              if (lineAfterComment.length()!=0) {
-                commentChain.append(lineAfterComment).append(" ");
-              }
+
               
               if (lineBeforeComment.length()>0) { // End of comment chain (if there was one)
                 if (commentChainExisted) {
                   result = detector.detect(commentChain.toString());
-                  if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {
+                  if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain() && commentChain.toString().trim().split("\\s+").length>0) {
                     if (commentChainStartLine!=lineNumber) {
                       addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments : "+result.getLanguage());
                     } 
@@ -460,8 +458,15 @@ public class PureJavaSensor implements Sensor {
                     }                    
                   }
                 }
+                if (lineAfterComment.length()!=0) {
+                  commentChainStartLine = lineNumber;
+                }
                 commentChain = new StringBuilder(lineAfterComment);
               }
+              else if (lineAfterComment.length()!=0) {
+                commentChain.append(lineAfterComment).append(" ");
+              }
+              
             }
 
             else { // Header and block comments
@@ -486,7 +491,7 @@ public class PureJavaSensor implements Sensor {
               }
               if (lineAfterCode.length()>0) { // End of comments chain
                 result = detector.detect(commentChain.toString());
-                if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {
+                if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain() && commentChain.toString().trim().split("\\s+").length>0) {
                   if (commentChainStartLine!=lineNumber) {
                     addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments : "+result.getLanguage());
                   }
@@ -609,7 +614,7 @@ public class PureJavaSensor implements Sensor {
                 inHeader = false;
                 if (detector!=null) {          
                   result = detector.detect(commentChain.toString());
-                  if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {
+                  if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain() && commentChain.toString().trim().split("\\s+").length>0) {
                     if (commentChainStartLine!=lineNumber) {
                       addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, 0, "English language should be preferred in comments : code "+result.getLanguage());
                     }
@@ -711,7 +716,7 @@ public class PureJavaSensor implements Sensor {
 
         if (detector!=null) {          
           result = detector.detect(commentChain.toString());
-          if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain()) {
+          if (result.getLanguage().length()>0 && !result.getLanguage().equalsIgnoreCase(defaultLanguage) && result.isReasonablyCertain() && commentChain.toString().trim().split("\\s+").length>0) {
             if (commentChainStartLine!=lineNumber && !lastLine.equals("")) {
               addNewIssue("STD_02700", inputFile, commentChainStartLine, 0, lineNumber, lastLine.length()-1, "English language should be preferred in comments : code "+result.getLanguage());
             }
