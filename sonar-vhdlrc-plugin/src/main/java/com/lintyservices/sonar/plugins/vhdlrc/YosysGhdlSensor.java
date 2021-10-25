@@ -135,7 +135,7 @@ public class YosysGhdlSensor implements Sensor {
       std4400 = context.activeRules().findByInternalKey(repo, "STD_04400");
       cne200 = context.activeRules().findByInternalKey(repo, "CNE_00200");
       std5100 = context.activeRules().findByInternalKey(repo, "STD_05100");
-      ghdlMessages = context.activeRules().findByInternalKey(repo, "GHD_00000");
+      ghdlMessages = context.activeRules().findByInternalKey(repo, "CNE_06000");
 
       if(!IS_WINDOWS && (ghdlMessages !=null || std4000!=null || std5500!=null)) { // Analyse each file separately with ghdl -s command
         Iterable<InputFile> files = context.fileSystem().inputFiles(predicates.hasLanguage(Vhdl.KEY));
@@ -671,7 +671,7 @@ public class YosysGhdlSensor implements Sensor {
                 try {  
                   Integer.parseInt(errorMsg);  
                 } catch(NumberFormatException e){
-                  addNewIssue("GHD_00000", file, errorLine, errorMsg);
+                  addNewIssue("CNE_06000", file, errorLine, errorMsg);
                 }  
               }
               if (std4000!=null && (errorMsg.startsWith(" no choice for") || errorMsg.startsWith(" no choices for"))) {
