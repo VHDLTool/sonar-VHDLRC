@@ -8,6 +8,8 @@ hello
 
 -- Commentaire en français
 -- Commentaire en français
+-- Commentaire en français
+-- Commentaire en français
 
 code
 
@@ -16,21 +18,26 @@ code
 code
 
 /*commentaire en
+francais commentaire en
+francais commentaire en
+francais commentaire en
 francais*/
 
 code
 
--- commentaire
+-- commentaire commentaire commentaire commentaire commentaire commentaire commentaire commentaire commentaire commentaire
 
 code
 
--- commentaire non fiable ahghujhukjjklmkmlkklm
+-- commentaire trop court
 
 code
 
--- Demain tomorrow
+-- Demain tomorrow Demain tomorrow Demain tomorrow Demain tomorrow Demain tomorrow
 
 code
 
+-- Commentaire en français
+-- Commentaire en français
 -- Commentaire en français
 -- Commentaire en français
