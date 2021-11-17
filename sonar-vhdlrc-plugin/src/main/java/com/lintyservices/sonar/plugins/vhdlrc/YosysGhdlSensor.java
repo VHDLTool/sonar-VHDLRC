@@ -188,21 +188,29 @@ public class YosysGhdlSensor implements Sensor {
           builder.append("select "+top+"/"+outputName+" %cie*; tee -q -o "+outputName+".statlog stat; select -clear; ");*/
 
         // Parse input list file
-        listFile=new File(workdir+"/inputlist");
-        builder= new StringBuilder();
-        try (FileReader fReader = new FileReader(listFile)){
-          BufferedReader bufRead = new BufferedReader(fReader);
-          String currentLine;
-          while ((currentLine = bufRead.readLine()) != null) {
-            String currentLineAsName = currentLine.replaceAll("/", "\\*");
+        if (std5100!=null) {
+          listFile=new File(workdir+"/inputlist");
+          builder= new StringBuilder();
+          try{
             std5100Limit = Integer.parseInt(std5100.param("Limit"));
-            builder.append("select "+currentLine+" %co"+(std5100Limit+1)+"; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co"+(std5100Limit+1)+"  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
           }
-        }catch (IOException e) {
-          LOG.warn("Could not read inputlist file");
+          catch(NumberFormatException e) {
+            LOG.warn("Could not parse rule STD_05100 limit as an integer");
+          }
+          try (FileReader fReader = new FileReader(listFile)){
+            BufferedReader bufRead = new BufferedReader(fReader);
+            String currentLine;
+            while ((currentLine = bufRead.readLine()) != null) {
+              String currentLineAsName = currentLine.replaceAll("/", "\\*");
+              builder.append("select "+currentLine+" %co"+(std5100Limit+1)+"; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co"+(std5100Limit+1)+"  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
+            }
+          }catch (IOException e) {
+            LOG.warn("Could not read inputlist file");
+          }
+          String yosysCheckInputs=builder.toString();
+          System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysCheckInputs+"\""}));
         }
-        String yosysCheckInputs=builder.toString();
-        System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysCheckInputs+"\""}));
+
 
         // Parse clock list file
         Map <String,Set<String>> clocks = new HashMap<>();
