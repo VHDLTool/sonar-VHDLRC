@@ -188,29 +188,50 @@ public class YosysGhdlSensor implements Sensor {
           builder.append("select "+top+"/"+outputName+" %cie*; tee -q -o "+outputName+".statlog stat; select -clear; ");*/
 
         // Parse input list file
-        if (std5100!=null) {
-          listFile=new File(workdir+"/inputlist");
-          builder= new StringBuilder();
-          try{
-            std5100Limit = Integer.parseInt(std5100.param("Limit"));
-          }
-          catch(NumberFormatException e) {
-            LOG.warn("Could not parse rule STD_05100 limit as an integer");
-          }
-          try (FileReader fReader = new FileReader(listFile)){
-            BufferedReader bufRead = new BufferedReader(fReader);
-            String currentLine;
-            while ((currentLine = bufRead.readLine()) != null) {
-              String currentLineAsName = currentLine.replaceAll("/", "\\*");
-              builder.append("select "+currentLine+" %co"+(std5100Limit+1)+"; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co"+(std5100Limit+1)+"  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
+        Map <String,Set<String>> inputs = new HashMap<>();
+
+        listFile=new File(workdir+"/inputlist");
+        builder= new StringBuilder();
+        try{
+          std5100Limit = Integer.parseInt(std5100.param("Limit"));
+        }
+        catch(NumberFormatException e) {
+          LOG.warn("Could not parse rule STD_05100 limit as an integer");
+        }
+        try (FileReader fReader = new FileReader(listFile)) {
+          BufferedReader bufRead = new BufferedReader(fReader);
+          String currentLine;
+          while ((currentLine = bufRead.readLine()) != null) {
+
+            // Generate the hashmap <module name, set of the module's inputs>
+            int lastSlash = currentLine.lastIndexOf("/");
+            int len = currentLine.length();
+            if (lastSlash!=-1) {
+              String moduleName = currentLine.substring(0, lastSlash).toLowerCase();
+              String inputName = currentLine.substring(lastSlash+1, len).toLowerCase();
+              Set<String> clocksSet = inputs.get(moduleName);
+              if (clocksSet!=null) {
+                clocksSet.add(inputName);
+              }
+              else {
+                inputs.put(moduleName, new HashSet<String>(Arrays.asList(inputName)));
+              }
             }
-          }catch (IOException e) {
-            LOG.warn("Could not read inputlist file");
+
+            // Generate command line for rule STD_05100
+            String currentLineAsName = currentLine.replaceAll("/", "\\*");
+            builder.append("select "+currentLine+" %co"+(std5100Limit+1)+"; tee -q -o "+currentLineAsName+".istatlog stat; select -clear; select "+currentLine+" %co"+(std5100Limit+1)+"  t:*ff* %i; tee -q -a "+currentLineAsName+".istatlog stat; select -clear; ");
+
           }
+        } catch (IOException e) {
+          LOG.warn("Could not read inputlist file");
+        }
+
+        // Check rule STD_05100
+        if (std5100!=null) {
           String yosysCheckInputs=builder.toString();
           System.out.println(executeCommand(new String[] {"bash","-c","cd "+workdir+"; "+yosysGhdlCmd+ghdlParams+" "+top+" ; "+yosysCheckInputs+"\""}));
         }
-
 
         // Parse clock list file
         Map <String,Set<String>> clocks = new HashMap<>();
@@ -236,6 +257,10 @@ public class YosysGhdlSensor implements Sensor {
           for (Map.Entry<String,Set<String>> pair: clocks.entrySet()) {
             String fileName = pair.getKey();
             Set<String> clockNames = pair.getValue();
+            Set<String> inputNames = inputs.get(fileName);
+            if (inputNames!=null) {
+              clockNames.removeAll(inputNames); // Exclude input ports
+            }
             InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhd"));
             if (inputFile == null) {
               inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName+".vhdl"));
