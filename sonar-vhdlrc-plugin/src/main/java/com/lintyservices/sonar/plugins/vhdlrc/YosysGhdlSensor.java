@@ -273,8 +273,13 @@ public class YosysGhdlSensor implements Sensor {
                 if (clocksDeclaredInMultipleFiles && std4400!=null) {
                   addNewIssue("STD_04400", inputFile, clockLine ,"All clocks should be declared in a dedicated module");
                 }
-                if (inTop && cne200!=null) {
-                  addNewIssue("CNE_00200", inputFile, clockLine ,"The clock signal name does not contain the clock frequency value (Warning, to be verified manually)");
+                if (inTop) {
+                  if (cne200!=null) {
+                    addNewIssue("CNE_00200", inputFile, clockLine ,"The clock signal name does not contain the clock frequency value (Warning, to be verified manually)");
+                  }
+                  if (std4400!=null) {
+                    addNewIssue("STD_04400", inputFile, clockLine ,"Clocks should be generated in a dedicated module and not in the top level entity");
+                  }
                 }
               }
             }  
