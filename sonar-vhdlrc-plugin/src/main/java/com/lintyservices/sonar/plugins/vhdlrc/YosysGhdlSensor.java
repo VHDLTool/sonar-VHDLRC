@@ -254,6 +254,12 @@ public class YosysGhdlSensor implements Sensor {
               }
             }
           }
+
+          boolean clocksInTopOnly = false;
+          if (clocks.containsKey(top) && clocks.size()==1) {
+            clocksInTopOnly = true;
+          }
+
           for (Map.Entry<String,Set<String>> pair: clocks.entrySet()) {
             String fileName = pair.getKey();
             Set<String> clockNames = pair.getValue();
@@ -267,17 +273,20 @@ public class YosysGhdlSensor implements Sensor {
             }              
             if (inputFile != null ) {
               List<Integer> clockLines = getClockLocation(new File(inputFile.uri()), clockNames);
+              boolean clocksInMultipleModules = false;
+              if (clockLines.remove(Integer.valueOf(-1))) {
+                clocksInMultipleModules = true;
+              }
               boolean inTop = fileName.startsWith(top.toLowerCase());
-              boolean clocksDeclaredInMultipleFiles = clocks.size()>1;
               for (int clockLine : clockLines) {
-                if (clocksDeclaredInMultipleFiles && std4400!=null) {
+                if (clocksInMultipleModules && std4400!=null) {
                   addNewIssue("STD_04400", inputFile, clockLine ,"All clocks should be declared in a dedicated module");
                 }
                 if (inTop) {
                   if (cne200!=null) {
                     addNewIssue("CNE_00200", inputFile, clockLine ,"The clock signal name does not contain the clock frequency value (Warning, to be verified manually)");
                   }
-                  if (std4400!=null) {
+                  if (clocksInTopOnly && std4400!=null) {
                     addNewIssue("STD_04400", inputFile, clockLine ,"Clocks should be generated in a dedicated module and not in the top level entity");
                   }
                 }
@@ -530,22 +539,46 @@ public class YosysGhdlSensor implements Sensor {
 
   private List<Integer> getClockLocation(File file, Set<String> clocks){
     List<Integer> clockLines = new ArrayList<>();
+    List<String> allClocks = new ArrayList<>(clocks);
     try (FileReader fReader = new FileReader(file)){
       BufferedReader bufRead = new BufferedReader(fReader);
       String currentLine = null;
-      boolean finished = false;      
+      boolean finished = false;
+      boolean portMap = false;
+      boolean nextPortMap = false;
+      boolean clockAssignedInPortMap = false;
       int currentLineNumber = 0;
       while ((currentLine = bufRead.readLine()) != null && !finished) {
         currentLineNumber++;
         Scanner input = new Scanner(currentLine);
+        input.useDelimiter("((\\p{javaWhitespace})|;|,|:|\\.|\\(|\\))+");
         while(input.hasNext() && !finished) {
           String currentToken = input.next();
+
+          if (portMap && currentToken.equalsIgnoreCase("=>") && input.hasNext() && allClocks.contains(input.next())) {
+            if (nextPortMap) {
+              clockLines.add(-1);  // Clock signals are assigned in different modules
+              if (clocks.isEmpty()) {
+                finished = true;
+              }
+            }
+            clockAssignedInPortMap = true;
+          }
+
+          if (currentToken.equalsIgnoreCase("port") && input.hasNext() && input.next().equalsIgnoreCase("map")) {
+            portMap = true;
+            if (clockAssignedInPortMap) {
+              nextPortMap = true;
+            }
+          }
+
           if (clocks.remove(currentToken.toLowerCase())) {            
-            if (clocks.isEmpty()) {
+            if (clocks.isEmpty() && std4400 == null) {
               finished = true;
             }
             clockLines.add(currentLineNumber);
           }
+
         }
         input.close();
       }
