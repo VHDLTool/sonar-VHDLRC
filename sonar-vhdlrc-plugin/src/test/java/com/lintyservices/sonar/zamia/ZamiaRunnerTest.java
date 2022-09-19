@@ -1,6 +1,6 @@
 /*
  * SonarQube Linty VHDLRC :: Plugin
- * Copyright (C) 2018-2020 Linty Services
+ * Copyright (C) 2018-2021 Linty Services
  * mailto:contact@linty-services.com
  *
  * This program is free software; you can redistribute it and/or
@@ -177,17 +177,6 @@ public class ZamiaRunnerTest {
     assertThat(vhdlTargetFolder.resolve("home/project1/src/MUX/a.vhd").toFile().exists()).isTrue();
     assertThat(vhdlTargetFolder.resolve("home/project1/src/MUX/b.vhd").toFile().exists()).isTrue();
     //walkin(testScanner.getRoot(),"+--"); 
-  }
-
-  @Test
-  public void test_read_only_vhdl_dir_should_log_errors() throws IOException {
-    testScanner.newFile(PROJECT_DIRECTORY + "/vhdl/Top.vhd").setReadOnly();
-    addTestFile2(context, testProject, "Top.vhd");
-
-    new ZamiaRunner(context, runnerContext).uploadInputFilesToZamia();
-
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("Unable to upload this vhdl source to project:");
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains("Top.vhd");
   }
 
   @Test

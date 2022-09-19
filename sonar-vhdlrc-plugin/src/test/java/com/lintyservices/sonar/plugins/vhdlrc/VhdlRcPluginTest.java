@@ -1,6 +1,6 @@
 /*
  * SonarQube Linty VHDLRC :: Plugin
- * Copyright (C) 2018-2020 Linty Services
+ * Copyright (C) 2018-2021 Linty Services
  * mailto:contact@linty-services.com
  *
  * This program is free software; you can redistribute it and/or
@@ -32,18 +32,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class VhdlRcPluginTest {
 
-  private static final Version SONARQUBE_LTS_VERSION = Version.create(7, 9);
+  private static final Version SONARQUBE_LTS_VERSION = Version.create(8, 9, 0);
   private VhdlRcPlugin vhdlRcPlugin = new VhdlRcPlugin();
 
   @SuppressWarnings("unchecked")
   @Test
-  public void test_plugin_extensions_compatible_with_7_9() {
+  public void test_plugin_extensions_compatible_with_8_9() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(SONARQUBE_LTS_VERSION, SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
     vhdlRcPlugin.define(context);
-    int extensionsNumber=17;
+    int extensionsNumber=18;
     if (System.getProperty("withoutVhdlLanguageSupport")!=null && System.getProperty("withoutVhdlLanguageSupport").equals("true")) {
-      extensionsNumber-=3;
+      extensionsNumber-=2;
     }
     if (System.getProperty("withoutYosys")!=null && System.getProperty("withoutYosys").equals("true")) {
       extensionsNumber-=6;

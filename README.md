@@ -23,9 +23,9 @@ Without built-in vhdl language (allows compatibility with linty-vhdl plugin):
 ```
 mvn clean package -DwithoutVhdlLanguageSupport
 ```
-With integration tests on SonarQube 7.9.4 version:
+With integration tests on SonarQube 8.9.0.43852 version:
 ```
-mvn clean verify -Pits -Dsonar.runtimeVersion=7.9.4
+mvn clean verify -Pits -Dsonar.runtimeVersion=8.9.0.43852
 ```
 
 ## Debugg Mode
@@ -36,7 +36,7 @@ rc-scanner -X
 To keep files and reports, two options can be activated directly in the SonarQube UI. It's independent of -X debugg option. Options could be forced with these sonar-project.properties: Dsonar.vhdlrc.keepReports=true and Dsonar.vhdlrc.keepSource=true
 
 ## Quickstart
-1. Setup a SonarQube 7.9 LTS instance  
+1. Setup a SonarQube 8.9 LTS instance  
 2. [Install the plugin](https://github.com/Linty-Services/VHDL-RC/wiki/Try-it-in-3-clics)  
 3. [Install the rc-scanner](https://github.com/Linty-Services/VHDL-RC/wiki/Install-The-Scanner) 
 4. [Run an analysis](https://github.com/Linty-Services/VHDL-RC/wiki/Run-Analysis)  

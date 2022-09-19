@@ -18,7 +18,8 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        sonarqube: [ 7.9.4, 8.4.2.36762 ]
+        sonarqube: [ 8.9.0.43852 ]
+        # sonarqube: [ 8.9.0.43852, 8.8.0.42792 ] # TODO: Move back to matrix when LTS != LATEST
 
     steps:
       - name: Git Checkout
@@ -32,18 +33,18 @@ jobs:
           java-version: 11
 
       - name: Set Release Version ${{ github.event.inputs.release_version }}
-        if: github.event_name == 'workflow_dispatch' && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '7.9.4'
+        if: github.event_name == 'workflow_dispatch' && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '8.9.0.43852'
         run: mvn -B versions:set -DnewVersion=${{ github.event.inputs.release_version }} -DgenerateBackupPoms=false
 
       - name: Build and Test against SonarQube ${{ matrix.sonarqube }}
         run: mvn -B clean verify -Pits -"Dsonar.runtimeVersion=${{ matrix.sonarqube }}"
 
       - name: Run SonarQube Analysis
-        if: contains(github.ref, 'master') && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '7.9.4'
-        run: mvn -B sonar:sonar -Dsonar.login=bdeecb6f70858e66230e3582d74f9503fe38c1ac
+        if: contains(github.ref, 'master') && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '8.9.0.43852'
+        run: mvn -B sonar:sonar -Dsonar.login=${{ secrets.SONARQUBE_SCANNER_FOR_PRIVATE_REPOSITORIES_TOKEN }}
 
       - name: Upload Plugin JAR
-        if: matrix.os == 'ubuntu-latest' && matrix.sonarqube == '7.9.4'
+        if: matrix.os == 'ubuntu-latest' && matrix.sonarqube == '8.9.0.43852'
         uses: actions/upload-artifact@v2
         with:
           name: plugin
@@ -51,8 +52,21 @@ jobs:
             sonar-vhdlrc-plugin/target/sonar-vhdlrc-plugin-*.jar
             !sonar-vhdlrc-plugin/target/sonar-vhdlrc-plugin-*-sources.jar
 
+      - name: Build plugin with Linty compatibility
+        if: contains(github.ref, 'master') && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '8.9.0.43852'
+        run: mvn -B clean package -DwithoutVhdlLanguageSupport
+
+      - name: Upload Plugin JAR with Linty compatibility
+        if: contains(github.ref, 'master') && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '8.9.0.43852'
+        uses: actions/upload-artifact@v2
+        with:
+          name: plugin-with-linty-compatibility
+          path: |
+            sonar-vhdlrc-plugin/target/sonar-vhdlrc-plugin-*.jar
+            !sonar-vhdlrc-plugin/target/sonar-vhdlrc-plugin-*-sources.jar
+
       - name: Commit, Push and Tag Release Version ${{ github.event.inputs.release_version }}
-        if: github.event_name == 'workflow_dispatch' && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '7.9.4'
+        if: github.event_name == 'workflow_dispatch' && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '8.9.0.43852'
         uses: EndBug/add-and-commit@v5
         with:
           add: '*'
@@ -64,11 +78,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set Next Development Cycle Version ${{ github.event.inputs.next_version }}
-        if: github.event_name == 'workflow_dispatch' && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '7.9.4'
+        if: github.event_name == 'workflow_dispatch' && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '8.9.0.43852'
         run: mvn -B versions:set -DnewVersion=${{ github.event.inputs.next_version }} -DgenerateBackupPoms=false
 
       - name: Commit and Push Next Development Cycle Version ${{ github.event.inputs.next_version }}
-        if: github.event_name == 'workflow_dispatch' && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '7.9.4'
+        if: github.event_name == 'workflow_dispatch' && matrix.os == 'ubuntu-latest' && matrix.sonarqube == '8.9.0.43852'
         uses: EndBug/add-and-commit@v5
         with:
           add: '*'
@@ -90,6 +104,14 @@ jobs:
           name: plugin
       - name: Rename JAR into latest
         run: mv sonar-vhdlrc-plugin-*.jar sonar-vhdlrc-plugin-latest.jar
+
+      - name: Download Plugin JAR with Linty compatibility
+        uses: actions/download-artifact@v2
+        with:
+          name: plugin-with-linty-compatibility
+      - name: Rename JAR into latest
+        run: mv sonar-vhdlrc-plugin-*-SNAPSHOT.jar sonar-vhdlrc-plugin-with-linty-compatibility-latest.jar
+
       - name: "GitHub Pre-release: latest"
         uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -97,7 +119,9 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: true
           title: Latest build from master
-          files: sonar-vhdlrc-plugin-latest.jar
+          files: |
+            sonar-vhdlrc-plugin-latest.jar
+            sonar-vhdlrc-plugin-with-linty-compatibility-latest.jar
 
   release:
     name: GitHub Release
@@ -105,6 +129,12 @@ jobs:
     needs: build
     if: github.event_name == 'workflow_dispatch'
     steps:
+      - name: Download Plugin JAR with Linty compatibility
+        uses: actions/download-artifact@v2
+        with:
+          name: plugin-with-linty-compatibility
+      - name: Rename JAR with Linty compatibility
+        run: mv sonar-vhdlrc-plugin-*.jar sonar-vhdlrc-plugin-with-linty-compatibility-${{ github.event.inputs.release_version }}.jar
       - name: Download Plugin JAR
         uses: actions/download-artifact@v2
         with:
